@@ -131,7 +131,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: #000;
             text-shadow: 1px 1px 2px #fff;
@@ -540,7 +540,6 @@
     <div id="gameScreen" class="screen hidden">
         <div class="game-ui">
             <div class="ui-item">スコア: <span id="score">0</span></div>
-            <div class="ui-item">正解数: <span id="correctCount">0</span></div>
             <div class="ui-item">時間: <span id="timer">60</span></div>
             <div class="ui-item lives">残機: <span id="lives">3</span></div>
         </div>
@@ -912,7 +911,6 @@
                 gameState.score += points;
                 gameState.correctCount++;
                 document.getElementById('score').textContent = gameState.score;
-                document.getElementById('correctCount').textContent = gameState.correctCount;
                 
                 // 正解するたびに速度を0.1倍ずつ加算（初期速度の4倍まで）
                 if (!gameState.timeUp) {
@@ -984,7 +982,6 @@
             document.getElementById('gameScreen').classList.remove('hidden');
             
             document.getElementById('score').textContent = gameState.score;
-            document.getElementById('correctCount').textContent = gameState.correctCount;
             document.getElementById('lives').textContent = gameState.lives;
             document.getElementById('timer').textContent = gameState.timeLeft;
             
