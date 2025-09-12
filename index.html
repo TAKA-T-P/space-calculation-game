@@ -330,6 +330,16 @@
         </div>
     </div>
 
+    <div id="speedScreen" class="screen hidden">
+        <h1>UFO速度設定</h1>
+        <div class="mode-buttons">
+            <button class="mode-btn speed-btn" data-speed="0.5">おそい (0.5倍)</button>
+            <button class="mode-btn speed-btn" data-speed="1.0">ふつう (1.0倍)</button>
+            <button class="mode-btn speed-btn" data-speed="2.0">はやい (2.0倍)</button>
+            <button class="mode-btn speed-btn" data-speed="3.0">超高速 (3.0倍)</button>
+        </div>
+    </div>
+
     <div id="gameScreen" class="screen hidden">
         <div class="game-ui">
             <div class="ui-item">スコア: <span id="score">0</span></div>
@@ -377,6 +387,7 @@
             problemSpeed: 10000,
             baseSpeed: 10000,
             speedMultiplier: 1.0,
+            initialSpeedMultiplier: 1.0,
             currentUfo: null,
             currentFallInterval: null
         };
@@ -672,10 +683,11 @@
                 document.getElementById('score').textContent = gameState.score;
                 document.getElementById('correctCount').textContent = gameState.correctCount;
                 
-                // 正解するたびに速度を0.1倍ずつ加算（最大4倍まで）
+                // 正解するたびに速度を0.1倍ずつ加算（初期速度の4倍まで）
                 gameState.speedMultiplier += 0.1;
-                if (gameState.speedMultiplier > 4.0) {
-                    gameState.speedMultiplier = 4.0;
+                const maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
+                if (gameState.speedMultiplier > maxMultiplier) {
+                    gameState.speedMultiplier = maxMultiplier;
                 }
                 gameState.problemSpeed = gameState.baseSpeed / gameState.speedMultiplier;
                 
@@ -735,17 +747,18 @@
         }
 
         // ゲーム開始
-        function startGame(mode) {
+        function startGame(mode, speed) {
             gameState.mode = mode;
             gameState.score = 0;
             gameState.correctCount = 0;
             gameState.lives = 3;
             gameState.timeLeft = 60;
             gameState.gameRunning = true;
-            gameState.speedMultiplier = 1.0;
-            gameState.problemSpeed = gameState.baseSpeed;
+            gameState.initialSpeedMultiplier = speed;
+            gameState.speedMultiplier = speed;
+            gameState.problemSpeed = gameState.baseSpeed / speed;
             
-            document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
             
             document.getElementById('score').textContent = gameState.score;
@@ -777,6 +790,9 @@
             // UFOを削除
             document.querySelectorAll('.ufo').forEach(ufo => ufo.remove());
             
+            // 危険演出をリセット
+            document.getElementById('dangerOverlay').classList.remove('active');
+            
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.remove('hidden');
             document.getElementById('finalScore').textContent = gameState.score;
@@ -793,6 +809,9 @@
             
             // UFOを削除
             document.querySelectorAll('.ufo').forEach(ufo => ufo.remove());
+            
+            // 危険演出をリセット
+            document.getElementById('dangerOverlay').classList.remove('active');
             
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.remove('hidden');
@@ -812,13 +831,29 @@
             document.getElementById('progressFill').style.width = '100%';
         }
 
+        // モード選択
+        function selectMode(mode) {
+            gameState.mode = mode;
+            document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.remove('hidden');
+        }
+
+        // 速度選択
+        function selectSpeed(speed) {
+            startGame(gameState.mode, parseFloat(speed));
+        }
+
         // イベントリスナー
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
             
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    startGame(btn.dataset.mode);
+                    if (btn.classList.contains('speed-btn')) {
+                        selectSpeed(btn.dataset.speed);
+                    } else {
+                        selectMode(btn.dataset.mode);
+                    }
                 });
             });
         });
