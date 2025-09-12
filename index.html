@@ -102,7 +102,7 @@
             transform: translateX(-50%);
             display: flex;
             gap: 30px;
-            z-index: 20;
+            z-index: 5;
         }
 
         .ui-item {
@@ -236,22 +236,6 @@
             margin: 0.5rem 0;
         }
 
-        .restart-btn {
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border: 2px solid #00ffff;
-            background: rgba(0, 255, 255, 0.1);
-            color: #00ffff;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 2rem;
-            transition: all 0.3s;
-        }
-
-        .restart-btn:hover {
-            background: rgba(0, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
 
         .lives {
             color: #ff0000;
@@ -359,7 +343,7 @@
             box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
         }
 
-        .score-records {
+        .top-buttons {
             position: fixed;
             top: 20px;
             left: 50%;
@@ -367,6 +351,64 @@
             display: flex;
             gap: 20px;
             z-index: 10;
+        }
+        
+        .top-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        
+        .top-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .score-records-display {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .score-records-display .score-record {
+            padding: 12px 18px;
+            border: 2px solid #00aaff;
+            background: rgba(0, 170, 255, 0.1);
+            color: #00aaff;
+            border-radius: 12px;
+            text-shadow: 0 0 10px #00aaff;
+            text-align: center;
+            min-width: 160px;
+        }
+        
+        .score-records-display .score-record.high-score {
+            border-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.1);
+            color: #ffaa00;
+            text-shadow: 0 0 10px #ffaa00;
+        }
+        
+        .score-records-display .score-record-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        
+        .score-records-display .score-record-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .score-records-display .score-record-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 6px;
         }
 
         .score-record {
@@ -439,10 +481,21 @@
                 right: 15px;
             }
             
-            .score-records {
+            .top-buttons {
                 flex-direction: column;
                 gap: 10px;
                 top: 10px;
+            }
+            
+            .top-btn {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+            
+            .score-records-display {
+                flex-direction: column;
+                gap: 20px;
+                align-items: center;
             }
             
             .score-record {
@@ -466,6 +519,59 @@
         }
 
         /* 極小画面対応 */
+        .story-container {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .story-text {
+            font-size: 1.8rem;
+            text-align: center;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            line-height: 2.5;
+            animation: scroll-up 20s linear infinite;
+            white-space: nowrap;
+        }
+        
+        @keyframes scroll-up {
+            0% {
+                transform: translateY(100vh);
+            }
+            100% {
+                transform: translateY(-100vh);
+            }
+        }
+
+        /* スマートフォン横画面でのゲームクリア文字サイズ調整 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            #gameClearScreen h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0.2rem;
+            }
+            
+            #gameClearScreen p {
+                font-size: 1rem;
+                margin: 0.2rem 0;
+            }
+            
+            #gameClearScreen .score-display {
+                font-size: 1rem;
+                margin: 0.2rem 0;
+            }
+            
+            #gameClearScreen .title-display {
+                font-size: 1.2rem;
+                margin: 0.5rem 0;
+                padding: 8px 15px;
+            }
+        }
+
         @media (max-width: 480px) {
             #gameScreen .choice-btn {
                 font-size: 1rem;
@@ -497,14 +603,27 @@
                 font-size: 1rem;
                 margin: 0.3rem 0;
             }
+            
+            .story-text {
+                font-size: 1.2rem;
+                line-height: 2;
+            }
         }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
     <div class="danger-overlay" id="dangerOverlay"></div>
+    
+    <audio id="bgMusic" loop>
+        <source src="サイバー・ストーリー.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="modeScreen" class="screen">
+        <div class="top-buttons">
+            <button class="top-btn" data-mode="records">記録</button>
+            <button class="top-btn" data-mode="story">ストーリー</button>
+        </div>
         <h1>宇宙計算ゲーム</h1>
         <div class="mode-buttons">
             <button class="mode-btn" data-mode="addition">たし算</button>
@@ -512,18 +631,6 @@
             <button class="mode-btn" data-mode="multiplication">かけ算</button>
             <button class="mode-btn" data-mode="division">わり算</button>
             <button class="mode-btn" data-mode="all">全部</button>
-        </div>
-        <div class="score-records" id="scoreRecords">
-            <div class="score-record">
-                <div class="score-record-title">前回のスコア</div>
-                <div class="score-record-value" id="lastScoreValue">0</div>
-                <div class="score-record-subtitle" id="lastScoreTitle">LV.1 ひよっこ訓練生</div>
-            </div>
-            <div class="score-record high-score">
-                <div class="score-record-title">最高記録</div>
-                <div class="score-record-value" id="highScoreValue">0</div>
-                <div class="score-record-subtitle" id="highScoreTitle">LV.1 ひよっこ訓練生</div>
-            </div>
         </div>
     </div>
 
@@ -558,7 +665,7 @@
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #ff6666;">地球を守れなかった・・・</p>
         <div class="score-display">最終スコア: <span id="finalScore">0</span></div>
         <div class="score-display">正解数: <span id="finalCorrectCount">0</span></div>
-        <button class="restart-btn" onclick="restartGame()">タイトルに戻る</button>
+        <button class="home-btn" onclick="restartGame()">ホーム</button>
     </div>
 
     <div id="gameClearScreen" class="screen hidden">
@@ -566,7 +673,40 @@
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
         <div class="score-display">最終スコア: <span id="clearScore">0</span></div>
         <div class="score-display">正解数: <span id="clearCorrectCount">0</span></div>
-        <button class="restart-btn" onclick="restartGame()">タイトルに戻る</button>
+        <button class="home-btn" onclick="restartGame()">ホーム</button>
+    </div>
+
+    <div id="storyScreen" class="screen hidden">
+        <div class="story-container">
+            <div class="story-text" id="storyText">
+                はるか銀河のかなた──<br><br>
+                計算エネルギーを食べるナゾのUFO軍団が、<br>
+                地球と星々にせまっている！<br><br><br>
+                君は選ばれし"計算パイロット"。<br>
+                正しい答えを導き出すことで、<br>
+                エネルギービームが発射される！<br><br><br>
+                計算の力で宇宙を守りぬき、<br>
+                伝説の「宇宙計算マスター」を目指せ！
+            </div>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <div id="recordsScreen" class="screen hidden">
+        <h1>記録</h1>
+        <div class="score-records-display">
+            <div class="score-record">
+                <div class="score-record-title">前回のスコア</div>
+                <div class="score-record-value" id="recordsLastScoreValue">0</div>
+                <div class="score-record-subtitle" id="recordsLastScoreTitle">LV.1 ひよっこ訓練生</div>
+            </div>
+            <div class="score-record high-score">
+                <div class="score-record-title">最高記録</div>
+                <div class="score-record-value" id="recordsHighScoreValue">0</div>
+                <div class="score-record-subtitle" id="recordsHighScoreTitle">LV.1 ひよっこ訓練生</div>
+            </div>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
     <script>
@@ -903,7 +1043,12 @@
                 const screenHeight = window.innerHeight;
                 const positionRatio = Math.max(0, Math.min(1, ufoPosition / screenHeight));
                 const basePoints = Math.round(1000 * (1 - positionRatio));
-                const points = Math.round(basePoints * gameState.speedMultiplier);
+                let points = Math.round(basePoints * gameState.speedMultiplier);
+                
+                // 「全部」モードの場合は1.2倍のボーナス
+                if (gameState.mode === 'all') {
+                    points = Math.round(points * 1.2);
+                }
                 
                 // フローティングスコアを表示（UFOの位置に）
                 showFloatingScore(points, ufoLeft + 60, ufoPosition + 40);
@@ -978,6 +1123,9 @@
             gameState.wrongAnswerCount = 0;
             gameState.timeUp = false;
             
+            // ゲーム開始時に背景音楽を一時停止
+            pauseBgMusic();
+            
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
             
@@ -1044,17 +1192,11 @@
             let bonusMessage = '';
             let totalBonus = 0;
             
-            // 残機ボーナス（残機1つにつき5000点）
+            // 残機ボーナス（残機1つにつき4000点）
             if (gameState.lives > 0) {
-                const livesBonus = gameState.lives * 5000;
+                const livesBonus = gameState.lives * 4000;
                 totalBonus += livesBonus;
-                bonusMessage += `<p style="font-size: 1.2rem; margin: 0.3rem 0; color: #00ff00; text-shadow: 0 0 10px #00ff00;">残機ボーナス: ${gameState.lives} × 5000 = ${livesBonus}点</p>`;
-            }
-            
-            // 全問正解ボーナス（残機3でミス0回）
-            if (gameState.lives === 3 && gameState.wrongAnswerCount === 0) {
-                totalBonus += 10000;
-                bonusMessage += '<p style="font-size: 1.4rem; margin: 0.5rem 0; color: #ffff00; text-shadow: 0 0 10px #ffff00;">全問正解！ボーナス10000点</p>';
+                bonusMessage += `<p style="font-size: 1.2rem; margin: 0.3rem 0; color: #00ff00; text-shadow: 0 0 10px #00ff00;">残機ボーナス: ${gameState.lives} × 4000 = ${livesBonus}点</p>`;
             }
             
             // ボーナスをスコアに加算
@@ -1116,12 +1258,26 @@
             document.getElementById('gameArea').innerHTML = '';
             document.getElementById('choices').innerHTML = '';
             
+            // タイトル画面に戻ったら背景音楽を再開
+            resumeBgMusic();
+            
             // スコア記録を更新
             updateScoreRecords();
         }
 
         // モード選択
         function selectMode(mode) {
+            if (mode === 'story') {
+                document.getElementById('modeScreen').classList.add('hidden');
+                document.getElementById('storyScreen').classList.remove('hidden');
+                return;
+            }
+            if (mode === 'records') {
+                document.getElementById('modeScreen').classList.add('hidden');
+                document.getElementById('recordsScreen').classList.remove('hidden');
+                updateRecordsDisplay();
+                return;
+            }
             gameState.mode = mode;
             document.getElementById('modeScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.remove('hidden');
@@ -1172,6 +1328,8 @@
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.add('hidden');
+            document.getElementById('storyScreen').classList.add('hidden');
+            document.getElementById('recordsScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
             
             // ゲームエリアをクリア
@@ -1179,27 +1337,67 @@
             document.getElementById('choices').innerHTML = '';
             document.getElementById('dangerOverlay').classList.remove('active');
             
-            // スコア記録を更新
-            updateScoreRecords();
+            // タイトル画面に戻ったら背景音楽を再開
+            resumeBgMusic();
         }
 
-        // スコア記録を更新
-        function updateScoreRecords() {
+        // 記録画面のスコア表示を更新
+        function updateRecordsDisplay() {
             const lastScore = getLastScore();
             const highScore = getHighScore();
             
-            document.getElementById('lastScoreValue').textContent = lastScore;
-            document.getElementById('lastScoreTitle').textContent = getTitleByScore(lastScore);
-            document.getElementById('highScoreValue').textContent = highScore;
-            document.getElementById('highScoreTitle').textContent = getTitleByScore(highScore);
+            document.getElementById('recordsLastScoreValue').textContent = lastScore;
+            document.getElementById('recordsLastScoreTitle').textContent = getTitleByScore(lastScore);
+            document.getElementById('recordsHighScoreValue').textContent = highScore;
+            document.getElementById('recordsHighScoreTitle').textContent = getTitleByScore(highScore);
+        }
+
+        // 背景音楽を制御
+        function playBgMusic() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.volume = 0.3; // 音量を30%に設定
+                bgMusic.play().catch(error => {
+                    console.log('音楽の自動再生がブロックされました:', error);
+                });
+            }
+        }
+        
+        function stopBgMusic() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.pause();
+                bgMusic.currentTime = 0;
+            }
+        }
+        
+        function pauseBgMusic() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.pause();
+            }
+        }
+        
+        function resumeBgMusic() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic) {
+                bgMusic.play().catch(error => {
+                    console.log('音楽の再生に失敗しました:', error);
+                });
+            }
         }
 
         // イベントリスナー
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
-            updateScoreRecords();
             
-            document.querySelectorAll('.mode-btn').forEach(btn => {
+            // ユーザーがページをクリックしたら音楽を開始（自動再生制限対策）
+            document.addEventListener('click', function initAudio() {
+                playBgMusic();
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
+            
+            document.querySelectorAll('.mode-btn, .top-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (btn.classList.contains('speed-btn')) {
                         selectSpeed(btn.dataset.speed);
