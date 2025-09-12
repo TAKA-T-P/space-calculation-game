@@ -106,11 +106,11 @@
         }
 
         .ui-item {
-            font-size: 1.2rem;
-            padding: 10px 20px;
+            font-size: 1rem;
+            padding: 8px 16px;
             border: 2px solid #00ffff;
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
+            border-radius: 8px;
             text-shadow: 0 0 10px #00ffff;
         }
 
@@ -166,6 +166,9 @@
             display: flex;
             gap: 20px;
             z-index: 20;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 90vw;
         }
 
         .choice-btn {
@@ -313,6 +316,100 @@
             0% { background: rgba(255, 0, 0, 0.15); }
             100% { background: rgba(255, 0, 0, 0.25); }
         }
+
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 30px;
+            font-size: 0.8rem;
+            border: 1px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .home-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .title-display {
+            font-size: 1.8rem;
+            margin: 1.5rem 0;
+            padding: 15px 25px;
+            border: 2px solid #ffaa00;
+            background: linear-gradient(45deg, rgba(255, 170, 0, 0.1), rgba(255, 200, 0, 0.2));
+            color: #ffaa00;
+            border-radius: 15px;
+            text-shadow: 0 0 15px #ffaa00;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+        }
+
+        /* スマートフォン縦画面対応 */
+        @media (max-width: 768px), (max-height: 600px) {
+            .choices {
+                bottom: 20px;
+                gap: 10px;
+                max-width: 95vw;
+            }
+            
+            #gameScreen .choice-btn {
+                padding: 12px 20px;
+                font-size: 1.1rem;
+                min-width: calc(50% - 10px);
+                flex: 1 1 calc(50% - 10px);
+                max-width: calc(50% - 10px);
+            }
+            
+            .game-ui {
+                bottom: 140px;
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .ui-item {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+            
+            .progress-bar {
+                bottom: 200px;
+                width: 250px;
+            }
+            
+            .home-btn {
+                width: 50px;
+                height: 25px;
+                font-size: 0.7rem;
+                top: 15px;
+                right: 15px;
+            }
+        }
+
+        /* 極小画面対応 */
+        @media (max-width: 480px) {
+            #gameScreen .choice-btn {
+                font-size: 1rem;
+                padding: 10px 15px;
+            }
+            
+            .ui-item {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+            
+            .title-display {
+                font-size: 1.4rem;
+                margin: 1rem 0;
+                padding: 10px 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -357,6 +454,8 @@
         
         <div class="choices" id="choices">
         </div>
+        
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
     <div id="gameOverScreen" class="screen hidden">
@@ -389,7 +488,9 @@
             speedMultiplier: 1.0,
             initialSpeedMultiplier: 1.0,
             currentUfo: null,
-            currentFallInterval: null
+            currentFallInterval: null,
+            wrongAnswerCount: 0,
+            timeUp: false
         };
 
         let gameTimer;
@@ -589,7 +690,10 @@
             const ufo = document.createElement('div');
             ufo.className = 'ufo';
             ufo.textContent = problem.question;
-            ufo.style.left = Math.random() * (window.innerWidth - 120) + 'px';
+            // UFOの幅120pxの範囲内に数式が収まるよう、左右に余裕を持たせる
+            const minLeft = 60; // 左端から60px以上
+            const maxLeft = window.innerWidth - 180; // 右端から180px以上（UFO幅120px + 余裕60px）
+            ufo.style.left = Math.random() * (maxLeft - minLeft) + minLeft + 'px';
             ufo.style.top = '-80px';
             
             gameArea.appendChild(ufo);
@@ -684,12 +788,14 @@
                 document.getElementById('correctCount').textContent = gameState.correctCount;
                 
                 // 正解するたびに速度を0.1倍ずつ加算（初期速度の4倍まで）
-                gameState.speedMultiplier += 0.1;
-                const maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
-                if (gameState.speedMultiplier > maxMultiplier) {
-                    gameState.speedMultiplier = maxMultiplier;
+                if (!gameState.timeUp) {
+                    gameState.speedMultiplier += 0.1;
+                    const maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
+                    if (gameState.speedMultiplier > maxMultiplier) {
+                        gameState.speedMultiplier = maxMultiplier;
+                    }
+                    gameState.problemSpeed = gameState.baseSpeed / gameState.speedMultiplier;
                 }
-                gameState.problemSpeed = gameState.baseSpeed / gameState.speedMultiplier;
                 
                 // UFOの降下を停止してUFOを削除
                 if (gameState.currentFallInterval) {
@@ -707,42 +813,31 @@
                 // 危険演出をリセット
                 document.getElementById('dangerOverlay').classList.remove('active');
                 
-                setTimeout(() => {
-                    if (gameState.gameRunning) {
-                        newProblem();
-                    }
-                }, 500);
-            } else {
-                button.classList.add('incorrect');
-                playIncorrectSound();
-                gameState.lives--;
-                document.getElementById('lives').textContent = gameState.lives;
-                
-                if (gameState.lives <= 0) {
-                    setTimeout(gameOver, 500);
+                // 時間終了後の正解ならゲームクリア
+                if (gameState.timeUp) {
+                    setTimeout(gameClear, 500);
                 } else {
-                    // UFOの降下を停止してUFOを削除
-                    if (gameState.currentFallInterval) {
-                        clearInterval(gameState.currentFallInterval);
-                        gameState.currentFallInterval = null;
-                    }
-                    if (gameState.currentUfo) {
-                        gameState.currentUfo.remove();
-                        gameState.currentUfo = null;
-                    }
-                    
-                    // プログレスバーをリセット
-                    document.getElementById('progressFill').style.width = '100%';
-                    
-                    // 危険演出をリセット
-                    document.getElementById('dangerOverlay').classList.remove('active');
-                    
                     setTimeout(() => {
                         if (gameState.gameRunning) {
                             newProblem();
                         }
                     }, 500);
                 }
+            } else {
+                button.classList.add('incorrect');
+                playIncorrectSound();
+                gameState.lives--;
+                gameState.wrongAnswerCount++;
+                document.getElementById('lives').textContent = gameState.lives;
+                
+                if (gameState.lives <= 0) {
+                    setTimeout(gameOver, 500);
+                }
+                // 不正解の場合、UFOは残したまま（正解するまで消えない）
+                // ボタンの色だけリセット
+                setTimeout(() => {
+                    button.classList.remove('incorrect');
+                }, 500);
             }
         }
 
@@ -757,6 +852,8 @@
             gameState.initialSpeedMultiplier = speed;
             gameState.speedMultiplier = speed;
             gameState.problemSpeed = gameState.baseSpeed / speed;
+            gameState.wrongAnswerCount = 0;
+            gameState.timeUp = false;
             
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
@@ -772,7 +869,9 @@
                 document.getElementById('timer').textContent = gameState.timeLeft;
                 
                 if (gameState.timeLeft <= 0) {
-                    gameClear();
+                    gameState.timeUp = true;
+                    clearInterval(gameTimer);
+                    // 時間終了時もUFOの降下は継続（画面下に落ちるまでに正解すればクリア）
                 }
             }, 1000);
             
@@ -797,12 +896,31 @@
             document.getElementById('gameOverScreen').classList.remove('hidden');
             document.getElementById('finalScore').textContent = gameState.score;
             document.getElementById('finalCorrectCount').textContent = gameState.correctCount;
+            
+            // 称号を表示
+            const gameOverScreen = document.getElementById('gameOverScreen');
+            const existingTitle = gameOverScreen.querySelector('.title-display');
+            if (existingTitle) {
+                existingTitle.remove();
+            }
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'title-display';
+            titleDiv.textContent = getTitleByScore(gameState.score);
+            gameOverScreen.insertBefore(titleDiv, gameOverScreen.querySelector('.score-display'));
         }
 
         // ゲームクリア
         function gameClear() {
             gameState.gameRunning = false;
             clearInterval(gameTimer);
+            
+            // 全問正解ボーナスチェック（残機3でミス0回）
+            let bonusMessage = '';
+            if (gameState.lives === 3 && gameState.wrongAnswerCount === 0) {
+                gameState.score += 10000;
+                bonusMessage = '<p style="font-size: 1.8rem; margin: 1rem 0; color: #ffff00; text-shadow: 0 0 10px #ffff00;">全問正解！ボーナス10000点</p>';
+            }
             
             // ファンファーレを再生
             playFanfareSound();
@@ -815,8 +933,34 @@
             
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.remove('hidden');
+            
+            // ボーナスメッセージを表示
+            const clearScreen = document.getElementById('gameClearScreen');
+            const existingBonus = clearScreen.querySelector('.bonus-message');
+            if (existingBonus) {
+                existingBonus.remove();
+            }
+            
+            if (bonusMessage) {
+                const bonusDiv = document.createElement('div');
+                bonusDiv.className = 'bonus-message';
+                bonusDiv.innerHTML = bonusMessage;
+                clearScreen.insertBefore(bonusDiv, clearScreen.querySelector('.score-display'));
+            }
+            
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
+            
+            // 称号を表示
+            const existingTitle = clearScreen.querySelector('.title-display');
+            if (existingTitle) {
+                existingTitle.remove();
+            }
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'title-display';
+            titleDiv.textContent = getTitleByScore(gameState.score);
+            clearScreen.insertBefore(titleDiv, clearScreen.querySelector('.score-display'));
         }
 
         // ゲーム再開
@@ -841,6 +985,55 @@
         // 速度選択
         function selectSpeed(speed) {
             startGame(gameState.mode, parseFloat(speed));
+        }
+
+        // スコアに応じた称号を取得
+        function getTitleByScore(score) {
+            if (score >= 100000) return 'LV.MAX 計算銀河の創造主';
+            if (score >= 95000) return 'LV.20 宇宙根源の答え';
+            if (score >= 90000) return 'LV.19 永遠の銀河覇者';
+            if (score >= 85000) return 'LV.18 伝説の宇宙勇者';
+            if (score >= 80000) return 'LV.17 星々の守護神';
+            if (score >= 75000) return 'LV.16 宇宙を統べる王';
+            if (score >= 70000) return 'LV.15 銀河連合の司令官';
+            if (score >= 65000) return 'LV.14 星雲の支配者';
+            if (score >= 60000) return 'LV.13 光の翼を持つ者';
+            if (score >= 55000) return 'LV.12 ブラックホール討伐者';
+            if (score >= 50000) return 'LV.11 暗黒星雲の戦士';
+            if (score >= 45000) return 'LV.10 太陽系の英雄';
+            if (score >= 40000) return 'LV.9 宇宙戦艦の隊長';
+            if (score >= 35000) return 'LV.8 光速の挑戦者';
+            if (score >= 30000) return 'LV.7 銀河の探検家';
+            if (score >= 25000) return 'LV.6 惑星の守護者';
+            if (score >= 20000) return 'LV.5 星空の冒険者';
+            if (score >= 15000) return 'LV.4 宇宙船の操縦士';
+            if (score >= 10000) return 'LV.3 流れ星を追う者';
+            if (score >= 5000) return 'LV.2 見習い宇宙飛行士';
+            return 'LV.1 ひよっこ訓練生';
+        }
+
+        // タイトルに戻る
+        function returnToTitle() {
+            gameState.gameRunning = false;
+            if (gameTimer) {
+                clearInterval(gameTimer);
+            }
+            if (gameState.currentFallInterval) {
+                clearInterval(gameState.currentFallInterval);
+            }
+            
+            // 画面をリセット
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gameClearScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.add('hidden');
+            document.getElementById('modeScreen').classList.remove('hidden');
+            
+            // ゲームエリアをクリア
+            document.getElementById('gameArea').innerHTML = '';
+            document.getElementById('choices').innerHTML = '';
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('dangerOverlay').classList.remove('active');
         }
 
         // イベントリスナー
