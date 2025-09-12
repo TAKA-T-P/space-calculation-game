@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇宙計算ゲーム</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #000011, #001122, #000033);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #modeScreen h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px #00ffff;
+            color: #00ffff;
+        }
+
+        .mode-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .mode-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        #gameScreen {
+            justify-content: flex-start;
+            padding: 20px;
+        }
+
+        .game-ui {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            z-index: 20;
+        }
+
+        .ui-item {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border: 2px solid #00ffff;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .game-area {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ufo {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6600, #ff9900);
+            border-radius: 50% 50% 20% 20%;
+            border: 2px solid #ffaa00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #000;
+            text-shadow: 1px 1px 2px #fff;
+            animation: ufo-glow 1s infinite alternate;
+            box-shadow: 0 0 20px #ff6600;
+            z-index: 15;
+        }
+
+        @keyframes ufo-glow {
+            0% { box-shadow: 0 0 20px #ff6600; }
+            100% { box-shadow: 0 0 30px #ff9900, 0 0 40px #ff6600; }
+        }
+
+        .ufo::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            background: linear-gradient(45deg, #00ffff, #0088ff);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .choices {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 20;
+        }
+
+        .choice-btn {
+            padding: 15px 25px;
+            font-size: 1.3rem;
+            border: 2px solid #00ff00;
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00ff00;
+            min-width: 80px;
+        }
+
+        .choice-btn:hover {
+            background: rgba(0, 255, 0, 0.4);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        .choice-btn.correct {
+            animation: correct-flash 0.5s;
+        }
+
+        .choice-btn.incorrect {
+            animation: incorrect-flash 0.5s;
+        }
+
+        @keyframes correct-flash {
+            0%, 100% { background: rgba(0, 255, 0, 0.2); }
+            50% { background: rgba(0, 255, 0, 0.8); }
+        }
+
+        @keyframes incorrect-flash {
+            0%, 100% { background: rgba(255, 0, 0, 0.2); border-color: #ff0000; }
+            50% { background: rgba(255, 0, 0, 0.8); border-color: #ff0000; }
+        }
+
+        #gameOverScreen, #gameClearScreen {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        #gameOverScreen h1 {
+            color: #ff0000;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #ff0000;
+        }
+
+        #gameClearScreen h1 {
+            color: #00ff00;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px #00ff00;
+        }
+
+        .score-display {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        .restart-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .lives {
+            color: #ff0000;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 10px;
+            border: 2px solid #00ffff;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 20;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+
+        .floating-score {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffff00;
+            text-shadow: 0 0 10px #ffff00, 2px 2px 4px #000;
+            z-index: 25;
+            pointer-events: none;
+            animation: float-up 1s ease-out forwards;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        .danger-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.2);
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .danger-overlay.active {
+            opacity: 1;
+            animation: danger-pulse 0.5s infinite alternate;
+        }
+
+        @keyframes danger-pulse {
+            0% { background: rgba(255, 0, 0, 0.15); }
+            100% { background: rgba(255, 0, 0, 0.25); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="danger-overlay" id="dangerOverlay"></div>
+
+    <div id="modeScreen" class="screen">
+        <h1>宇宙計算ゲーム</h1>
+        <div class="mode-buttons">
+            <button class="mode-btn" data-mode="addition">たし算</button>
+            <button class="mode-btn" data-mode="subtraction">ひき算</button>
+            <button class="mode-btn" data-mode="multiplication">かけ算</button>
+            <button class="mode-btn" data-mode="division">わり算</button>
+            <button class="mode-btn" data-mode="all">全部</button>
+        </div>
+    </div>
+
+    <div id="gameScreen" class="screen hidden">
+        <div class="game-ui">
+            <div class="ui-item">スコア: <span id="score">0</span></div>
+            <div class="ui-item">正解数: <span id="correctCount">0</span></div>
+            <div class="ui-item">時間: <span id="timer">60</span></div>
+            <div class="ui-item lives">残機: <span id="lives">3</span></div>
+        </div>
+        
+        <div class="game-area" id="gameArea">
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="choices" id="choices">
+        </div>
+    </div>
+
+    <div id="gameOverScreen" class="screen hidden">
+        <h1>GAME OVER</h1>
+        <p style="font-size: 1.5rem; margin: 1rem 0; color: #ff6666;">地球を守れなかった・・・</p>
+        <div class="score-display">最終スコア: <span id="finalScore">0</span></div>
+        <div class="score-display">正解数: <span id="finalCorrectCount">0</span></div>
+        <button class="restart-btn" onclick="restartGame()">もう一度プレイ</button>
+    </div>
+
+    <div id="gameClearScreen" class="screen hidden">
+        <h1>GAME CLEAR!</h1>
+        <p style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
+        <div class="score-display">最終スコア: <span id="clearScore">0</span></div>
+        <div class="score-display">正解数: <span id="clearCorrectCount">0</span></div>
+        <button class="restart-btn" onclick="restartGame()">もう一度プレイ</button>
+    </div>
+
+    <script>
+        let gameState = {
+            mode: '',
+            score: 0,
+            correctCount: 0,
+            lives: 3,
+            timeLeft: 60,
+            currentProblem: null,
+            gameRunning: false,
+            problemSpeed: 10000,
+            baseSpeed: 10000,
+            speedMultiplier: 1.0,
+            currentUfo: null,
+            currentFallInterval: null
+        };
+
+        let gameTimer;
+
+        // 星を生成
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 効果音を生成
+        function playSound(frequency, duration, type = 'sine') {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        function playCorreectSound() {
+            playSound(800, 0.2);
+            setTimeout(() => playSound(1000, 0.2), 100);
+        }
+
+        function playIncorrectSound() {
+            playSound(200, 0.5, 'sawtooth');
+        }
+
+        function playFanfareSound() {
+            // ファンファーレのメロディー
+            playSound(523, 0.3); // ド
+            setTimeout(() => playSound(659, 0.3), 200); // ミ
+            setTimeout(() => playSound(784, 0.3), 400); // ソ
+            setTimeout(() => playSound(1047, 0.5), 600); // 高いド
+        }
+
+        function playExplosionSound() {
+            // 爆発音
+            playSound(100, 0.3, 'sawtooth');
+            setTimeout(() => playSound(80, 0.4, 'sawtooth'), 100);
+            setTimeout(() => playSound(60, 0.5, 'sawtooth'), 200);
+        }
+
+        // フローティングスコアを表示
+        function showFloatingScore(points, x, y) {
+            const floatingScore = document.createElement('div');
+            floatingScore.className = 'floating-score';
+            floatingScore.textContent = '+' + points;
+            floatingScore.style.left = x + 'px';
+            floatingScore.style.top = y + 'px';
+            
+            document.getElementById('gameArea').appendChild(floatingScore);
+            
+            // 1秒後に要素を削除
+            setTimeout(() => {
+                if (floatingScore.parentNode) {
+                    floatingScore.parentNode.removeChild(floatingScore);
+                }
+            }, 1000);
+        }
+
+        // 計算問題を生成
+        function generateProblem(mode) {
+            let num1, num2, operation, answer;
+            
+            const modes = mode === 'all' ? ['addition', 'subtraction', 'multiplication', 'division'] : [mode];
+            const selectedMode = modes[Math.floor(Math.random() * modes.length)];
+            
+            switch (selectedMode) {
+                case 'addition':
+                    num1 = Math.floor(Math.random() * 50) + 1;
+                    num2 = Math.floor(Math.random() * 50) + 1;
+                    operation = '+';
+                    answer = num1 + num2;
+                    break;
+                case 'subtraction':
+                    num1 = Math.floor(Math.random() * 50) + 20;
+                    num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                    operation = '-';
+                    answer = num1 - num2;
+                    break;
+                case 'multiplication':
+                    num1 = Math.floor(Math.random() * 10) + 1;
+                    num2 = Math.floor(Math.random() * 10) + 1;
+                    operation = '×';
+                    answer = num1 * num2;
+                    break;
+                case 'division':
+                    answer = Math.floor(Math.random() * 10) + 1;
+                    num2 = Math.floor(Math.random() * 9) + 1;
+                    num1 = answer * num2;
+                    operation = '÷';
+                    break;
+            }
+            
+            return {
+                question: `${num1} ${operation} ${num2}`,
+                answer: answer
+            };
+        }
+
+        // 選択肢を生成
+        function generateChoices(correctAnswer) {
+            // 正解の配置位置を決める（0-4の5つの位置から1つ選択）
+            const correctPosition = Math.floor(Math.random() * 5);
+            
+            // 正解を配置位置に基づいて上下に配分する誤答を生成
+            const choices = [];
+            
+            // 正解より小さい値が必要な数
+            const smallerNeeded = correctPosition;
+            // 正解より大きい値が必要な数  
+            const largerNeeded = 4 - correctPosition;
+            
+            // 正解より小さい値を生成
+            for (let i = 0; i < smallerNeeded; i++) {
+                let wrongAnswer;
+                let attempts = 0;
+                do {
+                    if (correctAnswer <= 10) {
+                        wrongAnswer = Math.max(1, correctAnswer - Math.floor(Math.random() * 5) - 1);
+                    } else {
+                        const variation = Math.floor(correctAnswer * 0.3);
+                        wrongAnswer = Math.max(1, correctAnswer - Math.floor(Math.random() * variation) - 1);
+                    }
+                    attempts++;
+                } while ((choices.includes(wrongAnswer) || wrongAnswer >= correctAnswer) && attempts < 50);
+                
+                if (!choices.includes(wrongAnswer) && wrongAnswer < correctAnswer) {
+                    choices.push(wrongAnswer);
+                }
+            }
+            
+            // 正解より大きい値を生成
+            for (let i = 0; i < largerNeeded; i++) {
+                let wrongAnswer;
+                let attempts = 0;
+                do {
+                    if (correctAnswer <= 10) {
+                        wrongAnswer = correctAnswer + Math.floor(Math.random() * 5) + 1;
+                    } else {
+                        const variation = Math.floor(correctAnswer * 0.3);
+                        wrongAnswer = correctAnswer + Math.floor(Math.random() * variation) + 1;
+                    }
+                    attempts++;
+                } while ((choices.includes(wrongAnswer) || wrongAnswer <= correctAnswer) && attempts < 50);
+                
+                if (!choices.includes(wrongAnswer) && wrongAnswer > correctAnswer) {
+                    choices.push(wrongAnswer);
+                }
+            }
+            
+            // 必要に応じて不足分を補完
+            while (choices.length < 4) {
+                let wrongAnswer;
+                if (Math.random() < 0.5) {
+                    // 小さい値を追加
+                    wrongAnswer = Math.max(1, correctAnswer - Math.floor(Math.random() * 10) - 1);
+                } else {
+                    // 大きい値を追加
+                    wrongAnswer = correctAnswer + Math.floor(Math.random() * 10) + 1;
+                }
+                
+                if (!choices.includes(wrongAnswer) && wrongAnswer !== correctAnswer) {
+                    choices.push(wrongAnswer);
+                }
+            }
+            
+            // 正解を正しい位置に挿入
+            choices.splice(correctPosition, 0, correctAnswer);
+            
+            // 数字の小さい順にソート
+            return choices.sort((a, b) => a - b);
+        }
+
+        // UFOを作成して降下させる
+        function createUfo(problem) {
+            const gameArea = document.getElementById('gameArea');
+            const ufo = document.createElement('div');
+            ufo.className = 'ufo';
+            ufo.textContent = problem.question;
+            ufo.style.left = Math.random() * (window.innerWidth - 120) + 'px';
+            ufo.style.top = '-80px';
+            
+            gameArea.appendChild(ufo);
+            gameState.currentUfo = ufo;
+            
+            // UFOを降下させる
+            let position = -80;
+            const fallSpeed = (window.innerHeight + 80) / (gameState.problemSpeed / 50);
+            
+            const fallInterval = setInterval(() => {
+                if (!gameState.gameRunning) {
+                    clearInterval(fallInterval);
+                    return;
+                }
+                
+                position += fallSpeed;
+                ufo.style.top = position + 'px';
+                
+                // プログレスバーを更新
+                const progress = Math.max(0, 100 - (position + 80) / (window.innerHeight + 80) * 100);
+                document.getElementById('progressFill').style.width = progress + '%';
+                
+                // UFOが画面下半分に来たら危険演出
+                const dangerOverlay = document.getElementById('dangerOverlay');
+                if (position > window.innerHeight / 2) {
+                    dangerOverlay.classList.add('active');
+                } else {
+                    dangerOverlay.classList.remove('active');
+                }
+                
+                if (position >= window.innerHeight) {
+                    clearInterval(fallInterval);
+                    if (gameState.gameRunning) {
+                        gameOver();
+                    }
+                }
+            }, 50);
+            
+            return { ufo, fallInterval };
+        }
+
+        // 新しい問題を出題
+        function newProblem() {
+            if (!gameState.gameRunning) return;
+            
+            const problem = generateProblem(gameState.mode);
+            const choices = generateChoices(problem.answer);
+            
+            gameState.currentProblem = problem;
+            
+            // UFOを作成
+            const ufoData = createUfo(problem);
+            gameState.currentFallInterval = ufoData.fallInterval;
+            
+            // 選択肢を表示
+            const choicesContainer = document.getElementById('choices');
+            choicesContainer.innerHTML = '';
+            
+            choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = 'choice-btn';
+                button.textContent = choice;
+                button.onclick = () => selectAnswer(choice, button);
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        // 答えを選択
+        function selectAnswer(selectedAnswer, button) {
+            if (!gameState.gameRunning) return;
+            
+            const isCorrect = selectedAnswer === gameState.currentProblem.answer;
+            
+            if (isCorrect) {
+                button.classList.add('correct');
+                playCorreectSound();
+                
+                // UFOの位置と速度に基づいて得点を計算（位置1000点 × 速度倍率）
+                const ufoPosition = parseFloat(gameState.currentUfo.style.top);
+                const ufoLeft = parseFloat(gameState.currentUfo.style.left);
+                const screenHeight = window.innerHeight;
+                const positionRatio = Math.max(0, Math.min(1, ufoPosition / screenHeight));
+                const basePoints = Math.round(1000 * (1 - positionRatio));
+                const points = Math.round(basePoints * gameState.speedMultiplier);
+                
+                // フローティングスコアを表示（UFOの位置に）
+                showFloatingScore(points, ufoLeft + 60, ufoPosition + 40);
+                
+                gameState.score += points;
+                gameState.correctCount++;
+                document.getElementById('score').textContent = gameState.score;
+                document.getElementById('correctCount').textContent = gameState.correctCount;
+                
+                // 正解するたびに速度を0.1倍ずつ加算（最大4倍まで）
+                gameState.speedMultiplier += 0.1;
+                if (gameState.speedMultiplier > 4.0) {
+                    gameState.speedMultiplier = 4.0;
+                }
+                gameState.problemSpeed = gameState.baseSpeed / gameState.speedMultiplier;
+                
+                // UFOの降下を停止してUFOを削除
+                if (gameState.currentFallInterval) {
+                    clearInterval(gameState.currentFallInterval);
+                    gameState.currentFallInterval = null;
+                }
+                if (gameState.currentUfo) {
+                    gameState.currentUfo.remove();
+                    gameState.currentUfo = null;
+                }
+                
+                // プログレスバーをリセット
+                document.getElementById('progressFill').style.width = '100%';
+                
+                // 危険演出をリセット
+                document.getElementById('dangerOverlay').classList.remove('active');
+                
+                setTimeout(() => {
+                    if (gameState.gameRunning) {
+                        newProblem();
+                    }
+                }, 500);
+            } else {
+                button.classList.add('incorrect');
+                playIncorrectSound();
+                gameState.lives--;
+                document.getElementById('lives').textContent = gameState.lives;
+                
+                if (gameState.lives <= 0) {
+                    setTimeout(gameOver, 500);
+                } else {
+                    // UFOの降下を停止してUFOを削除
+                    if (gameState.currentFallInterval) {
+                        clearInterval(gameState.currentFallInterval);
+                        gameState.currentFallInterval = null;
+                    }
+                    if (gameState.currentUfo) {
+                        gameState.currentUfo.remove();
+                        gameState.currentUfo = null;
+                    }
+                    
+                    // プログレスバーをリセット
+                    document.getElementById('progressFill').style.width = '100%';
+                    
+                    // 危険演出をリセット
+                    document.getElementById('dangerOverlay').classList.remove('active');
+                    
+                    setTimeout(() => {
+                        if (gameState.gameRunning) {
+                            newProblem();
+                        }
+                    }, 500);
+                }
+            }
+        }
+
+        // ゲーム開始
+        function startGame(mode) {
+            gameState.mode = mode;
+            gameState.score = 0;
+            gameState.correctCount = 0;
+            gameState.lives = 3;
+            gameState.timeLeft = 60;
+            gameState.gameRunning = true;
+            gameState.speedMultiplier = 1.0;
+            gameState.problemSpeed = gameState.baseSpeed;
+            
+            document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            document.getElementById('score').textContent = gameState.score;
+            document.getElementById('correctCount').textContent = gameState.correctCount;
+            document.getElementById('lives').textContent = gameState.lives;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+            
+            // ゲームタイマー開始
+            gameTimer = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    gameClear();
+                }
+            }, 1000);
+            
+            newProblem();
+        }
+
+        // ゲームオーバー
+        function gameOver() {
+            gameState.gameRunning = false;
+            clearInterval(gameTimer);
+            
+            // 爆発音を再生
+            playExplosionSound();
+            
+            // UFOを削除
+            document.querySelectorAll('.ufo').forEach(ufo => ufo.remove());
+            
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalCorrectCount').textContent = gameState.correctCount;
+        }
+
+        // ゲームクリア
+        function gameClear() {
+            gameState.gameRunning = false;
+            clearInterval(gameTimer);
+            
+            // ファンファーレを再生
+            playFanfareSound();
+            
+            // UFOを削除
+            document.querySelectorAll('.ufo').forEach(ufo => ufo.remove());
+            
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('gameClearScreen').classList.remove('hidden');
+            document.getElementById('clearScore').textContent = gameState.score;
+            document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
+        }
+
+        // ゲーム再開
+        function restartGame() {
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gameClearScreen').classList.add('hidden');
+            document.getElementById('modeScreen').classList.remove('hidden');
+            
+            // ゲームエリアをクリア
+            document.getElementById('gameArea').innerHTML = '';
+            document.getElementById('choices').innerHTML = '';
+            document.getElementById('progressFill').style.width = '100%';
+        }
+
+        // イベントリスナー
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    startGame(btn.dataset.mode);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
