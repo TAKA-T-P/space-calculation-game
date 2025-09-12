@@ -370,6 +370,39 @@
             transform: scale(1.05);
         }
         
+        .bgm-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: 30px;
+            font-size: 0.7rem;
+            border: 1px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ffff;
+        }
+        
+        .bgm-toggle-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .bgm-toggle-btn.off {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #ff0000;
+            color: #ff0000;
+            text-shadow: 0 0 5px #ff0000;
+        }
+        
+        .bgm-toggle-btn.off:hover {
+            background: rgba(255, 0, 0, 0.3);
+        }
+        
         .score-records-display {
             display: flex;
             gap: 40px;
@@ -624,6 +657,7 @@
             <button class="top-btn" data-mode="records">記録</button>
             <button class="top-btn" data-mode="story">ストーリー</button>
         </div>
+        <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1>宇宙計算ゲーム</h1>
         <div class="mode-buttons">
             <button class="mode-btn" data-mode="addition">たし算</button>
@@ -642,6 +676,7 @@
             <button class="mode-btn speed-btn" data-speed="2.0">はやい (2.0倍)</button>
             <button class="mode-btn speed-btn" data-speed="3.0">超高速 (3.0倍)</button>
         </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
     <div id="gameScreen" class="screen hidden">
@@ -725,7 +760,8 @@
             currentUfo: null,
             currentFallInterval: null,
             wrongAnswerCount: 0,
-            timeUp: false
+            timeUp: false,
+            bgmEnabled: true
         };
 
         let gameTimer;
@@ -1259,7 +1295,9 @@
             document.getElementById('choices').innerHTML = '';
             
             // タイトル画面に戻ったら背景音楽を再開
-            resumeBgMusic();
+            if (gameState.bgmEnabled) {
+                resumeBgMusic();
+            }
             
             // スコア記録を更新
             updateScoreRecords();
@@ -1338,7 +1376,9 @@
             document.getElementById('dangerOverlay').classList.remove('active');
             
             // タイトル画面に戻ったら背景音楽を再開
-            resumeBgMusic();
+            if (gameState.bgmEnabled) {
+                resumeBgMusic();
+            }
         }
 
         // 記録画面のスコア表示を更新
@@ -1380,20 +1420,60 @@
         
         function resumeBgMusic() {
             const bgMusic = document.getElementById('bgMusic');
-            if (bgMusic) {
+            if (bgMusic && gameState.bgmEnabled) {
                 bgMusic.play().catch(error => {
                     console.log('音楽の再生に失敗しました:', error);
                 });
             }
+        }
+        
+        function toggleBgm() {
+            gameState.bgmEnabled = !gameState.bgmEnabled;
+            const bgmButton = document.getElementById('bgmToggle');
+            
+            if (gameState.bgmEnabled) {
+                bgmButton.textContent = 'BGM ON';
+                bgmButton.classList.remove('off');
+                // タイトル画面にいる時はBGMを再生
+                if (document.getElementById('modeScreen').classList.contains('screen') && 
+                    !document.getElementById('modeScreen').classList.contains('hidden')) {
+                    resumeBgMusic();
+                }
+            } else {
+                bgmButton.textContent = 'BGM OFF';
+                bgmButton.classList.add('off');
+                stopBgMusic();
+            }
+            
+            // BGM設定をローカルストレージに保存
+            localStorage.setItem('bgmEnabled', gameState.bgmEnabled);
         }
 
         // イベントリスナー
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
             
+            // BGM設定をロード
+            const savedBgmSetting = localStorage.getItem('bgmEnabled');
+            if (savedBgmSetting !== null) {
+                gameState.bgmEnabled = savedBgmSetting === 'true';
+            }
+            
+            // BGMボタンの初期表示を更新
+            const bgmButton = document.getElementById('bgmToggle');
+            if (gameState.bgmEnabled) {
+                bgmButton.textContent = 'BGM ON';
+                bgmButton.classList.remove('off');
+            } else {
+                bgmButton.textContent = 'BGM OFF';
+                bgmButton.classList.add('off');
+            }
+            
             // ユーザーがページをクリックしたら音楽を開始（自動再生制限対策）
             document.addEventListener('click', function initAudio() {
-                playBgMusic();
+                if (gameState.bgmEnabled) {
+                    playBgMusic();
+                }
                 document.removeEventListener('click', initAudio);
             }, { once: true });
             
