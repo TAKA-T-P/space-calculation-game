@@ -331,6 +331,28 @@
             transform: scale(1.05);
         }
 
+        .retry-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 30px;
+            font-size: 0.8rem;
+            border: 1px solid #ffaa00;
+            background: rgba(255, 170, 0, 0.1);
+            color: #ffaa00;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #ffaa00;
+        }
+
+        .retry-btn:hover {
+            background: rgba(255, 170, 0, 0.3);
+            transform: scale(1.05);
+        }
+
         .title-display {
             font-size: 1.8rem;
             margin: 1.5rem 0;
@@ -571,6 +593,14 @@
                 font-size: 0.7rem;
                 top: 15px;
                 right: 15px;
+            }
+
+            .retry-btn {
+                width: 60px;
+                height: 25px;
+                font-size: 0.7rem;
+                top: 15px;
+                left: 15px;
             }
             
             .top-buttons {
@@ -931,6 +961,7 @@
     </div>
 
     <div id="gameOverScreen" class="screen hidden">
+        <button class="retry-btn" onclick="retryGame()">リトライ</button>
         <h1>GAME OVER</h1>
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #ff6666;">地球を守れなかった・・・</p>
         <div class="score-display">最終スコア: <span id="finalScore">0</span></div>
@@ -939,6 +970,7 @@
     </div>
 
     <div id="gameClearScreen" class="screen hidden">
+        <button class="retry-btn" onclick="retryGame()">リトライ</button>
         <h1>GAME CLEAR!</h1>
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
         <div class="score-display">最終スコア: <span id="clearScore">0</span></div>
@@ -1697,6 +1729,25 @@
                 resumeBgMusic();
             }
             
+        }
+
+        // リトライ機能：同じ設定でゲームを再開
+        function retryGame() {
+            // 現在の設定を保存
+            const currentMode = gameState.mode;
+            const currentDifficulty = gameState.difficulty;
+            const currentSpeed = gameState.initialSpeedMultiplier;
+
+            // ゲーム画面を非表示
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gameClearScreen').classList.add('hidden');
+
+            // ゲームエリアをクリア
+            document.getElementById('gameArea').innerHTML = '';
+            document.getElementById('choices').innerHTML = '';
+
+            // 同じ設定でゲームを再開
+            startGame(currentMode, currentDifficulty, currentSpeed);
         }
 
         // モード選択
