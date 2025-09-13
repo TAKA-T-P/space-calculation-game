@@ -716,12 +716,12 @@
         <div class="story-container">
             <div class="story-text" id="storyText">
                 はるか銀河のかなた──<br><br>
-                計算エネルギーを食べるナゾのUFO軍団が、<br>
+                計算エネルギーを食べるナゾのUFO軍団が<br>
                 地球と星々にせまっている！<br><br><br>
                 君は選ばれし"計算パイロット"。<br>
-                正しい答えを導き出すことで、<br>
+                正しい答えを導き出すことで<br>
                 エネルギービームが発射される！<br><br><br>
-                計算の力で宇宙を守りぬき、<br>
+                計算の力で宇宙を守りぬき<br>
                 伝説の「宇宙計算マスター」を目指せ！
             </div>
         </div>
@@ -1105,15 +1105,21 @@
                 gameState.correctCount++;
                 document.getElementById('score').textContent = gameState.score;
                 
-                // 正解するたびに速度を0.1倍ずつ加算（初期速度の4倍まで、ただし「おそい」モードは2.0倍まで）
+                // 正解するたびに速度を0.1倍ずつ加算（各モードで上限設定）
                 if (!gameState.timeUp) {
                     gameState.speedMultiplier += 0.1;
                     let maxMultiplier;
                     if (gameState.initialSpeedMultiplier === 0.5) {
                         // 「おそい」モード（0.5倍）の場合は2.0倍まで
                         maxMultiplier = 2.0;
+                    } else if (gameState.initialSpeedMultiplier === 1.0) {
+                        // 「ふつう」モード（1.0倍）の場合は2.5倍まで
+                        maxMultiplier = 2.5;
+                    } else if (gameState.initialSpeedMultiplier === 2.0) {
+                        // 「はやい」モード（2.0倍）の場合は3.5倍まで
+                        maxMultiplier = 3.5;
                     } else {
-                        // その他のモードは初期速度の4倍まで
+                        // 「超高速」モード（3.0倍）は初期速度の4倍まで
                         maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
                     }
                     if (gameState.speedMultiplier > maxMultiplier) {
