@@ -172,8 +172,8 @@
         }
 
         .choice-btn {
-            padding: 15px 25px;
-            font-size: 1.3rem;
+            padding: 18px 30px;
+            font-size: 1.4rem;
             border: 2px solid #00ff00;
             background: rgba(0, 255, 0, 0.2);
             color: #00ff00;
@@ -181,7 +181,7 @@
             cursor: pointer;
             transition: all 0.3s;
             text-shadow: 0 0 10px #00ff00;
-            min-width: 80px;
+            min-width: 90px;
         }
 
         .choice-btn:hover {
@@ -402,46 +402,91 @@
         .bgm-toggle-btn.off:hover {
             background: rgba(255, 0, 0, 0.3);
         }
-        
-        .score-records-display {
-            display: flex;
-            gap: 40px;
-            justify-content: center;
-            margin: 2rem 0;
+
+        .instructions-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 30px;
+            font-size: 0.8rem;
+            border: 1px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        .instructions-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
         }
         
-        .score-records-display .score-record {
-            padding: 12px 18px;
+        .records-table {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 1.5rem auto;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .record-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
             border: 2px solid #00aaff;
             background: rgba(0, 170, 255, 0.1);
             color: #00aaff;
-            border-radius: 12px;
-            text-shadow: 0 0 10px #00aaff;
-            text-align: center;
-            min-width: 160px;
+            border-radius: 8px;
+            text-shadow: 0 0 8px #00aaff;
+            transition: all 0.3s;
         }
-        
-        .score-records-display .score-record.high-score {
+
+        .record-row:hover {
+            background: rgba(0, 170, 255, 0.2);
+            transform: scale(1.01);
+        }
+
+        .record-row.has-score {
             border-color: #ffaa00;
             background: rgba(255, 170, 0, 0.1);
             color: #ffaa00;
-            text-shadow: 0 0 10px #ffaa00;
+            text-shadow: 0 0 8px #ffaa00;
         }
-        
-        .score-records-display .score-record-title {
-            font-size: 1rem;
-            margin-bottom: 8px;
+
+        .record-row.has-score:hover {
+            background: rgba(255, 170, 0, 0.2);
         }
-        
-        .score-records-display .score-record-value {
-            font-size: 1.8rem;
+
+        .record-category {
+            flex: 0 0 160px;
+            font-size: 0.95rem;
             font-weight: bold;
         }
-        
-        .score-records-display .score-record-subtitle {
-            font-size: 0.9rem;
+
+        .record-score {
+            flex: 0 0 90px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .record-title {
+            flex: 1;
+            font-size: 0.8rem;
+            text-align: center;
             opacity: 0.9;
-            margin-top: 6px;
+        }
+
+        .record-speed {
+            flex: 0 0 70px;
+            font-size: 0.8rem;
+            text-align: center;
+            opacity: 0.9;
         }
 
         .score-record {
@@ -487,8 +532,8 @@
             }
             
             #gameScreen .choice-btn {
-                padding: 12px 20px;
-                font-size: 1.1rem;
+                padding: 14px 22px;
+                font-size: 1.2rem;
                 min-width: calc(50% - 10px);
                 flex: 1 1 calc(50% - 10px);
                 max-width: calc(50% - 10px);
@@ -524,11 +569,60 @@
                 font-size: 0.8rem;
                 padding: 6px 12px;
             }
+
+            .instructions-btn {
+                width: 60px;
+                height: 25px;
+                font-size: 0.7rem;
+                top: 15px;
+                left: 15px;
+            }
+
+            .instructions-content {
+                padding: 0 10px;
+            }
+
+            .instruction-section {
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+            }
+
+            .instruction-section h2 {
+                font-size: 1.1rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .instruction-section p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
             
-            .score-records-display {
+            .records-table {
+                padding: 0 10px;
+                gap: 6px;
+                margin: 1rem auto;
+            }
+
+            .record-row {
+                padding: 6px 10px;
                 flex-direction: column;
-                gap: 20px;
-                align-items: center;
+                gap: 2px;
+                text-align: center;
+            }
+
+            .record-category, .record-score, .record-title, .record-speed {
+                flex: none;
+                font-size: 0.8rem;
+            }
+
+            .record-category {
+                font-size: 0.9rem;
+                margin-bottom: 2px;
+            }
+
+            .record-score {
+                font-size: 1rem;
+                margin-bottom: 1px;
             }
             
             .score-record {
@@ -581,6 +675,42 @@
             }
         }
 
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .countdown-number {
+            font-size: 8rem;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 50px #00ffff, 0 0 100px #00ffff;
+            animation: countdown-pulse 1s ease-in-out;
+        }
+
+        @keyframes countdown-pulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
         /* スマートフォン横画面でのゲームクリア文字サイズ調整 */
         @media (orientation: landscape) and (max-height: 500px) {
             #gameClearScreen h1 {
@@ -607,8 +737,8 @@
 
         @media (max-width: 480px) {
             #gameScreen .choice-btn {
-                font-size: 1rem;
-                padding: 10px 15px;
+                font-size: 1.1rem;
+                padding: 12px 18px;
             }
             
             .ui-item {
@@ -641,6 +771,44 @@
                 font-size: 1.2rem;
                 line-height: 2;
             }
+
+            .countdown-number {
+                font-size: 4rem;
+            }
+        }
+
+        .instructions-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: left;
+        }
+
+        .instruction-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 2px solid #00aaff;
+            background: rgba(0, 170, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+        }
+
+        .instruction-section h2 {
+            color: #00ffff;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .instruction-section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .instruction-section strong {
+            color: #ffaa00;
+            text-shadow: 0 0 5px #ffaa00;
         }
     </style>
 </head>
@@ -653,6 +821,7 @@
     </audio>
 
     <div id="modeScreen" class="screen">
+        <button class="instructions-btn" data-mode="instructions">説明</button>
         <div class="top-buttons">
             <button class="top-btn" data-mode="records">記録</button>
             <button class="top-btn" data-mode="story">ストーリー</button>
@@ -660,13 +829,21 @@
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1>宇宙計算ゲーム</h1>
         <div class="mode-buttons">
-            <button class="mode-btn" data-mode="beginner">初心者</button>
             <button class="mode-btn" data-mode="addition">たし算</button>
             <button class="mode-btn" data-mode="subtraction">ひき算</button>
             <button class="mode-btn" data-mode="multiplication">かけ算</button>
             <button class="mode-btn" data-mode="division">わり算</button>
             <button class="mode-btn" data-mode="all">全部</button>
         </div>
+    </div>
+
+    <div id="difficultyScreen" class="screen hidden">
+        <h1>難易度選択</h1>
+        <div class="mode-buttons">
+            <button class="mode-btn difficulty-btn" data-difficulty="normal">ノーマル</button>
+            <button class="mode-btn difficulty-btn" data-difficulty="hyper">ハイパー</button>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
     <div id="speedScreen" class="screen hidden">
@@ -730,16 +907,34 @@
 
     <div id="recordsScreen" class="screen hidden">
         <h1>記録</h1>
-        <div class="score-records-display">
-            <div class="score-record">
-                <div class="score-record-title">前回のスコア</div>
-                <div class="score-record-value" id="recordsLastScoreValue">0</div>
-                <div class="score-record-subtitle" id="recordsLastScoreTitle">LV.1 ひよっこ訓練生</div>
+        <div class="records-table" id="recordsTable">
+            <!-- Records will be populated by JavaScript -->
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <div id="instructionsScreen" class="screen hidden">
+        <div class="instructions-content">
+            <div class="instruction-section">
+                <h2>🎯 ゲームの目的</h2>
+                <p>地球に襲来するUFOを計算の力で撃退しよう！<br>
+                正しい答えを選んでUFOを破壊し、60秒間地球を守り抜こう！</p>
             </div>
-            <div class="score-record high-score">
-                <div class="score-record-title">最高記録</div>
-                <div class="score-record-value" id="recordsHighScoreValue">0</div>
-                <div class="score-record-subtitle" id="recordsHighScoreTitle">LV.1 ひよっこ訓練生</div>
+
+            <div class="instruction-section">
+                <h2>⚡ 遊び方</h2>
+                <p><strong>1.</strong> 計算の種類を選択（たし算・ひき算・かけ算・わり算・全部）<br>
+                <strong>2.</strong> 難易度を選択（ノーマル・ハイパー）<br>
+                <strong>3.</strong> UFOの速度を選択<br>
+                <strong>4.</strong> カウントダウン後、ゲーム開始！</p>
+            </div>
+
+            <div class="instruction-section">
+                <h2>💡 コツ</h2>
+                <p>・早く答えるほど高得点！<br>
+                ・間違えると残機が減るので注意<br>
+                ・全部モードは正解時のスコアが1.2倍！<br>
+                ・ゲーム終了時のスコアによって称号が変わるぞ！</p>
             </div>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
@@ -748,6 +943,7 @@
     <script>
         let gameState = {
             mode: '',
+            difficulty: '',
             score: 0,
             correctCount: 0,
             lives: 3,
@@ -768,20 +964,53 @@
         let gameTimer;
         
         // スコア管理
-        function saveScore(score) {
-            localStorage.setItem('lastScore', score);
-            const highScore = getHighScore();
-            if (score > highScore) {
-                localStorage.setItem('highScore', score);
+        function saveScore(score, mode, difficulty, speed) {
+            const recordKey = `record_${mode}_${difficulty}`;
+            const existingRecord = JSON.parse(localStorage.getItem(recordKey) || '{}');
+
+            if (!existingRecord.score || score > existingRecord.score) {
+                const newRecord = {
+                    score: score,
+                    title: getTitleByScore(score),
+                    speed: getSpeedLabel(speed),
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(recordKey, JSON.stringify(newRecord));
             }
         }
-        
-        function getLastScore() {
-            return parseInt(localStorage.getItem('lastScore')) || 0;
+
+        function getRecord(mode, difficulty) {
+            const recordKey = `record_${mode}_${difficulty}`;
+            return JSON.parse(localStorage.getItem(recordKey) || '{}');
         }
-        
-        function getHighScore() {
-            return parseInt(localStorage.getItem('highScore')) || 0;
+
+        function getSpeedLabel(speed) {
+            switch(speed) {
+                case 0.5: return 'おそい';
+                case 1.0: return 'ふつう';
+                case 2.0: return 'はやい';
+                case 3.0: return '超高速';
+                default: return 'ふつう';
+            }
+        }
+
+        function getModeLabel(mode) {
+            switch(mode) {
+                case 'addition': return 'たし算';
+                case 'subtraction': return 'ひき算';
+                case 'multiplication': return 'かけ算';
+                case 'division': return 'わり算';
+                case 'all': return '全部';
+                default: return mode;
+            }
+        }
+
+        function getDifficultyLabel(difficulty) {
+            switch(difficulty) {
+                case 'normal': return 'ノーマル';
+                case 'hyper': return 'ハイパー';
+                default: return difficulty;
+            }
         }
 
         // 星を生成
@@ -841,6 +1070,17 @@
             setTimeout(() => playSound(60, 0.5, 'sawtooth'), 200);
         }
 
+        function playCountdownSound(isStart = false) {
+            if (isStart) {
+                // ゲーム開始音（高い音）
+                playSound(1000, 0.5);
+                setTimeout(() => playSound(1200, 0.3), 200);
+            } else {
+                // カウントダウン音
+                playSound(800, 0.3);
+            }
+        }
+
         // フローティングスコアを表示
         function showFloatingScore(points, x, y) {
             const floatingScore = document.createElement('div');
@@ -878,46 +1118,76 @@
         }
 
         // 計算問題を生成
-        function generateProblem(mode) {
+        function generateProblem(mode, difficulty) {
             let num1, num2, operation, answer;
-            
+
             const modes = mode === 'all' ? ['addition', 'subtraction', 'multiplication', 'division'] : [mode];
             const selectedMode = modes[Math.floor(Math.random() * modes.length)];
-            
+
             switch (selectedMode) {
-                case 'beginner':
-                    // 初心者モード：1桁+1桁のたし算のみ
-                    num1 = Math.floor(Math.random() * 9) + 1;
-                    num2 = Math.floor(Math.random() * 9) + 1;
-                    operation = '+';
-                    answer = num1 + num2;
-                    break;
                 case 'addition':
-                    num1 = Math.floor(Math.random() * 50) + 1;
-                    num2 = Math.floor(Math.random() * 50) + 1;
+                    if (difficulty === 'normal') {
+                        // ノーマル：1桁+1桁
+                        num1 = Math.floor(Math.random() * 9) + 1;
+                        num2 = Math.floor(Math.random() * 9) + 1;
+                    } else {
+                        // ハイパー：2桁+2桁
+                        num1 = Math.floor(Math.random() * 90) + 10;
+                        num2 = Math.floor(Math.random() * 90) + 10;
+                    }
                     operation = '+';
                     answer = num1 + num2;
                     break;
                 case 'subtraction':
-                    num1 = Math.floor(Math.random() * 50) + 20;
-                    num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                    if (difficulty === 'normal') {
+                        // ノーマル：引く数と答えが1桁（引かれる数は10以上でもよい）
+                        answer = Math.floor(Math.random() * 9) + 1;
+                        num2 = Math.floor(Math.random() * 9) + 1;
+                        num1 = answer + num2;
+                    } else {
+                        // ハイパー：引く数と答えが2桁（引かれる数は100以上でもよい）
+                        answer = Math.floor(Math.random() * 90) + 10;
+                        num2 = Math.floor(Math.random() * 90) + 10;
+                        num1 = answer + num2;
+                    }
                     operation = '-';
-                    answer = num1 - num2;
                     break;
                 case 'multiplication':
-                    num1 = Math.floor(Math.random() * 10) + 1;
-                    num2 = Math.floor(Math.random() * 10) + 1;
+                    if (difficulty === 'normal') {
+                        // ノーマル：元の難易度を踏襲（1桁×1桁）
+                        num1 = Math.floor(Math.random() * 10) + 1;
+                        num2 = Math.floor(Math.random() * 10) + 1;
+                    } else {
+                        // ハイパー：2桁×1桁
+                        num1 = Math.floor(Math.random() * 90) + 10;
+                        num2 = Math.floor(Math.random() * 9) + 1;
+                    }
                     operation = '×';
                     answer = num1 * num2;
                     break;
                 case 'division':
-                    answer = Math.floor(Math.random() * 10) + 1;
-                    num2 = Math.floor(Math.random() * 9) + 1;
-                    num1 = answer * num2;
+                    if (difficulty === 'normal') {
+                        // ノーマル：元の難易度を踏襲
+                        answer = Math.floor(Math.random() * 10) + 1;
+                        num2 = Math.floor(Math.random() * 9) + 1;
+                        num1 = answer * num2;
+                    } else {
+                        // ハイパー：「わる数2桁＆答えが1桁」または「わる数1桁＆答えが2桁」
+                        if (Math.random() < 0.5) {
+                            // わる数2桁＆答えが1桁
+                            answer = Math.floor(Math.random() * 9) + 1;
+                            num2 = Math.floor(Math.random() * 90) + 10;
+                        } else {
+                            // わる数1桁＆答えが2桁
+                            answer = Math.floor(Math.random() * 90) + 10;
+                            num2 = Math.floor(Math.random() * 9) + 1;
+                        }
+                        num1 = answer * num2;
+                    }
                     operation = '÷';
                     break;
             }
-            
+
             return {
                 question: `${num1} ${operation} ${num2}`,
                 answer: answer
@@ -1049,10 +1319,10 @@
         // 新しい問題を出題
         function newProblem() {
             if (!gameState.gameRunning) return;
-            
-            const problem = generateProblem(gameState.mode);
+
+            const problem = generateProblem(gameState.mode, gameState.difficulty);
             const choices = generateChoices(problem.answer);
-            
+
             gameState.currentProblem = problem;
             
             // UFOを作成
@@ -1088,13 +1358,17 @@
                 const positionRatio = Math.max(0, Math.min(1, ufoPosition / screenHeight));
                 const basePoints = Math.round(1000 * (1 - positionRatio));
                 let points = Math.round(basePoints * gameState.speedMultiplier);
-                
-                // 「初心者」モードの場合は0.9倍
-                if (gameState.mode === 'beginner') {
+
+                // 難易度による倍率調整
+                if (gameState.difficulty === 'normal') {
+                    // ノーマル難易度の場合は0.9倍
                     points = Math.round(points * 0.9);
+                } else if (gameState.difficulty === 'hyper') {
+                    // ハイパー難易度の場合は1.2倍
+                    points = Math.round(points * 1.2);
                 }
-                // 「全部」モードの場合は1.2倍のボーナス
-                else if (gameState.mode === 'all') {
+                // 「全部」モードの場合はさらに1.2倍のボーナス
+                if (gameState.mode === 'all') {
                     points = Math.round(points * 1.2);
                 }
                 
@@ -1170,43 +1444,77 @@
             }
         }
 
+        // カウントダウン表示
+        function showCountdown(callback) {
+            const countdownOverlay = document.createElement('div');
+            countdownOverlay.className = 'countdown-overlay';
+            document.body.appendChild(countdownOverlay);
+
+            let count = 3;
+
+            function displayNumber() {
+                if (count > 0) {
+                    countdownOverlay.innerHTML = `<div class="countdown-number">${count}</div>`;
+                    playCountdownSound();
+                    count--;
+                    setTimeout(displayNumber, 1000);
+                } else {
+                    // "START!" を表示
+                    countdownOverlay.innerHTML = '<div class="countdown-number">START!</div>';
+                    playCountdownSound(true);
+                    setTimeout(() => {
+                        document.body.removeChild(countdownOverlay);
+                        callback();
+                    }, 1000);
+                }
+            }
+
+            displayNumber();
+        }
+
         // ゲーム開始
-        function startGame(mode, speed) {
+        function startGame(mode, difficulty, speed) {
             gameState.mode = mode;
+            gameState.difficulty = difficulty;
             gameState.score = 0;
             gameState.correctCount = 0;
             gameState.lives = 3;
             gameState.timeLeft = 60;
-            gameState.gameRunning = true;
+            gameState.gameRunning = false; // カウントダウン中は false
             gameState.initialSpeedMultiplier = speed;
             gameState.speedMultiplier = speed;
             gameState.problemSpeed = gameState.baseSpeed / speed;
             gameState.wrongAnswerCount = 0;
             gameState.timeUp = false;
-            
+
             // ゲーム開始時に背景音楽を一時停止
             pauseBgMusic();
-            
+
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
-            
+
             document.getElementById('score').textContent = gameState.score;
             document.getElementById('lives').textContent = gameState.lives;
             document.getElementById('timer').textContent = gameState.timeLeft;
-            
-            // ゲームタイマー開始
-            gameTimer = setInterval(() => {
-                gameState.timeLeft--;
-                document.getElementById('timer').textContent = gameState.timeLeft;
-                
-                if (gameState.timeLeft <= 0) {
-                    gameState.timeUp = true;
-                    clearInterval(gameTimer);
-                    // 時間終了時もUFOの降下は継続（画面下に落ちるまでに正解すればクリア）
-                }
-            }, 1000);
-            
-            newProblem();
+
+            // カウントダウン後にゲーム開始
+            showCountdown(() => {
+                gameState.gameRunning = true;
+
+                // ゲームタイマー開始
+                gameTimer = setInterval(() => {
+                    gameState.timeLeft--;
+                    document.getElementById('timer').textContent = gameState.timeLeft;
+
+                    if (gameState.timeLeft <= 0) {
+                        gameState.timeUp = true;
+                        clearInterval(gameTimer);
+                        // 時間終了時もUFOの降下は継続（画面下に落ちるまでに正解すればクリア）
+                    }
+                }, 1000);
+
+                newProblem();
+            });
         }
 
         // ゲームオーバー
@@ -1215,7 +1523,7 @@
             clearInterval(gameTimer);
             
             // スコアを保存
-            saveScore(gameState.score);
+            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
             
             // 爆発音を再生
             playExplosionSound();
@@ -1292,7 +1600,7 @@
             }
             
             // スコアを保存
-            saveScore(gameState.score);
+            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
             
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
@@ -1324,8 +1632,6 @@
                 resumeBgMusic();
             }
             
-            // スコア記録を更新
-            updateScoreRecords();
         }
 
         // モード選択
@@ -1341,14 +1647,26 @@
                 updateRecordsDisplay();
                 return;
             }
+            if (mode === 'instructions') {
+                document.getElementById('modeScreen').classList.add('hidden');
+                document.getElementById('instructionsScreen').classList.remove('hidden');
+                return;
+            }
             gameState.mode = mode;
             document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('difficultyScreen').classList.remove('hidden');
+        }
+
+        // 難易度選択
+        function selectDifficulty(difficulty) {
+            gameState.difficulty = difficulty;
+            document.getElementById('difficultyScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.remove('hidden');
         }
 
         // 速度選択
         function selectSpeed(speed) {
-            startGame(gameState.mode, parseFloat(speed));
+            startGame(gameState.mode, gameState.difficulty, parseFloat(speed));
         }
 
         // スコアに応じた称号を取得
@@ -1390,9 +1708,11 @@
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
+            document.getElementById('difficultyScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('storyScreen').classList.add('hidden');
             document.getElementById('recordsScreen').classList.add('hidden');
+            document.getElementById('instructionsScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
             
             // ゲームエリアをクリア
@@ -1408,13 +1728,30 @@
 
         // 記録画面のスコア表示を更新
         function updateRecordsDisplay() {
-            const lastScore = getLastScore();
-            const highScore = getHighScore();
-            
-            document.getElementById('recordsLastScoreValue').textContent = lastScore;
-            document.getElementById('recordsLastScoreTitle').textContent = getTitleByScore(lastScore);
-            document.getElementById('recordsHighScoreValue').textContent = highScore;
-            document.getElementById('recordsHighScoreTitle').textContent = getTitleByScore(highScore);
+            const recordsTable = document.getElementById('recordsTable');
+            recordsTable.innerHTML = '';
+
+            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all'];
+            const difficulties = ['normal', 'hyper'];
+
+            modes.forEach(mode => {
+                difficulties.forEach(difficulty => {
+                    const record = getRecord(mode, difficulty);
+                    const categoryLabel = `${getModeLabel(mode)}${getDifficultyLabel(difficulty)}`;
+
+                    const recordRow = document.createElement('div');
+                    recordRow.className = `record-row ${record.score ? 'has-score' : ''}`;
+
+                    recordRow.innerHTML = `
+                        <div class="record-category">${categoryLabel}</div>
+                        <div class="record-score">${record.score || '-'}</div>
+                        <div class="record-title">${record.title || '未挑戦'}</div>
+                        <div class="record-speed">${record.speed || '-'}</div>
+                    `;
+
+                    recordsTable.appendChild(recordRow);
+                });
+            });
         }
 
         // 背景音楽を制御
@@ -1502,10 +1839,12 @@
                 document.removeEventListener('click', initAudio);
             }, { once: true });
             
-            document.querySelectorAll('.mode-btn, .top-btn').forEach(btn => {
+            document.querySelectorAll('.mode-btn, .top-btn, .instructions-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (btn.classList.contains('speed-btn')) {
                         selectSpeed(btn.dataset.speed);
+                    } else if (btn.classList.contains('difficulty-btn')) {
+                        selectDifficulty(btn.dataset.difficulty);
                     } else {
                         selectMode(btn.dataset.mode);
                     }
