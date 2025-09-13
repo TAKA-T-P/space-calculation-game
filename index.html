@@ -1219,9 +1219,11 @@
                         num1 = Math.floor(Math.random() * 10) + 1;
                         num2 = Math.floor(Math.random() * 10) + 1;
                     } else {
-                        // ハイパー：11～20×1桁
-                        num1 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
-                        num2 = Math.floor(Math.random() * 9) + 1;
+                        // ハイパー：答えが100以下になるよう調整
+                        do {
+                            num1 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
+                            num2 = Math.floor(Math.random() * 9) + 1;   // 1-9の範囲
+                        } while (num1 * num2 > 100);
                     }
                     operation = '×';
                     answer = num1 * num2;
@@ -1233,17 +1235,19 @@
                         num2 = Math.floor(Math.random() * 9) + 1;
                         num1 = answer * num2;
                     } else {
-                        // ハイパー：「わる数11～20＆答えが1桁」または「わる数1桁＆答えが11～20」
-                        if (Math.random() < 0.5) {
-                            // わる数11～20＆答えが1桁
-                            answer = Math.floor(Math.random() * 9) + 1;
-                            num2 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
-                        } else {
-                            // わる数1桁＆答えが11～20
-                            answer = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
-                            num2 = Math.floor(Math.random() * 9) + 1;
-                        }
-                        num1 = answer * num2;
+                        // ハイパー：わられる数が100以下になるよう調整
+                        do {
+                            if (Math.random() < 0.5) {
+                                // わる数11～20＆答えが1桁
+                                answer = Math.floor(Math.random() * 9) + 1;
+                                num2 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
+                            } else {
+                                // わる数1桁＆答えが11～20
+                                answer = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
+                                num2 = Math.floor(Math.random() * 9) + 1;
+                            }
+                            num1 = answer * num2;
+                        } while (num1 > 100);
                     }
                     operation = '÷';
                     break;
@@ -1422,8 +1426,8 @@
 
                 // 難易度による倍率調整
                 if (gameState.difficulty === 'normal') {
-                    // ノーマル難易度の場合は0.9倍
-                    points = Math.round(points * 0.9);
+                    // ノーマル難易度の場合は1.0倍（変更なし）
+                    points = Math.round(points * 1.0);
                 } else if (gameState.difficulty === 'hyper') {
                     // ハイパー難易度の場合は1.2倍
                     points = Math.round(points * 1.2);
