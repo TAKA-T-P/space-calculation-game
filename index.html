@@ -343,6 +343,14 @@
             box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
         }
 
+        .title-display.game-clear-title {
+            border: 2px solid #00ff00;
+            background: linear-gradient(45deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 100, 0.2));
+            color: #00ff00;
+            text-shadow: 0 0 15px #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
         .top-buttons {
             position: fixed;
             top: 20px;
@@ -460,6 +468,17 @@
 
         .record-row.has-score:hover {
             background: rgba(255, 170, 0, 0.2);
+        }
+
+        .record-row.game-clear {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            text-shadow: 0 0 8px #00ff00;
+        }
+
+        .record-row.game-clear:hover {
+            background: rgba(0, 255, 0, 0.2);
         }
 
         .record-category {
@@ -967,6 +986,7 @@
                 <strong>コツ：</strong><br>
                 ・早く答えるほど高得点！<br>
                 ・間違えると残機が減るので注意<br>
+                ・ハイパーモードは難しいけれど、正解時のスコアがアップ！<br>
                 ・全部モードは正解時のスコアが1.2倍！<br>
                 ・ゲーム終了時のスコアによって称号が変わるぞ！</p>
             </div>
@@ -998,7 +1018,7 @@
         let gameTimer;
         
         // スコア管理
-        function saveScore(score, mode, difficulty, speed) {
+        function saveScore(score, mode, difficulty, speed, isGameClear = false) {
             const recordKey = `record_${mode}_${difficulty}`;
             const existingRecord = JSON.parse(localStorage.getItem(recordKey) || '{}');
 
@@ -1007,6 +1027,7 @@
                     score: score,
                     title: getTitleByScore(score),
                     speed: getSpeedLabel(speed),
+                    isGameClear: isGameClear,
                     timestamp: Date.now()
                 };
                 localStorage.setItem(recordKey, JSON.stringify(newRecord));
@@ -1561,9 +1582,9 @@
         function gameOver() {
             gameState.gameRunning = false;
             clearInterval(gameTimer);
-            
+
             // スコアを保存
-            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
+            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier, false);
             
             // 爆発音を再生
             playExplosionSound();
@@ -1640,8 +1661,8 @@
             }
             
             // スコアを保存
-            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
-            
+            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier, true);
+
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
             
@@ -1652,7 +1673,7 @@
             }
             
             const titleDiv = document.createElement('div');
-            titleDiv.className = 'title-display';
+            titleDiv.className = 'title-display game-clear-title';
             titleDiv.textContent = getTitleByScore(gameState.score);
             clearScreen.insertBefore(titleDiv, clearScreen.querySelector('.score-display'));
         }
@@ -1787,7 +1808,15 @@
                 const categoryLabel = getModeLabel(mode);
 
                 const recordRow = document.createElement('div');
-                recordRow.className = `record-row ${record.score ? 'has-score' : ''}`;
+                let rowClass = 'record-row';
+                if (record.score) {
+                    if (record.isGameClear) {
+                        rowClass += ' game-clear';
+                    } else {
+                        rowClass += ' has-score';
+                    }
+                }
+                recordRow.className = rowClass;
 
                 recordRow.innerHTML = `
                     <div class="record-category">${categoryLabel}</div>
