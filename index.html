@@ -660,6 +660,7 @@
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1>宇宙計算ゲーム</h1>
         <div class="mode-buttons">
+            <button class="mode-btn" data-mode="beginner">初心者</button>
             <button class="mode-btn" data-mode="addition">たし算</button>
             <button class="mode-btn" data-mode="subtraction">ひき算</button>
             <button class="mode-btn" data-mode="multiplication">かけ算</button>
@@ -671,10 +672,10 @@
     <div id="speedScreen" class="screen hidden">
         <h1>UFO速度設定</h1>
         <div class="mode-buttons">
-            <button class="mode-btn speed-btn" data-speed="0.5">おそい (0.5倍)</button>
-            <button class="mode-btn speed-btn" data-speed="1.0">ふつう (1.0倍)</button>
-            <button class="mode-btn speed-btn" data-speed="2.0">はやい (2.0倍)</button>
-            <button class="mode-btn speed-btn" data-speed="3.0">超高速 (3.0倍)</button>
+            <button class="mode-btn speed-btn" data-speed="0.5">おそい</button>
+            <button class="mode-btn speed-btn" data-speed="1.0">ふつう</button>
+            <button class="mode-btn speed-btn" data-speed="2.0">はやい</button>
+            <button class="mode-btn speed-btn" data-speed="3.0">超高速</button>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
@@ -884,6 +885,13 @@
             const selectedMode = modes[Math.floor(Math.random() * modes.length)];
             
             switch (selectedMode) {
+                case 'beginner':
+                    // 初心者モード：1桁+1桁のたし算のみ
+                    num1 = Math.floor(Math.random() * 9) + 1;
+                    num2 = Math.floor(Math.random() * 9) + 1;
+                    operation = '+';
+                    answer = num1 + num2;
+                    break;
                 case 'addition':
                     num1 = Math.floor(Math.random() * 50) + 1;
                     num2 = Math.floor(Math.random() * 50) + 1;
@@ -1081,8 +1089,12 @@
                 const basePoints = Math.round(1000 * (1 - positionRatio));
                 let points = Math.round(basePoints * gameState.speedMultiplier);
                 
+                // 「初心者」モードの場合は0.9倍
+                if (gameState.mode === 'beginner') {
+                    points = Math.round(points * 0.9);
+                }
                 // 「全部」モードの場合は1.2倍のボーナス
-                if (gameState.mode === 'all') {
+                else if (gameState.mode === 'all') {
                     points = Math.round(points * 1.2);
                 }
                 
@@ -1093,10 +1105,17 @@
                 gameState.correctCount++;
                 document.getElementById('score').textContent = gameState.score;
                 
-                // 正解するたびに速度を0.1倍ずつ加算（初期速度の4倍まで）
+                // 正解するたびに速度を0.1倍ずつ加算（初期速度の4倍まで、ただし「おそい」モードは2.0倍まで）
                 if (!gameState.timeUp) {
                     gameState.speedMultiplier += 0.1;
-                    const maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
+                    let maxMultiplier;
+                    if (gameState.initialSpeedMultiplier === 0.5) {
+                        // 「おそい」モード（0.5倍）の場合は2.0倍まで
+                        maxMultiplier = 2.0;
+                    } else {
+                        // その他のモードは初期速度の4倍まで
+                        maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
+                    }
                     if (gameState.speedMultiplier > maxMultiplier) {
                         gameState.speedMultiplier = maxMultiplier;
                     }
