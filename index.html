@@ -588,13 +588,13 @@
             }
 
             .instruction-section h2 {
-                font-size: 1.1rem;
-                margin-bottom: 0.8rem;
+                font-size: 1rem;
+                margin-bottom: 0.6rem;
             }
 
             .instruction-section p {
-                font-size: 0.9rem;
-                line-height: 1.5;
+                font-size: 0.8rem;
+                line-height: 1.4;
             }
             
             .records-table {
@@ -623,6 +623,17 @@
             .record-score {
                 font-size: 1rem;
                 margin-bottom: 1px;
+            }
+
+            .records-header {
+                gap: 15px;
+                margin-bottom: 1.5rem;
+            }
+
+            .records-toggle-btn {
+                padding: 10px 20px;
+                font-size: 1.1rem;
+                min-width: 100px;
             }
             
             .score-record {
@@ -795,20 +806,52 @@
 
         .instruction-section h2 {
             color: #00ffff;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
             text-shadow: 0 0 10px #00ffff;
         }
 
         .instruction-section p {
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 0.9rem;
+            line-height: 1.5;
             margin: 0;
         }
 
         .instruction-section strong {
             color: #ffaa00;
             text-shadow: 0 0 5px #ffaa00;
+        }
+
+        .records-header {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .records-toggle-btn {
+            padding: 12px 24px;
+            font-size: 1.3rem;
+            border: 2px solid #00aaff;
+            background: rgba(0, 170, 255, 0.1);
+            color: #00aaff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00aaff;
+            min-width: 120px;
+        }
+
+        .records-toggle-btn:hover {
+            background: rgba(0, 170, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .records-toggle-btn.active {
+            border-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.3);
+            color: #ffaa00;
+            text-shadow: 0 0 10px #ffaa00;
         }
     </style>
 </head>
@@ -906,7 +949,10 @@
     </div>
 
     <div id="recordsScreen" class="screen hidden">
-        <h1>記録</h1>
+        <div class="records-header">
+            <button class="records-toggle-btn active" id="normalToggleBtn" data-difficulty="normal">ノーマル</button>
+            <button class="records-toggle-btn" id="hyperToggleBtn" data-difficulty="hyper">ハイパー</button>
+        </div>
         <div class="records-table" id="recordsTable">
             <!-- Records will be populated by JavaScript -->
         </div>
@@ -923,8 +969,8 @@
 
             <div class="instruction-section">
                 <h2>⚡ 遊び方</h2>
-                <p><strong>1.</strong> 計算の種類を選択（たし算・ひき算・かけ算・わり算・全部）<br>
-                <strong>2.</strong> 難易度を選択（ノーマル・ハイパー）<br>
+                <p><strong>1.</strong> 計算の種類を選択<br>
+                <strong>2.</strong> 難易度を選択<br>
                 <strong>3.</strong> UFOの速度を選択<br>
                 <strong>4.</strong> カウントダウン後、ゲーム開始！</p>
             </div>
@@ -1131,9 +1177,11 @@
                         num1 = Math.floor(Math.random() * 9) + 1;
                         num2 = Math.floor(Math.random() * 9) + 1;
                     } else {
-                        // ハイパー：2桁+2桁
+                        // ハイパー：2桁+2桁（答えが100以下になるよう調整）
                         num1 = Math.floor(Math.random() * 90) + 10;
-                        num2 = Math.floor(Math.random() * 90) + 10;
+                        // num2の最大値をnum1に応じて調整
+                        const maxNum2 = Math.min(90, 100 - num1);
+                        num2 = Math.floor(Math.random() * (maxNum2 - 10 + 1)) + 10;
                     }
                     operation = '+';
                     answer = num1 + num2;
@@ -1145,10 +1193,14 @@
                         num2 = Math.floor(Math.random() * 9) + 1;
                         num1 = answer + num2;
                     } else {
-                        // ハイパー：引く数と答えが2桁（引かれる数は100以上でもよい）
+                        // ハイパー：引く数と答えが2桁（引かれる数は100以下）
                         answer = Math.floor(Math.random() * 90) + 10;
                         num2 = Math.floor(Math.random() * 90) + 10;
-                        num1 = answer + num2;
+                        num1 = Math.min(100, answer + num2);
+                        // num1が100になった場合、answerを再調整
+                        if (num1 === 100) {
+                            answer = num1 - num2;
+                        }
                     }
                     operation = '-';
                     break;
@@ -1158,8 +1210,8 @@
                         num1 = Math.floor(Math.random() * 10) + 1;
                         num2 = Math.floor(Math.random() * 10) + 1;
                     } else {
-                        // ハイパー：2桁×1桁
-                        num1 = Math.floor(Math.random() * 90) + 10;
+                        // ハイパー：11～20×1桁
+                        num1 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
                         num2 = Math.floor(Math.random() * 9) + 1;
                     }
                     operation = '×';
@@ -1172,14 +1224,14 @@
                         num2 = Math.floor(Math.random() * 9) + 1;
                         num1 = answer * num2;
                     } else {
-                        // ハイパー：「わる数2桁＆答えが1桁」または「わる数1桁＆答えが2桁」
+                        // ハイパー：「わる数11～20＆答えが1桁」または「わる数1桁＆答えが11～20」
                         if (Math.random() < 0.5) {
-                            // わる数2桁＆答えが1桁
+                            // わる数11～20＆答えが1桁
                             answer = Math.floor(Math.random() * 9) + 1;
-                            num2 = Math.floor(Math.random() * 90) + 10;
+                            num2 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
                         } else {
-                            // わる数1桁＆答えが2桁
-                            answer = Math.floor(Math.random() * 90) + 10;
+                            // わる数1桁＆答えが11～20
+                            answer = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
                             num2 = Math.floor(Math.random() * 9) + 1;
                         }
                         num1 = answer * num2;
@@ -1726,31 +1778,37 @@
             }
         }
 
-        // 記録画面のスコア表示を更新
+        // 記録画面の初期表示（ノーマル記録を表示）
         function updateRecordsDisplay() {
+            showRecordsForDifficulty('normal');
+        }
+
+        // 選択された難易度の記録を表示
+        function showRecordsForDifficulty(difficulty) {
+            // トグルボタンの状態を更新
+            document.getElementById('normalToggleBtn').classList.toggle('active', difficulty === 'normal');
+            document.getElementById('hyperToggleBtn').classList.toggle('active', difficulty === 'hyper');
+
             const recordsTable = document.getElementById('recordsTable');
             recordsTable.innerHTML = '';
 
             const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all'];
-            const difficulties = ['normal', 'hyper'];
 
             modes.forEach(mode => {
-                difficulties.forEach(difficulty => {
-                    const record = getRecord(mode, difficulty);
-                    const categoryLabel = `${getModeLabel(mode)}${getDifficultyLabel(difficulty)}`;
+                const record = getRecord(mode, difficulty);
+                const categoryLabel = getModeLabel(mode);
 
-                    const recordRow = document.createElement('div');
-                    recordRow.className = `record-row ${record.score ? 'has-score' : ''}`;
+                const recordRow = document.createElement('div');
+                recordRow.className = `record-row ${record.score ? 'has-score' : ''}`;
 
-                    recordRow.innerHTML = `
-                        <div class="record-category">${categoryLabel}</div>
-                        <div class="record-score">${record.score || '-'}</div>
-                        <div class="record-title">${record.title || '未挑戦'}</div>
-                        <div class="record-speed">${record.speed || '-'}</div>
-                    `;
+                recordRow.innerHTML = `
+                    <div class="record-category">${categoryLabel}</div>
+                    <div class="record-score">${record.score || '-'}</div>
+                    <div class="record-title">${record.title || '未挑戦'}</div>
+                    <div class="record-speed">${record.speed || '-'}</div>
+                `;
 
-                    recordsTable.appendChild(recordRow);
-                });
+                recordsTable.appendChild(recordRow);
             });
         }
 
@@ -1839,12 +1897,14 @@
                 document.removeEventListener('click', initAudio);
             }, { once: true });
             
-            document.querySelectorAll('.mode-btn, .top-btn, .instructions-btn').forEach(btn => {
+            document.querySelectorAll('.mode-btn, .top-btn, .instructions-btn, .records-toggle-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (btn.classList.contains('speed-btn')) {
                         selectSpeed(btn.dataset.speed);
                     } else if (btn.classList.contains('difficulty-btn')) {
                         selectDifficulty(btn.dataset.difficulty);
+                    } else if (btn.classList.contains('records-toggle-btn')) {
+                        showRecordsForDifficulty(btn.dataset.difficulty);
                     } else {
                         selectMode(btn.dataset.mode);
                     }
