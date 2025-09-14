@@ -1805,16 +1805,23 @@
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
-            
+
+            // 勝利間近演出をクリア
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.classList.remove('time-warning');
+            // 直接設定されたスタイルもクリア
+            gameScreen.style.boxShadow = '';
+            gameScreen.style.borderColor = '';
+
             // ゲームエリアをクリア
             document.getElementById('gameArea').innerHTML = '';
             document.getElementById('choices').innerHTML = '';
-            
+
             // タイトル画面に戻ったら背景音楽を再開
             if (gameState.bgmEnabled) {
                 resumeBgMusic();
             }
-            
+
         }
 
         // リトライ機能：同じ設定でゲームを再開
@@ -1827,6 +1834,13 @@
             // ゲーム画面を非表示
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
+
+            // 勝利間近演出をクリア
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.classList.remove('time-warning');
+            // 直接設定されたスタイルもクリア
+            gameScreen.style.boxShadow = '';
+            gameScreen.style.borderColor = '';
 
             // ゲームエリアをクリア
             document.getElementById('gameArea').innerHTML = '';
@@ -1934,7 +1948,11 @@
             }
 
             // 勝利間近演出をクリア
-            document.getElementById('gameScreen').classList.remove('time-warning');
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.classList.remove('time-warning');
+            // 直接設定されたスタイルもクリア
+            gameScreen.style.boxShadow = '';
+            gameScreen.style.borderColor = '';
 
             // 画面をリセット
             document.getElementById('gameScreen').classList.add('hidden');
@@ -1946,12 +1964,12 @@
             document.getElementById('recordsScreen').classList.add('hidden');
             document.getElementById('instructionsScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
-            
+
             // ゲームエリアをクリア
             document.getElementById('gameArea').innerHTML = '';
             document.getElementById('choices').innerHTML = '';
             document.getElementById('dangerOverlay').classList.remove('active');
-            
+
             // タイトル画面に戻ったら背景音楽を再開
             if (gameState.bgmEnabled) {
                 resumeBgMusic();
