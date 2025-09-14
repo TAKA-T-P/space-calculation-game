@@ -172,16 +172,16 @@
         }
 
         .choice-btn {
-            padding: 18px 30px;
-            font-size: 1.4rem;
+            padding: 22px 36px;
+            font-size: 1.6rem;
             border: 2px solid #00ff00;
             background: rgba(0, 255, 0, 0.2);
             color: #00ff00;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
             text-shadow: 0 0 10px #00ff00;
-            min-width: 90px;
+            min-width: 100px;
         }
 
         .choice-btn:hover {
@@ -568,8 +568,8 @@
             }
             
             #gameScreen .choice-btn {
-                padding: 14px 22px;
-                font-size: 1.2rem;
+                padding: 16px 26px;
+                font-size: 1.3rem;
                 min-width: calc(50% - 10px);
                 flex: 1 1 calc(50% - 10px);
                 max-width: calc(50% - 10px);
@@ -792,8 +792,8 @@
 
         @media (max-width: 480px) {
             #gameScreen .choice-btn {
-                font-size: 1.1rem;
-                padding: 12px 18px;
+                font-size: 1.2rem;
+                padding: 14px 20px;
             }
             
             .ui-item {
@@ -915,6 +915,16 @@
         </div>
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1>宇宙計算ゲーム</h1>
+        <p style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
+        <p style="font-size: 1.1rem; margin: 1rem 0; color: #00ffff; text-shadow: 0 0 5px #00ffff;">ゲームモード（難しさ）を選ぼう</p>
+        <div class="mode-buttons">
+            <button class="mode-btn difficulty-btn" data-difficulty="normal">ノーマル</button>
+            <button class="mode-btn difficulty-btn" data-difficulty="hyper">ハイパー</button>
+        </div>
+    </div>
+
+    <div id="modeSelectionScreen" class="screen hidden">
+        <h1>計算の種類を選ぼう</h1>
         <div class="mode-buttons">
             <button class="mode-btn" data-mode="addition">たし算</button>
             <button class="mode-btn" data-mode="subtraction">ひき算</button>
@@ -922,19 +932,11 @@
             <button class="mode-btn" data-mode="division">わり算</button>
             <button class="mode-btn" data-mode="all">全部</button>
         </div>
-    </div>
-
-    <div id="difficultyScreen" class="screen hidden">
-        <h1>難易度選択</h1>
-        <div class="mode-buttons">
-            <button class="mode-btn difficulty-btn" data-difficulty="normal">ノーマル</button>
-            <button class="mode-btn difficulty-btn" data-difficulty="hyper">ハイパー</button>
-        </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
     <div id="speedScreen" class="screen hidden">
-        <h1>UFO速度設定</h1>
+        <h1>UFOの速さを選ぼう</h1>
         <div class="mode-buttons">
             <button class="mode-btn speed-btn" data-speed="0.5">おそい</button>
             <button class="mode-btn speed-btn" data-speed="1.0">ふつう</button>
@@ -1009,12 +1011,7 @@
         <div class="instructions-content">
             <div class="instruction-section">
                 <h2>🎯 ゲームの遊び方</h2>
-                <p><strong>目的：</strong>襲来するUFOを計算の力で撃退せよ！<br>正しい答えを選んで、60秒間地球を守り抜け！<br><br>
-                <strong>手順：</strong><br>
-                1. 計算の種類を選択<br>
-                2. 難易度を選択<br>
-                3. UFOの速度を選択<br>
-                4. カウントダウン後、ゲーム開始！<br><br>
+                <p><strong>ゲーム概要：</strong>襲来するUFOを計算の力で撃退せよ！<br>正しい答えを選んで、60秒間地球を守り抜け！<br>難しさ・計算の種類・UFOの速さを選んだら、ゲームスタート！<br><br>
                 <strong>コツ：</strong><br>
                 ・早く答えるほど高得点！<br>
                 ・間違えると残機が減るので注意<br>
@@ -1658,11 +1655,12 @@
             let bonusMessage = '';
             let totalBonus = 0;
             
-            // 残機ボーナス（残機1つにつき4000点）
+            // 残機ボーナス（ノーマル：3000点、ハイパー：4000点）
             if (gameState.lives > 0) {
-                const livesBonus = gameState.lives * 4000;
+                const livesPointPer = gameState.difficulty === 'normal' ? 3000 : 4000;
+                const livesBonus = gameState.lives * livesPointPer;
                 totalBonus += livesBonus;
-                bonusMessage += `<p style="font-size: 1.2rem; margin: 0.3rem 0; color: #00ff00; text-shadow: 0 0 10px #00ff00;">残機ボーナス: ${gameState.lives} × 4000 = ${livesBonus}点</p>`;
+                bonusMessage += `<p style="font-size: 1.2rem; margin: 0.3rem 0; color: #00ff00; text-shadow: 0 0 10px #00ff00;">残機ボーナス: ${gameState.lives} × ${livesPointPer} = ${livesBonus}点</p>`;
             }
             
             // ボーナスをスコアに加算
@@ -1769,15 +1767,15 @@
                 return;
             }
             gameState.mode = mode;
-            document.getElementById('modeScreen').classList.add('hidden');
-            document.getElementById('difficultyScreen').classList.remove('hidden');
+            document.getElementById('modeSelectionScreen').classList.add('hidden');
+            document.getElementById('speedScreen').classList.remove('hidden');
         }
 
         // 難易度選択
         function selectDifficulty(difficulty) {
             gameState.difficulty = difficulty;
-            document.getElementById('difficultyScreen').classList.add('hidden');
-            document.getElementById('speedScreen').classList.remove('hidden');
+            document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('modeSelectionScreen').classList.remove('hidden');
         }
 
         // 速度選択
@@ -1824,7 +1822,7 @@
             document.getElementById('gameScreen').classList.add('hidden');
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
-            document.getElementById('difficultyScreen').classList.add('hidden');
+            document.getElementById('modeSelectionScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('storyScreen').classList.add('hidden');
             document.getElementById('recordsScreen').classList.add('hidden');
