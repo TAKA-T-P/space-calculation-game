@@ -974,9 +974,10 @@
 
         .records-header {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             gap: 15px;
             margin-bottom: 0.6rem;
+            padding-left: 1rem;
         }
 
         .records-toggle-btn {
@@ -1805,8 +1806,10 @@
                         let validCombination = false;
 
                         while (!validCombination && attempts < 50) {
-                            // 答えとなる最大公約数を6～30の範囲で選ぶ
-                            answer = Math.floor(Math.random() * 25) + 6; // 6-30
+                            // 答えとなる最大公約数を6～30の範囲で選ぶ（素数17,19,23,29は除外）
+                            do {
+                                answer = Math.floor(Math.random() * 25) + 6; // 6-30
+                            } while (answer === 17 || answer === 19 || answer === 23 || answer === 29);
 
                             // 答えの倍数として2つの数を生成
                             const factor1 = Math.floor(Math.random() * Math.floor(120 / answer)) + 1;
