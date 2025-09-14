@@ -1728,7 +1728,7 @@
                             answer = lcm(num1, num2);
                         }
                     } else {
-                        // ハイパー：答えの範囲30～120
+                        // ハイパー：答えの範囲30～100
                         let attempts = 0;
                         let validCombination = false;
 
@@ -1746,7 +1746,7 @@
                             answer = lcm(num1, num2);
 
                             // 答えの範囲をチェック
-                            if (answer >= 30 && answer <= 120) {
+                            if (answer >= 30 && answer <= 100) {
                                 // 互いに素な数の組み合わせ（最小公倍数 = 積）を30%の確率で採用
                                 if (gcd(num1, num2) === 1) {
                                     if (Math.random() < 0.3) {
