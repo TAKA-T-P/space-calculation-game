@@ -1318,6 +1318,9 @@
     <audio id="bgMusic" loop>
         <source src="サイバー・ストーリー.mp3" type="audio/mpeg">
     </audio>
+    <audio id="gameClearMusic">
+        <source src="ゲームクリアー.mp3" type="audio/mpeg">
+    </audio>
 
     <div id="modeScreen" class="screen">
         <button class="instructions-btn" data-mode="instructions">説明</button>
@@ -3167,7 +3170,12 @@
             }
             
             // ファンファーレを再生
-            playFanfareSound();
+            // BGMが有効な場合はゲームクリア音楽を再生、無効な場合は効果音
+            if (gameState.bgmEnabled) {
+                playGameClearMusic();
+            } else {
+                playFanfareSound();
+            }
             
             // UFOを削除
             document.querySelectorAll('.ufo').forEach(ufo => ufo.remove());
@@ -3226,6 +3234,9 @@
 
         // ゲーム再開
         function restartGame() {
+            // ゲームクリア音楽を停止
+            stopGameClearMusic();
+
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
@@ -3250,6 +3261,9 @@
 
         // リトライ機能：同じ設定でゲームを再開
         function retryGame() {
+            // ゲームクリア音楽を停止
+            stopGameClearMusic();
+
             // 現在の設定を保存
             const currentMode = gameState.mode;
             const currentDifficulty = gameState.difficulty;
@@ -3459,6 +3473,26 @@
                 bgMusic.play().catch(error => {
                     console.log('音楽の再生に失敗しました:', error);
                 });
+            }
+        }
+
+        // ゲームクリア音楽を制御
+        function playGameClearMusic() {
+            const clearMusic = document.getElementById('gameClearMusic');
+            if (clearMusic && gameState.bgmEnabled) {
+                clearMusic.volume = 0.5; // 音量を50%に設定
+                clearMusic.currentTime = 0; // 最初から再生
+                clearMusic.play().catch(error => {
+                    console.log('ゲームクリア音楽の再生に失敗しました:', error);
+                });
+            }
+        }
+
+        function stopGameClearMusic() {
+            const clearMusic = document.getElementById('gameClearMusic');
+            if (clearMusic) {
+                clearMusic.pause();
+                clearMusic.currentTime = 0;
             }
         }
         
