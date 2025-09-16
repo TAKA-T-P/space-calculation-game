@@ -2866,7 +2866,7 @@
                     const button = document.createElement('button');
                     button.className = 'choice-btn';
                     // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
-                    if (choice && (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">'))) {
+                    if (choice && typeof choice === 'string' && (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">'))) {
                         button.innerHTML = choice;
                     } else {
                         button.textContent = choice;
