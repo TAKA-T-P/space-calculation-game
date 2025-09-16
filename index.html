@@ -2854,19 +2854,38 @@
             // 選択肢を表示
             const choicesContainer = document.getElementById('choices');
             choicesContainer.innerHTML = '';
-            
-            choices.forEach(choice => {
-                const button = document.createElement('button');
-                button.className = 'choice-btn';
-                // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
-                if (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">')) {
-                    button.innerHTML = choice;
-                } else {
+
+            // デバッグ用：選択肢の状態をコンソールに出力
+            console.log('Choices:', choices);
+            console.log('Choices type:', typeof choices);
+            console.log('Choices is array:', Array.isArray(choices));
+            console.log('Choices length:', choices ? choices.length : 'undefined');
+
+            if (choices && Array.isArray(choices) && choices.length > 0) {
+                choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-btn';
+                    // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
+                    if (choice && (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">'))) {
+                        button.innerHTML = choice;
+                    } else {
+                        button.textContent = choice;
+                    }
+                    button.onclick = () => selectAnswer(choice, button);
+                    choicesContainer.appendChild(button);
+                });
+            } else {
+                console.error('Choices array is invalid:', choices);
+                // フォールバック：最低限の選択肢を表示
+                const fallbackChoices = [1, 2, 3, 4];
+                fallbackChoices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-btn';
                     button.textContent = choice;
-                }
-                button.onclick = () => selectAnswer(choice, button);
-                choicesContainer.appendChild(button);
-            });
+                    button.onclick = () => selectAnswer(choice, button);
+                    choicesContainer.appendChild(button);
+                });
+            }
         }
 
         // 答えを選択
