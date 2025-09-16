@@ -1350,6 +1350,7 @@
     <div id="speedScreen" class="screen hidden">
         <h1>UFOの速さを選ぼう</h1>
         <div class="mode-buttons">
+            <button class="mode-btn speed-btn" data-speed="0.25">超低速</button>
             <button class="mode-btn speed-btn" data-speed="0.5">おそい</button>
             <button class="mode-btn speed-btn" data-speed="1.0">ふつう</button>
             <button class="mode-btn speed-btn" data-speed="2.0">はやい</button>
@@ -1800,6 +1801,7 @@
 
         function getSpeedLabel(speed) {
             switch(speed) {
+                case 0.25: return '超低速';
                 case 0.5: return 'おそい';
                 case 1.0: return 'ふつう';
                 case 2.0: return 'はやい';
@@ -2909,7 +2911,8 @@
                 document.getElementById('score').textContent = gameState.score;
                 
                 // 正解するたびに速度を0.1倍ずつ加算（各モードで上限設定）
-                if (!gameState.timeUp) {
+                // 超低速モードでは速度を固定
+                if (!gameState.timeUp && gameState.initialSpeedMultiplier !== 0.25) {
                     gameState.speedMultiplier += 0.1;
                     let maxMultiplier;
                     if (gameState.initialSpeedMultiplier === 0.5) {
