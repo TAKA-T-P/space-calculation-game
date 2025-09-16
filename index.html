@@ -97,7 +97,7 @@
 
         .game-ui {
             position: fixed;
-            bottom: 140px;
+            bottom: 200px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -523,7 +523,7 @@
 
         .story-btn {
             display: inline-block;
-            margin: 1rem;
+            margin: 0.5rem 1rem 1rem 1rem;
             padding: 10px 20px;
             font-size: 1rem;
             border: 2px solid #ffaa00;
@@ -903,7 +903,7 @@
             }
             
             .game-ui {
-                bottom: 160px;
+                bottom: 220px;
                 gap: 15px;
                 flex-wrap: wrap;
             }
@@ -2432,46 +2432,67 @@
                 // 分数→小数の場合、小数の選択肢を生成
                 const correctDecimal = parseFloat(correctAnswer);
 
-                // 有効な小数リスト（小数第2位まで、または小数第3位が5）
+                // 正答の小数桁数を判定
+                const correctAnswerStr = correctAnswer.toString();
+                let targetDecimalPlaces = 1; // デフォルトは小数第1位
+
+                if (correctAnswerStr.includes('.')) {
+                    const afterDecimal = correctAnswerStr.split('.')[1];
+                    targetDecimalPlaces = afterDecimal.length;
+                }
+
+                // 正答の桁数に合わせて有効な小数リストを生成
                 const validDecimals = [];
-                // 小数第1位のみ（0.1〜0.9）
-                for (let i = 1; i <= 9; i++) {
-                    validDecimals.push(i / 10);
-                }
-                // 小数第2位まで（0.01〜0.99）
-                for (let i = 1; i <= 99; i++) {
-                    validDecimals.push(i / 100);
-                }
-                // 小数第3位が5（0.005, 0.015, 0.025...0.995）
-                for (let i = 1; i <= 199; i++) {
-                    validDecimals.push((i * 5) / 1000);
+
+                if (targetDecimalPlaces === 1) {
+                    // 小数第1位のみ（0.1〜0.9）
+                    for (let i = 1; i <= 9; i++) {
+                        const decimal = i / 10;
+                        if (Math.abs(decimal - correctDecimal) > 0.05) { // 正答から十分離れた値
+                            validDecimals.push(decimal);
+                        }
+                    }
+                } else if (targetDecimalPlaces === 2) {
+                    // 小数第2位まで（0.01〜0.99）
+                    for (let i = 1; i <= 99; i++) {
+                        const decimal = i / 100;
+                        if (Math.abs(decimal - correctDecimal) > 0.02 && decimal < 1) {
+                            validDecimals.push(decimal);
+                        }
+                    }
+                } else if (targetDecimalPlaces === 3) {
+                    // 小数第3位まで（ただし第3位は5のみ）
+                    for (let i = 1; i <= 199; i++) {
+                        const decimal = (i * 5) / 1000;
+                        if (Math.abs(decimal - correctDecimal) > 0.005 && decimal < 1) {
+                            validDecimals.push(decimal);
+                        }
+                    }
                 }
 
-                // 正答と明らかに異なる範囲の選択肢を優先的に選ぶ
-                const candidateChoices = validDecimals.filter(decimal => {
-                    const diff = Math.abs(decimal - correctDecimal);
-                    return diff > 0.01 && decimal > 0 && decimal < 1; // 正答から0.01以上離れている
-                });
+                // シャッフルして選択肢を選ぶ
+                for (let i = validDecimals.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [validDecimals[i], validDecimals[j]] = [validDecimals[j], validDecimals[i]];
+                }
 
-                // 間違いの選択肢を生成
-                while (choices.size < 4 && candidateChoices.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * candidateChoices.length);
-                    const wrongChoice = candidateChoices[randomIndex].toString();
+                // 間違いの選択肢を生成（正答と同じ桁数にフォーマット）
+                let addedChoices = 0;
+                for (const decimal of validDecimals) {
+                    if (addedChoices >= 3) break; // 正答含めて4つまで
 
-                    // 小数第3位が5でない場合は小数第2位までに丸める
-                    const decimalValue = parseFloat(wrongChoice);
                     let formattedChoice;
-                    if (wrongChoice.length > 4 && !wrongChoice.endsWith('5')) {
-                        formattedChoice = decimalValue.toFixed(2).replace(/\.?0+$/, '');
-                    } else {
-                        formattedChoice = wrongChoice.replace(/\.?0+$/, '');
+                    if (targetDecimalPlaces === 1) {
+                        formattedChoice = decimal.toFixed(1).replace(/\.?0+$/, '');
+                    } else if (targetDecimalPlaces === 2) {
+                        formattedChoice = decimal.toFixed(2).replace(/\.?0+$/, '');
+                    } else if (targetDecimalPlaces === 3) {
+                        formattedChoice = decimal.toFixed(3);
                     }
 
-                    if (formattedChoice !== correctAnswer && !choices.has(formattedChoice)) {
+                    if (formattedChoice && formattedChoice !== correctAnswer && !choices.has(formattedChoice)) {
                         choices.add(formattedChoice);
-                        candidateChoices.splice(randomIndex, 1); // 使用した選択肢を削除
-                    } else {
-                        candidateChoices.splice(randomIndex, 1); // 重複した選択肢を削除
+                        addedChoices++;
                     }
                 }
 
