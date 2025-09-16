@@ -2591,7 +2591,8 @@
             });
 
             // まだ3つの誤答がない場合、ランダムに追加
-            while (choices.length < 3) {
+            let attempts = 0;
+            while (choices.length < 3 && attempts < 100) {
                 let wrongAnswer;
                 if (correctAnswer <= 10) {
                     wrongAnswer = Math.floor(Math.random() * correctAnswer * 3) + 1;
@@ -2601,6 +2602,20 @@
 
                 if (wrongAnswer !== correctAnswer && !choices.includes(wrongAnswer) && wrongAnswer > 0) {
                     choices.push(wrongAnswer);
+                }
+                attempts++;
+            }
+
+            // 強力なフォールバック処理
+            while (choices.length < 3) {
+                let fallbackChoice;
+                if (correctAnswer <= 10) {
+                    fallbackChoice = Math.floor(Math.random() * 30) + 1;
+                } else {
+                    fallbackChoice = Math.floor(Math.random() * correctAnswer * 3) + 1;
+                }
+                if (fallbackChoice !== correctAnswer && !choices.includes(fallbackChoice)) {
+                    choices.push(fallbackChoice);
                 }
             }
 
@@ -2653,7 +2668,8 @@
             });
 
             // まだ3つの誤答がない場合、ランダムに追加
-            while (choices.length < 3) {
+            let attempts = 0;
+            while (choices.length < 3 && attempts < 100) {
                 let wrongAnswer;
                 if (correctAnswer <= 30) {
                     wrongAnswer = Math.floor(Math.random() * correctAnswer * 2) + Math.floor(correctAnswer * 0.3);
@@ -2663,6 +2679,20 @@
 
                 if (wrongAnswer !== correctAnswer && !choices.includes(wrongAnswer) && wrongAnswer > 0) {
                     choices.push(wrongAnswer);
+                }
+                attempts++;
+            }
+
+            // 強力なフォールバック処理
+            while (choices.length < 3) {
+                let fallbackChoice;
+                if (correctAnswer <= 30) {
+                    fallbackChoice = Math.floor(Math.random() * correctAnswer * 4) + 1;
+                } else {
+                    fallbackChoice = Math.floor(Math.random() * correctAnswer * 2) + 1;
+                }
+                if (fallbackChoice !== correctAnswer && !choices.includes(fallbackChoice)) {
+                    choices.push(fallbackChoice);
                 }
             }
 
@@ -2678,76 +2708,66 @@
 
         // 選択肢を生成
         function generateChoices(correctAnswer) {
-            // 正解の配置位置を決める（0-3の4つの位置から1つ選択）
-            const correctPosition = Math.floor(Math.random() * 4);
-            
-            // 正解を配置位置に基づいて上下に配分する誤答を生成
-            const choices = [];
-            
-            // 正解より小さい値が必要な数
-            const smallerNeeded = correctPosition;
-            // 正解より大きい値が必要な数  
-            const largerNeeded = 3 - correctPosition;
-            
-            // 正解より小さい値を生成
-            for (let i = 0; i < smallerNeeded; i++) {
+            const choices = new Set();
+            choices.add(correctAnswer);
+
+            // 間違いの選択肢を生成（最大50回試行）
+            let attempts = 0;
+            while (choices.size < 4 && attempts < 200) {
                 let wrongAnswer;
-                let attempts = 0;
-                do {
+                const rand = Math.random();
+
+                if (rand < 0.5) {
+                    // 正解より小さい値を生成
                     if (correctAnswer <= 10) {
                         wrongAnswer = Math.max(1, correctAnswer - Math.floor(Math.random() * 5) - 1);
                     } else {
-                        const variation = Math.floor(correctAnswer * 0.3);
+                        const variation = Math.max(1, Math.floor(correctAnswer * 0.3));
                         wrongAnswer = Math.max(1, correctAnswer - Math.floor(Math.random() * variation) - 1);
                     }
-                    attempts++;
-                } while ((choices.includes(wrongAnswer) || wrongAnswer >= correctAnswer) && attempts < 50);
-                
-                if (!choices.includes(wrongAnswer) && wrongAnswer < correctAnswer) {
-                    choices.push(wrongAnswer);
-                }
-            }
-            
-            // 正解より大きい値を生成
-            for (let i = 0; i < largerNeeded; i++) {
-                let wrongAnswer;
-                let attempts = 0;
-                do {
+                } else {
+                    // 正解より大きい値を生成
                     if (correctAnswer <= 10) {
                         wrongAnswer = correctAnswer + Math.floor(Math.random() * 5) + 1;
                     } else {
-                        const variation = Math.floor(correctAnswer * 0.3);
+                        const variation = Math.max(1, Math.floor(correctAnswer * 0.3));
                         wrongAnswer = correctAnswer + Math.floor(Math.random() * variation) + 1;
                     }
-                    attempts++;
-                } while ((choices.includes(wrongAnswer) || wrongAnswer <= correctAnswer) && attempts < 50);
-                
-                if (!choices.includes(wrongAnswer) && wrongAnswer > correctAnswer) {
-                    choices.push(wrongAnswer);
                 }
+
+                if (wrongAnswer !== correctAnswer && wrongAnswer > 0) {
+                    choices.add(wrongAnswer);
+                }
+                attempts++;
             }
-            
-            // 必要に応じて不足分を補完
-            while (choices.length < 3) {
-                let wrongAnswer;
-                if (Math.random() < 0.5) {
-                    // 小さい値を追加
-                    wrongAnswer = Math.max(1, correctAnswer - Math.floor(Math.random() * 10) - 1);
+
+            // 選択肢が不足している場合のフォールバック処理
+            while (choices.size < 4) {
+                let fallbackChoice;
+                if (correctAnswer <= 10) {
+                    // 小さい数の場合は1-20の範囲で生成
+                    fallbackChoice = Math.floor(Math.random() * 20) + 1;
+                } else if (correctAnswer <= 100) {
+                    // 中程度の数の場合は1-200の範囲で生成
+                    fallbackChoice = Math.floor(Math.random() * 200) + 1;
                 } else {
-                    // 大きい値を追加
-                    wrongAnswer = correctAnswer + Math.floor(Math.random() * 10) + 1;
+                    // 大きい数の場合はより広い範囲で生成
+                    fallbackChoice = Math.floor(Math.random() * (correctAnswer * 2)) + 1;
                 }
-                
-                if (!choices.includes(wrongAnswer) && wrongAnswer !== correctAnswer) {
-                    choices.push(wrongAnswer);
+
+                if (!choices.has(fallbackChoice)) {
+                    choices.add(fallbackChoice);
                 }
             }
-            
-            // 正解を正しい位置に挿入
-            choices.splice(correctPosition, 0, correctAnswer);
-            
-            // 数字の小さい順にソート
-            return choices.sort((a, b) => a - b);
+
+            // 配列に変換してシャッフル
+            const choicesArray = Array.from(choices);
+            for (let i = choicesArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choicesArray[i], choicesArray[j]] = [choicesArray[j], choicesArray[i]];
+            }
+
+            return choicesArray;
         }
 
         // UFOを作成して降下させる
