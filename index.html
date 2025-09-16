@@ -2395,6 +2395,21 @@
                 }
             }
 
+            // 選択肢が不足している場合のフォールバック処理
+            while (choices.size < 4) {
+                const presetFractions = [
+                    {n: 1, d: 2}, {n: 1, d: 3}, {n: 2, d: 3}, {n: 1, d: 4}, {n: 3, d: 4},
+                    {n: 1, d: 5}, {n: 2, d: 5}, {n: 3, d: 5}, {n: 4, d: 5}, {n: 1, d: 6}, {n: 5, d: 6},
+                    {n: 1, d: 8}, {n: 3, d: 8}, {n: 5, d: 8}, {n: 7, d: 8}
+                ];
+                const randomFraction = presetFractions[Math.floor(Math.random() * presetFractions.length)];
+                const fallbackChoice = fractionToHTML(randomFraction.n, randomFraction.d);
+
+                if (!choices.has(fallbackChoice)) {
+                    choices.add(fallbackChoice);
+                }
+            }
+
             // 配列に変換してシャッフル
             const choicesArray = Array.from(choices);
             for (let i = choicesArray.length - 1; i > 0; i--) {
@@ -2493,6 +2508,23 @@
                     if (formattedChoice && formattedChoice !== correctAnswer && !choices.has(formattedChoice)) {
                         choices.add(formattedChoice);
                         addedChoices++;
+                    }
+                }
+
+                // 選択肢が不足している場合のフォールバック処理
+                while (choices.size < 4) {
+                    let fallbackChoice;
+                    if (targetDecimalPlaces === 1) {
+                        fallbackChoice = (Math.random() * 0.9 + 0.1).toFixed(1);
+                    } else if (targetDecimalPlaces === 2) {
+                        fallbackChoice = (Math.random() * 0.99 + 0.01).toFixed(2);
+                    } else {
+                        fallbackChoice = ((Math.floor(Math.random() * 199) + 1) * 5 / 1000).toFixed(3);
+                    }
+                    fallbackChoice = fallbackChoice.replace(/\.?0+$/, '');
+
+                    if (!choices.has(fallbackChoice)) {
+                        choices.add(fallbackChoice);
                     }
                 }
 
