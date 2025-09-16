@@ -97,7 +97,7 @@
 
         .game-ui {
             position: fixed;
-            bottom: 200px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -203,7 +203,7 @@
 
         .choices {
             position: fixed;
-            bottom: 30px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -523,7 +523,7 @@
 
         .story-btn {
             display: inline-block;
-            margin: 0.5rem 1rem 1rem 1rem;
+            margin: 0.25rem 1rem 1rem 1rem;
             padding: 10px 20px;
             font-size: 1rem;
             border: 2px solid #ffaa00;
@@ -889,7 +889,7 @@
         /* スマートフォン縦画面対応 */
         @media (max-width: 768px), (max-height: 600px) {
             .choices {
-                bottom: 20px;
+                bottom: 90px;
                 gap: 10px;
                 max-width: 95vw;
             }
@@ -903,7 +903,7 @@
             }
             
             .game-ui {
-                bottom: 220px;
+                bottom: 20px;
                 gap: 15px;
                 flex-wrap: wrap;
             }
@@ -2855,12 +2855,6 @@
             const choicesContainer = document.getElementById('choices');
             choicesContainer.innerHTML = '';
 
-            // デバッグ用：選択肢の状態をコンソールに出力
-            console.log('Choices:', choices);
-            console.log('Choices type:', typeof choices);
-            console.log('Choices is array:', Array.isArray(choices));
-            console.log('Choices length:', choices ? choices.length : 'undefined');
-
             if (choices && Array.isArray(choices) && choices.length > 0) {
                 choices.forEach(choice => {
                     const button = document.createElement('button');
@@ -2871,17 +2865,6 @@
                     } else {
                         button.textContent = choice;
                     }
-                    button.onclick = () => selectAnswer(choice, button);
-                    choicesContainer.appendChild(button);
-                });
-            } else {
-                console.error('Choices array is invalid:', choices);
-                // フォールバック：最低限の選択肢を表示
-                const fallbackChoices = [1, 2, 3, 4];
-                fallbackChoices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.className = 'choice-btn';
-                    button.textContent = choice;
                     button.onclick = () => selectAnswer(choice, button);
                     choicesContainer.appendChild(button);
                 });
