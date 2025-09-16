@@ -1881,7 +1881,7 @@
                 case 'reverse': return '□ にあてはまる数を求めよ。';
                 case 'lcm': return '最小公倍数を求めよ。';
                 case 'gcd': return '最大公約数を求めよ。';
-                case 'fraction': return '変換せよ。';
+                case 'fraction': return '小数は分数に、分数は小数になおせ。';
                 case 'all': return '計算せよ。';
                 default: return '計算せよ。';
             }
@@ -2487,7 +2487,7 @@
                     } else if (targetDecimalPlaces === 2) {
                         formattedChoice = decimal.toFixed(2).replace(/\.?0+$/, '');
                     } else if (targetDecimalPlaces === 3) {
-                        formattedChoice = decimal.toFixed(3);
+                        formattedChoice = decimal.toFixed(3).replace(/\.?0+$/, '');
                     }
 
                     if (formattedChoice && formattedChoice !== correctAnswer && !choices.has(formattedChoice)) {
