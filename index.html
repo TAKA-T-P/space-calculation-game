@@ -397,6 +397,23 @@
             transform: scale(1.05);
         }
 
+        .back-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: 2px solid #ff9900;
+            background: rgba(255, 153, 0, 0.1);
+            color: #ff9900;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #ff9900;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 153, 0, 0.3);
+            transform: scale(1.05);
+        }
+
         .retry-btn {
             position: fixed;
             top: 20px;
@@ -503,9 +520,9 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            width: 60px;
-            height: 30px;
-            font-size: 0.8rem;
+            width: 70px;
+            height: 35px;
+            font-size: 1.1rem;
             border: 1px solid #00ffff;
             background: rgba(0, 255, 255, 0.1);
             color: #00ffff;
@@ -540,7 +557,8 @@
             transform: scale(1.05);
         }
 
-        /* 2ページ目（上級者向け）の背景スタイル */
+        /* 2ページ目の背景スタイル（1ページ目と同じ - デフォルト背景を使用） */
+        /*
         .mode-selection-advanced {
             background: radial-gradient(ellipse at center,
                 rgba(75, 0, 130, 0.4) 0%,
@@ -578,7 +596,6 @@
             }
         }
 
-        /* 2ページ目でのボタンスタイル調整 */
         .mode-selection-advanced .mode-btn {
             border-color: #9370db;
             color: #dda0dd;
@@ -607,8 +624,81 @@
             text-shadow: 0 0 5px #9370db;
         }
 
-        /* 2ページ目での推奨学年テキストスタイル */
         .mode-selection-advanced .grade-label {
+            color: #dda0dd !important;
+            text-shadow: 0 0 5px #9370db !important;
+        }
+        */
+
+        /* 3ページ目（エキスパート向け）の背景スタイル */
+        .mode-selection-expert {
+            background: radial-gradient(ellipse at center,
+                rgba(75, 0, 130, 0.4) 0%,
+                rgba(48, 25, 52, 0.6) 30%,
+                rgba(25, 25, 112, 0.3) 60%,
+                rgba(0, 0, 0, 0.8) 100%);
+        }
+
+        .mode-selection-expert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(138, 43, 226, 0.6), transparent),
+                radial-gradient(2px 2px at 40% 70%, rgba(75, 0, 130, 0.4), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(148, 0, 211, 0.5), transparent),
+                radial-gradient(1px 1px at 10% 80%, rgba(138, 43, 226, 0.3), transparent);
+            background-repeat: repeat;
+            background-size: 100px 100px, 80px 80px, 120px 120px, 60px 60px;
+            animation: mysticalFloat 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes expertSparkle {
+            0% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        /* 3ページ目でのボタンスタイル調整 */
+        .mode-selection-expert .mode-btn {
+            border-color: #9370db;
+            color: #dda0dd;
+            text-shadow: 0 0 8px #9370db;
+            box-shadow: 0 0 15px rgba(147, 112, 219, 0.3);
+        }
+
+        .mode-selection-expert .mode-btn:hover {
+            background: rgba(147, 112, 219, 0.3);
+            box-shadow: 0 0 25px rgba(147, 112, 219, 0.5);
+        }
+
+        .mode-selection-expert h1 {
+            color: #dda0dd;
+            text-shadow: 0 0 15px #9370db;
+        }
+
+        .mode-selection-expert .pagination-btn {
+            border-color: #9370db;
+            color: #dda0dd;
+            text-shadow: 0 0 5px #9370db;
+        }
+
+        .mode-selection-expert .page-info {
+            color: #dda0dd;
+            text-shadow: 0 0 5px #9370db;
+        }
+
+        /* 3ページ目での推奨学年テキストスタイル */
+        .mode-selection-expert .grade-label {
             color: #dda0dd !important;
             text-shadow: 0 0 5px #9370db !important;
         }
@@ -959,9 +1049,9 @@
             }
 
             .instructions-btn {
-                width: 60px;
-                height: 25px;
-                font-size: 0.7rem;
+                width: 65px;
+                height: 30px;
+                font-size: 0.9rem;
                 top: 15px;
                 left: 15px;
             }
@@ -1360,7 +1450,10 @@
             <button class="mode-btn speed-btn" data-speed="3.0">超高速</button>
         </div>
         <p style="font-size: 1rem; margin: 1.5rem 0; color: #ffaa00; text-shadow: 0 0 5px #ffaa00;">UFOが速いほど、クリアが難しくなるぞ！</p>
-        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+        <div style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
+            <button class="back-btn" onclick="returnToModeSelection()">戻る</button>
+            <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+        </div>
     </div>
 
     <div id="gameScreen" class="screen hidden">
@@ -1567,6 +1660,479 @@
             return fractionToHTML(numerator, denominator, isMixed);
         }
 
+        // 計算の種類ごとの設定を取得する関数
+        function getModeSettings(mode) {
+            const settings = {
+                // 基本的な四則演算
+                'addition': { baseSpeed: 10000, scoreMultiplier: 1.0 },
+                'subtraction': { baseSpeed: 10000, scoreMultiplier: 1.0 },
+                'multiplication': { baseSpeed: 10000, scoreMultiplier: 1.0 },
+                'division': { baseSpeed: 10000, scoreMultiplier: 1.0 },
+                'all': { baseSpeed: 10000, scoreMultiplier: 1.1 },
+
+                // 単位変換系（基本速度16秒、倍率は個別）
+                'length': { baseSpeed: 16000, scoreMultiplier: 1.5 },
+                'weight': { baseSpeed: 16000, scoreMultiplier: 1.2 },
+                'area': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+                'volume': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+                'unitMix': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+
+                // その他の計算
+                'reverse': { baseSpeed: 13000, scoreMultiplier: 1.2 },
+                'lcm': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+                'gcd': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+                'fraction': { baseSpeed: 13000, scoreMultiplier: 1.3 }
+            };
+
+            return settings[mode] || { baseSpeed: 10000, scoreMultiplier: 1.0 };
+        }
+
+        // 長さの単位モードの問題を生成する関数
+        function generateLengthProblem(difficulty) {
+            const units = ['mm', 'cm', 'm', 'km'];
+            const unitNames = {
+                'mm': 'mm',
+                'cm': 'cm',
+                'm': 'm',
+                'km': 'km'
+            };
+
+            // 単位間の変換倍率
+            const conversions = {
+                'mm_to_cm': 10,
+                'cm_to_mm': 0.1,
+                'cm_to_m': 100,
+                'm_to_cm': 0.01,
+                'm_to_km': 1000,
+                'km_to_m': 0.001
+            };
+
+            let fromUnit, toUnit, value, answer;
+
+            if (difficulty === 'normal') {
+                // ノーマル：整数のみ
+                const patterns = [
+                    { from: 'm', to: 'cm', multiplier: 100, minValue: 1, maxValue: 100 },
+                    { from: 'cm', to: 'm', multiplier: 0.01, minValue: 100, maxValue: 1000 },
+                    { from: 'km', to: 'm', multiplier: 1000, minValue: 1, maxValue: 50 },
+                    { from: 'm', to: 'km', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
+                    { from: 'cm', to: 'mm', multiplier: 10, minValue: 1, maxValue: 100 },
+                    { from: 'mm', to: 'cm', multiplier: 0.1, minValue: 10, maxValue: 1000 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                // 整数の答えになるような値を生成
+                if (pattern.multiplier < 1) {
+                    // 割る場合は、答えが整数になるように調整
+                    answer = Math.floor(Math.random() * (pattern.maxValue * pattern.multiplier - pattern.minValue * pattern.multiplier + 1)) + pattern.minValue * pattern.multiplier;
+                    value = answer / pattern.multiplier;
+                } else {
+                    // 掛ける場合
+                    value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    answer = value * pattern.multiplier;
+                }
+            } else {
+                // ハイパー：小数も含む（有効数字2桁に適した範囲）
+                const patterns = [
+                    { from: 'm', to: 'cm', multiplier: 100, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'cm', to: 'm', multiplier: 0.01, minValue: 10, maxValue: 99, decimals: 0 },
+                    { from: 'km', to: 'm', multiplier: 1000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'm', to: 'km', multiplier: 0.001, minValue: 1000, maxValue: 9900, decimals: 0 },
+                    { from: 'cm', to: 'mm', multiplier: 10, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'mm', to: 'cm', multiplier: 0.1, minValue: 10, maxValue: 99, decimals: 0 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                if (pattern.decimals > 0) {
+                    // 小数を使用（有効数字2桁まで）
+                    value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 10) / 10;
+                } else {
+                    // 整数を使用（有効数字2桁まで）
+                    if (fromUnit === 'm' && toUnit === 'km') {
+                        // m → kmの場合は100m刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 100; // 1000, 1100, ..., 9900
+                    } else if (fromUnit === 'cm' && toUnit === 'm') {
+                        // cm → mの場合は10cm刻みで生成（有効数字2桁を保証）
+                        const tens = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = tens * 10; // 100, 110, ..., 990
+                    } else if (fromUnit === 'mm' && toUnit === 'cm') {
+                        // mm → cmの場合は10mm刻みで生成（有効数字2桁を保証）
+                        const tens = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = tens * 10; // 100, 110, ..., 990
+                    } else {
+                        value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    }
+                }
+
+                answer = value * pattern.multiplier;
+
+                // 答えを有効数字2桁までに丸める
+                answer = roundToTwoSignificantDigits(answer);
+            }
+
+            const question = `${value}${unitNames[fromUnit]}＝（　）${unitNames[toUnit]}`;
+
+            return {
+                question: question,
+                answer: answer
+            };
+        }
+
+        // 重さの単位モードの問題を生成する関数
+        function generateWeightProblem(difficulty) {
+            const units = ['g', 'kg', 't'];
+            const unitNames = {
+                'g': 'g',
+                'kg': 'kg',
+                't': 't'
+            };
+
+            let fromUnit, toUnit, value, answer;
+
+            if (difficulty === 'normal') {
+                // ノーマル：整数のみ（gとtの直接変換は除外）
+                const patterns = [
+                    { from: 'kg', to: 'g', multiplier: 1000, minValue: 1, maxValue: 10 },
+                    { from: 'g', to: 'kg', multiplier: 0.001, minValue: 1000, maxValue: 9000 },
+                    { from: 't', to: 'kg', multiplier: 1000, minValue: 1, maxValue: 9 },
+                    { from: 'kg', to: 't', multiplier: 0.001, minValue: 1000, maxValue: 9000 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                // 整数の答えになるような値を生成
+                if (pattern.multiplier < 1) {
+                    // 割る場合は、答えが整数になるように調整
+                    answer = Math.floor(Math.random() * (pattern.maxValue * pattern.multiplier - pattern.minValue * pattern.multiplier + 1)) + pattern.minValue * pattern.multiplier;
+                    value = answer / pattern.multiplier;
+                } else {
+                    // 掛ける場合
+                    value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    answer = value * pattern.multiplier;
+                }
+            } else {
+                // ハイパー：小数も含む（有効数字2桁に適した範囲、gとtの直接変換は除外）
+                const patterns = [
+                    { from: 'kg', to: 'g', multiplier: 1000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'g', to: 'kg', multiplier: 0.001, minValue: 10, maxValue: 99, decimals: 0 },
+                    { from: 't', to: 'kg', multiplier: 1000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'kg', to: 't', multiplier: 0.001, minValue: 10, maxValue: 99, decimals: 0 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                if (pattern.decimals > 0) {
+                    // 小数を使用（有効数字2桁まで）
+                    if (pattern.decimals === 1) {
+                        value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 10) / 10;
+                    } else {
+                        value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 100) / 100;
+                    }
+                } else {
+                    // 整数を使用（有効数字2桁まで）
+                    value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                }
+
+                answer = value * pattern.multiplier;
+
+                // 答えを有効数字2桁までに丸める
+                answer = roundToTwoSignificantDigits(answer);
+            }
+
+            const question = `${value}${unitNames[fromUnit]}＝（　）${unitNames[toUnit]}`;
+
+            return {
+                question: question,
+                answer: answer
+            };
+        }
+
+        // 面積の単位モードの問題を生成する関数
+        function generateAreaProblem(difficulty) {
+            const units = ['cm²', 'm²', 'a', 'ha', 'km²'];
+            const unitNames = {
+                'cm²': 'cm²',
+                'm²': 'm²',
+                'a': 'a',
+                'ha': 'ha',
+                'km²': 'km²'
+            };
+
+            let fromUnit, toUnit, value, answer;
+
+            if (difficulty === 'normal') {
+                // ノーマル：整数のみ（cm²はm²との変換のみ）
+                const patterns = [
+                    { from: 'm²', to: 'cm²', multiplier: 10000, minValue: 1, maxValue: 99 },
+                    { from: 'cm²', to: 'm²', multiplier: 0.0001, minValue: 10000, maxValue: 990000 },
+                    { from: 'a', to: 'm²', multiplier: 100, minValue: 1, maxValue: 99 },
+                    { from: 'm²', to: 'a', multiplier: 0.01, minValue: 100, maxValue: 9900 },
+                    { from: 'ha', to: 'a', multiplier: 100, minValue: 1, maxValue: 99 },
+                    { from: 'a', to: 'ha', multiplier: 0.01, minValue: 100, maxValue: 9900 },
+                    { from: 'ha', to: 'm²', multiplier: 10000, minValue: 1, maxValue: 99 },
+                    { from: 'm²', to: 'ha', multiplier: 0.0001, minValue: 10000, maxValue: 990000 },
+                    { from: 'km²', to: 'ha', multiplier: 100, minValue: 1, maxValue: 99 },
+                    { from: 'ha', to: 'km²', multiplier: 0.01, minValue: 100, maxValue: 9900 },
+                    { from: 'km²', to: 'm²', multiplier: 1000000, minValue: 1, maxValue: 99 },
+                    { from: 'm²', to: 'km²', multiplier: 0.000001, minValue: 1000000, maxValue: 50000000 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                // 整数の答えになるような値を生成
+                if (pattern.multiplier < 1) {
+                    // 割る場合は、答えが整数になるように調整
+                    answer = Math.floor(Math.random() * (pattern.maxValue * pattern.multiplier - pattern.minValue * pattern.multiplier + 1)) + pattern.minValue * pattern.multiplier;
+                    value = answer / pattern.multiplier;
+                } else {
+                    // 掛ける場合
+                    value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    answer = value * pattern.multiplier;
+                }
+            } else {
+                // ハイパー：小数も含む（有効数字2桁、cm²はm²との変換のみ）
+                const patterns = [
+                    { from: 'm²', to: 'cm²', multiplier: 10000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'cm²', to: 'm²', multiplier: 0.0001, minValue: 1000, maxValue: 9900, decimals: 0 },
+                    { from: 'a', to: 'm²', multiplier: 100, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'm²', to: 'a', multiplier: 0.01, minValue: 10, maxValue: 99, decimals: 0 },
+                    { from: 'ha', to: 'a', multiplier: 100, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'a', to: 'ha', multiplier: 0.01, minValue: 10, maxValue: 99, decimals: 0 },
+                    { from: 'ha', to: 'm²', multiplier: 10000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'm²', to: 'ha', multiplier: 0.0001, minValue: 1000, maxValue: 9900, decimals: 0 },
+                    { from: 'km²', to: 'ha', multiplier: 100, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'ha', to: 'km²', multiplier: 0.01, minValue: 10, maxValue: 99, decimals: 0 },
+                    { from: 'km²', to: 'm²', multiplier: 1000000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'm²', to: 'km²', multiplier: 0.000001, minValue: 100000, maxValue: 990000, decimals: 0 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                if (pattern.decimals > 0) {
+                    // 小数を使用（有効数字2桁まで）
+                    if (pattern.decimals === 1) {
+                        value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 10) / 10;
+                    } else {
+                        value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 100) / 100;
+                    }
+                } else {
+                    // 整数を使用（有効数字2桁まで）
+                    if (fromUnit === 'm²' && toUnit === 'km²') {
+                        // m² → km²の場合は10万m²刻みで生成（有効数字2桁を保証）
+                        const tenThousands = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = tenThousands * 10000; // 100000, 110000, ..., 990000
+                    } else if (fromUnit === 'cm²' && toUnit === 'm²') {
+                        // cm² → m²の場合は100cm²刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 100; // 1000, 1100, ..., 9900
+                    } else if (fromUnit === 'm²' && toUnit === 'ha') {
+                        // m² → haの場合は100m²刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 100; // 1000, 1100, ..., 9900
+                    } else {
+                        value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    }
+                }
+
+                answer = value * pattern.multiplier;
+
+                // 答えを有効数字2桁までに丸める
+                answer = roundToTwoSignificantDigits(answer);
+            }
+
+            // 大きな数値は見やすい表記に変換（問題文のみ）
+            const formattedValue = formatLargeNumber(value);
+
+            const question = `${formattedValue}${unitNames[fromUnit]}＝（　）${unitNames[toUnit]}`;
+
+            return {
+                question: question,
+                answer: answer
+            };
+        }
+
+        // 体積の単位モードの問題を生成する関数
+        function generateVolumeProblem(difficulty) {
+            const units = ['cm³', 'mL', 'dL', 'L', 'm³'];
+            const unitNames = {
+                'cm³': 'cm³',
+                'mL': 'mL',
+                'dL': 'dL',
+                'L': 'L',
+                'm³': 'm³'
+            };
+
+            let fromUnit, toUnit, value, answer;
+
+            if (difficulty === 'normal') {
+                // ノーマル：整数のみ（除外組み合わせ：dL↔cm³, dL↔m³, mL↔m³）
+                const patterns = [
+                    { from: 'cm³', to: 'mL', multiplier: 1, minValue: 1, maxValue: 99 },
+                    { from: 'mL', to: 'cm³', multiplier: 1, minValue: 1, maxValue: 99 },
+                    { from: 'mL', to: 'dL', multiplier: 0.01, minValue: 100, maxValue: 9900 },
+                    { from: 'dL', to: 'mL', multiplier: 100, minValue: 1, maxValue: 99 },
+                    { from: 'dL', to: 'L', multiplier: 0.1, minValue: 10, maxValue: 99 },
+                    { from: 'L', to: 'dL', multiplier: 10, minValue: 1, maxValue: 99 },
+                    { from: 'mL', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
+                    { from: 'L', to: 'mL', multiplier: 1000, minValue: 1, maxValue: 99 },
+                    { from: 'cm³', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
+                    { from: 'L', to: 'cm³', multiplier: 1000, minValue: 1, maxValue: 99 },
+                    { from: 'L', to: 'm³', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
+                    { from: 'm³', to: 'L', multiplier: 1000, minValue: 1, maxValue: 99 },
+                    { from: 'cm³', to: 'm³', multiplier: 0.000001, minValue: 1000000, maxValue: 50000000 },
+                    { from: 'm³', to: 'cm³', multiplier: 1000000, minValue: 1, maxValue: 99 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                // 整数の答えになるような値を生成
+                if (pattern.multiplier < 1) {
+                    // 割る場合は、答えが整数になるように調整
+                    answer = Math.floor(Math.random() * (pattern.maxValue * pattern.multiplier - pattern.minValue * pattern.multiplier + 1)) + pattern.minValue * pattern.multiplier;
+                    value = answer / pattern.multiplier;
+                } else {
+                    // 掛ける場合
+                    value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    answer = value * pattern.multiplier;
+                }
+            } else {
+                // ハイパー：小数も含む（有効数字2桁、除外組み合わせ：dL↔cm³, dL↔m³, mL↔m³）
+                const patterns = [
+                    { from: 'cm³', to: 'mL', multiplier: 1, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'mL', to: 'cm³', multiplier: 1, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'mL', to: 'dL', multiplier: 0.01, minValue: 100, maxValue: 990, decimals: 0 },
+                    { from: 'dL', to: 'mL', multiplier: 100, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'dL', to: 'L', multiplier: 0.1, minValue: 10, maxValue: 99, decimals: 0 },
+                    { from: 'L', to: 'dL', multiplier: 10, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'mL', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 5000, decimals: 0 },
+                    { from: 'L', to: 'mL', multiplier: 1000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'cm³', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 5000, decimals: 0 },
+                    { from: 'L', to: 'cm³', multiplier: 1000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'L', to: 'm³', multiplier: 0.001, minValue: 1000, maxValue: 5000, decimals: 0 },
+                    { from: 'm³', to: 'L', multiplier: 1000, minValue: 0.1, maxValue: 9.9, decimals: 1 },
+                    { from: 'cm³', to: 'm³', multiplier: 0.000001, minValue: 100000, maxValue: 500000, decimals: 0 },
+                    { from: 'm³', to: 'cm³', multiplier: 1000000, minValue: 0.1, maxValue: 9.9, decimals: 1 }
+                ];
+
+                const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+                fromUnit = pattern.from;
+                toUnit = pattern.to;
+
+                if (pattern.decimals > 0) {
+                    // 小数を使用（有効数字2桁まで）
+                    if (pattern.decimals === 1) {
+                        value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 10) / 10;
+                    } else {
+                        value = Math.round((Math.random() * (pattern.maxValue - pattern.minValue) + pattern.minValue) * 100) / 100;
+                    }
+                } else {
+                    // 整数を使用（有効数字2桁まで）
+                    if (fromUnit === 'mL' && toUnit === 'L') {
+                        // mL → Lの場合は100mL刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 100; // 1000, 1100, ..., 9900
+                    } else if (fromUnit === 'cm³' && toUnit === 'L') {
+                        // cm³ → Lの場合は100cm³刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 100; // 1000, 1100, ..., 9900
+                    } else if (fromUnit === 'L' && toUnit === 'm³') {
+                        // L → m³の場合は100L刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 100; // 1000, 1100, ..., 9900
+                    } else if (fromUnit === 'mL' && toUnit === 'dL') {
+                        // mL → dLの場合は100mL刻みで生成（有効数字2桁を保証）
+                        const hundreds = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = hundreds * 10; // 100, 110, ..., 990
+                    } else if (fromUnit === 'cm³' && toUnit === 'm³') {
+                        // cm³ → m³の場合は10万cm³刻みで生成（有効数字2桁を保証）
+                        const tenThousands = Math.floor(Math.random() * 90) + 10; // 10-99
+                        value = tenThousands * 10000; // 100000, 110000, ..., 990000
+                    } else {
+                        value = Math.floor(Math.random() * (pattern.maxValue - pattern.minValue + 1)) + pattern.minValue;
+                    }
+                }
+
+                answer = value * pattern.multiplier;
+
+                // 答えを有効数字2桁までに丸める
+                answer = roundToTwoSignificantDigits(answer);
+            }
+
+            // 大きな数値は見やすい表記に変換（問題文のみ）
+            const formattedValue = formatLargeNumber(value);
+
+            const question = `${formattedValue}${unitNames[fromUnit]}＝（　）${unitNames[toUnit]}`;
+
+            return {
+                question: question,
+                answer: answer
+            };
+        }
+
+        // 単位MIXモードの問題を生成する関数
+        function generateUnitMixProblem(difficulty) {
+            // 長さ、重さ、面積、体積からランダムに選択
+            const unitTypes = ['length', 'weight', 'area', 'volume'];
+            const selectedType = unitTypes[Math.floor(Math.random() * unitTypes.length)];
+
+            // 選択された単位タイプに応じて問題を生成
+            let problem;
+            switch (selectedType) {
+                case 'length':
+                    problem = generateLengthProblem(difficulty);
+                    break;
+                case 'weight':
+                    problem = generateWeightProblem(difficulty);
+                    break;
+                case 'area':
+                    problem = generateAreaProblem(difficulty);
+                    break;
+                case 'volume':
+                    problem = generateVolumeProblem(difficulty);
+                    break;
+                default:
+                    problem = generateLengthProblem(difficulty);
+            }
+
+            // 単位タイプの情報を追加
+            problem.unitType = selectedType;
+            return problem;
+        }
+
+        // 単位MIXモード専用の選択肢を生成する関数
+        function generateUnitMixChoices(correctAnswer, unitType) {
+            // 単位タイプに応じて適切な選択肢生成関数を使用
+            switch (unitType) {
+                case 'length':
+                    return generateLengthChoices(correctAnswer);
+                case 'weight':
+                    return generateWeightChoices(correctAnswer);
+                case 'area':
+                    return generateAreaChoices(correctAnswer);
+                case 'volume':
+                    return generateVolumeChoices(correctAnswer);
+                default:
+                    return generateChoices(correctAnswer);
+            }
+        }
+
         // 小数⇔分数モードの問題を生成する関数
         function generateFractionProblem(difficulty) {
             const isDecimalToFraction = Math.random() < 0.5;
@@ -1661,6 +2227,7 @@
         // モードページネーション用データ
         const modePages = [
             ['addition', 'subtraction', 'multiplication', 'division', 'all'],
+            ['length', 'weight', 'area', 'volume', 'unitMix'],
             ['reverse', 'lcm', 'gcd', 'fraction']
         ];
 
@@ -1675,10 +2242,12 @@
             container.innerHTML = '';
 
             // ページに応じて背景を変更
-            if (gameState.currentModePage === 2) {
-                modeScreen.classList.add('mode-selection-advanced');
+            if (gameState.currentModePage === 3) {
+                modeScreen.classList.add('mode-selection-expert');
+                modeScreen.classList.remove('mode-selection-advanced');
             } else {
                 modeScreen.classList.remove('mode-selection-advanced');
+                modeScreen.classList.remove('mode-selection-expert');
             }
 
             const currentPageModes = modePages[gameState.currentModePage - 1];
@@ -1824,6 +2393,11 @@
                 case 'gcd': return '最大公約数';
                 case 'all': return 'ミックス';
                 case 'fraction': return '小数⇔分数';
+                case 'length': return '長さの単位';
+                case 'weight': return '重さの単位';
+                case 'area': return '面積の単位';
+                case 'volume': return '体積の単位';
+                case 'unitMix': return '単位MIX';
                 default: return mode;
             }
         }
@@ -1866,12 +2440,22 @@
                 case 'gcd':
                 case 'fraction':
                     return '小５～';
+                case 'length':
+                    return isHyper ? '小４～' : '小３～';
+                case 'weight':
+                    return isHyper ? '小４～' : '小３～';
+                case 'area':
+                    return '小４～';
+                case 'volume':
+                    return '小５～';
+                case 'unitMix':
+                    return '小５～';
                 default:
                     return '';
             }
         }
 
-        // 上級者向けモード（2ページ目のモード）かどうかを判定する関数
+        // 上級者向けモード（3ページ目のモード）かどうかを判定する関数
         function isAdvancedMode(mode) {
             const advancedModes = ['reverse', 'lcm', 'gcd', 'fraction'];
             return advancedModes.includes(mode);
@@ -1887,6 +2471,11 @@
                 case 'lcm': return '最小公倍数を求めよ。';
                 case 'gcd': return '最大公約数を求めよ。';
                 case 'fraction': return '小数は分数に、分数は小数になおせ。';
+                case 'length': return '（　）にあてはまる数を答えよ。';
+                case 'weight': return '（　）にあてはまる数を答えよ。';
+                case 'area': return '（　）にあてはまる数を答えよ。';
+                case 'volume': return '（　）にあてはまる数を答えよ。';
+                case 'unitMix': return '（　）にあてはまる数を答えよ。';
                 case 'all': return '計算せよ。';
                 default: return '計算せよ。';
             }
@@ -2348,6 +2937,21 @@
                 case 'fraction':
                     // 小数⇔分数モード
                     return generateFractionProblem(difficulty);
+                case 'length':
+                    // 長さの単位モード
+                    return generateLengthProblem(difficulty);
+                case 'weight':
+                    // 重さの単位モード
+                    return generateWeightProblem(difficulty);
+                case 'area':
+                    // 面積の単位モード
+                    return generateAreaProblem(difficulty);
+                case 'volume':
+                    // 体積の単位モード
+                    return generateVolumeProblem(difficulty);
+                case 'unitMix':
+                    // 単位MIXモード
+                    return generateUnitMixProblem(difficulty);
             }
 
             return {
@@ -2634,6 +3238,292 @@
             return choices.sort((a, b) => a - b);
         }
 
+        // 大きな数値を見やすい表記に変換する関数
+        function formatLargeNumber(num) {
+            // 整数かつ下4桁が「0000」のときのみ「万」表記を使用
+            if (Number.isInteger(num) && num >= 10000 && num % 10000 === 0) {
+                const manValue = num / 10000;
+                return manValue + '万';
+            }
+            return num.toString();
+        }
+
+        // 有効数字2桁まで丸める共通関数
+        function roundToTwoSignificantDigits(num) {
+            if (num === 0) return 0;
+            if (num >= 100) {
+                return Math.round(num);
+            } else if (num >= 10) {
+                return Math.round(num * 10) / 10;
+            } else if (num >= 1) {
+                return Math.round(num * 100) / 100;
+            } else if (num >= 0.1) {
+                return Math.round(num * 1000) / 1000;
+            } else {
+                return Math.round(num * 10000) / 10000;
+            }
+        }
+
+        // 面積の単位モード専用の選択肢を生成
+        function generateAreaChoices(correctAnswer) {
+            const choices = [];
+
+            // よくある間違いパターンを生成（有効数字2桁まで丸める）
+            const wrongChoices = [
+                roundToTwoSignificantDigits(correctAnswer * 10),     // 桁を間違える（10倍）
+                roundToTwoSignificantDigits(correctAnswer / 10),     // 桁を間違える（1/10）
+                roundToTwoSignificantDigits(correctAnswer * 100),    // 桁を間違える（100倍）
+                roundToTwoSignificantDigits(correctAnswer / 100),    // 桁を間違える（1/100）
+                roundToTwoSignificantDigits(correctAnswer * 1000),   // 桁を間違える（1000倍）
+                roundToTwoSignificantDigits(correctAnswer / 1000),   // 桁を間違える（1/1000）
+                roundToTwoSignificantDigits(correctAnswer * 10000),  // 桁を間違える（10000倍）
+                roundToTwoSignificantDigits(correctAnswer / 10000),  // 桁を間違える（1/10000）
+                roundToTwoSignificantDigits(correctAnswer + 1000),   // 足し算と勘違い
+                roundToTwoSignificantDigits(correctAnswer - 1000),   // 引き算と勘違い
+                roundToTwoSignificantDigits(correctAnswer * 2),      // 2倍
+                roundToTwoSignificantDigits(correctAnswer / 2)       // 半分
+            ];
+
+            // 正解に近い範囲の誤答を選択
+            const validWrongChoices = wrongChoices.filter(choice =>
+                choice > 0 &&
+                choice !== correctAnswer &&
+                choice <= correctAnswer * 10000 &&
+                choice >= correctAnswer / 10000
+            );
+
+            // ランダムに3つの誤答を選択
+            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+                choices.push(shuffled[i]);
+            }
+
+            // 足りない場合は追加生成
+            while (choices.length < 3) {
+                let randomChoice;
+                if (correctAnswer >= 1) {
+                    randomChoice = roundToTwoSignificantDigits(correctAnswer * (0.5 + Math.random() * 2));
+                } else {
+                    randomChoice = roundToTwoSignificantDigits(correctAnswer * (0.1 + Math.random() * 10));
+                }
+
+                if (randomChoice > 0 && randomChoice !== correctAnswer && !choices.includes(randomChoice)) {
+                    choices.push(randomChoice);
+                }
+            }
+
+            // 正解を追加
+            choices.push(correctAnswer);
+
+            // Fisher-Yates shuffleでランダムに並び替え
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+
+            return choices;
+        }
+
+        // 体積の単位モード専用の選択肢を生成
+        function generateVolumeChoices(correctAnswer) {
+            const choices = [];
+
+            // よくある間違いパターンを生成（有効数字2桁まで丸める）
+            const wrongChoices = [
+                roundToTwoSignificantDigits(correctAnswer * 10),     // 桁を間違える（10倍）
+                roundToTwoSignificantDigits(correctAnswer / 10),     // 桁を間違える（1/10）
+                roundToTwoSignificantDigits(correctAnswer * 100),    // 桁を間違える（100倍）
+                roundToTwoSignificantDigits(correctAnswer / 100),    // 桁を間違える（1/100）
+                roundToTwoSignificantDigits(correctAnswer * 1000),   // 桁を間違える（1000倍）
+                roundToTwoSignificantDigits(correctAnswer / 1000),   // 桁を間違える（1/1000）
+                roundToTwoSignificantDigits(correctAnswer + 100),    // 足し算と勘違い
+                roundToTwoSignificantDigits(correctAnswer - 100),    // 引き算と勘違い
+                roundToTwoSignificantDigits(correctAnswer * 2),      // 2倍
+                roundToTwoSignificantDigits(correctAnswer / 2)       // 半分
+            ];
+
+            // 正解に近い範囲の誤答を選択
+            const validWrongChoices = wrongChoices.filter(choice =>
+                choice > 0 &&
+                choice !== correctAnswer &&
+                choice <= correctAnswer * 10000 &&
+                choice >= correctAnswer / 10000
+            );
+
+            // ランダムに3つの誤答を選択
+            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+                choices.push(shuffled[i]);
+            }
+
+            // 足りない場合は追加生成
+            while (choices.length < 3) {
+                let randomChoice;
+                if (correctAnswer >= 1) {
+                    randomChoice = roundToTwoSignificantDigits(correctAnswer * (0.5 + Math.random() * 2));
+                } else {
+                    randomChoice = roundToTwoSignificantDigits(correctAnswer * (0.1 + Math.random() * 10));
+                }
+
+                if (randomChoice > 0 && randomChoice !== correctAnswer && !choices.includes(randomChoice)) {
+                    choices.push(randomChoice);
+                }
+            }
+
+            // 正解を追加
+            choices.push(correctAnswer);
+
+            // Fisher-Yates shuffleでランダムに並び替え
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+
+            return choices;
+        }
+
+        // 長さの単位モード専用の選択肢を生成
+        function generateLengthChoices(correctAnswer) {
+            const choices = [];
+
+            // よくある間違いパターンを生成（有効数字2桁まで丸める）
+            const wrongChoices = [
+                roundToTwoSignificantDigits(correctAnswer * 10),     // 桁を間違える（10倍）
+                roundToTwoSignificantDigits(correctAnswer / 10),     // 桁を間違える（1/10）
+                roundToTwoSignificantDigits(correctAnswer * 100),    // 桁を間違える（100倍）
+                roundToTwoSignificantDigits(correctAnswer / 100),    // 桁を間違える（1/100）
+                roundToTwoSignificantDigits(correctAnswer * 1000),   // 桁を間違える（1000倍）
+                roundToTwoSignificantDigits(correctAnswer / 1000),   // 桁を間違える（1/1000）
+                roundToTwoSignificantDigits(correctAnswer + 10),     // 足し算と勘違い
+                roundToTwoSignificantDigits(correctAnswer - 10),     // 引き算と勘違い
+                roundToTwoSignificantDigits(correctAnswer * 2),      // 2倍
+                roundToTwoSignificantDigits(correctAnswer / 2)       // 半分
+            ];
+
+            // 正解に近い範囲の誤答を選択
+            const validWrongChoices = wrongChoices.filter(choice =>
+                choice > 0 &&
+                choice !== correctAnswer &&
+                choice <= correctAnswer * 10000 &&
+                choice >= correctAnswer / 10000
+            );
+
+            // ランダムに3つの誤答を選択
+            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+                choices.push(shuffled[i]);
+            }
+
+            // 不足分をランダムに補完
+            while (choices.length < 3) {
+                let wrongAnswer;
+                const rand = Math.random();
+
+                if (rand < 0.3) {
+                    // 正解の近くの値
+                    wrongAnswer = correctAnswer + (Math.random() - 0.5) * correctAnswer * 0.5;
+                } else if (rand < 0.6) {
+                    // 正解の10倍または1/10
+                    wrongAnswer = Math.random() < 0.5 ? correctAnswer * 10 : correctAnswer / 10;
+                } else {
+                    // 正解の100倍または1/100
+                    wrongAnswer = Math.random() < 0.5 ? correctAnswer * 100 : correctAnswer / 100;
+                }
+
+                // 有効数字2桁までに丸める
+                wrongAnswer = roundToTwoSignificantDigits(wrongAnswer);
+
+                if (wrongAnswer > 0 && wrongAnswer !== correctAnswer && !choices.includes(wrongAnswer)) {
+                    choices.push(wrongAnswer);
+                }
+            }
+
+            // 3つまでに制限
+            choices.splice(3);
+
+            // 正解を追加
+            choices.push(correctAnswer);
+
+            // Fisher-Yatesシャッフルでランダムに配置
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+
+            return choices;
+        }
+
+        // 重さの単位モード専用の選択肢を生成
+        function generateWeightChoices(correctAnswer) {
+            const choices = [];
+
+            // よくある間違いパターンを生成（有効数字2桁まで丸める）
+            const wrongChoices = [
+                roundToTwoSignificantDigits(correctAnswer * 10),     // 桁を間違える（10倍）
+                roundToTwoSignificantDigits(correctAnswer / 10),     // 桁を間違える（1/10）
+                roundToTwoSignificantDigits(correctAnswer * 100),    // 桁を間違える（100倍）
+                roundToTwoSignificantDigits(correctAnswer / 100),    // 桁を間違える（1/100）
+                roundToTwoSignificantDigits(correctAnswer * 1000),   // 桁を間違える（1000倍）
+                roundToTwoSignificantDigits(correctAnswer / 1000),   // 桁を間違える（1/1000）
+                roundToTwoSignificantDigits(correctAnswer + 100),    // 足し算と勘違い
+                roundToTwoSignificantDigits(correctAnswer - 100),    // 引き算と勘違い
+                roundToTwoSignificantDigits(correctAnswer * 2),      // 2倍
+                roundToTwoSignificantDigits(correctAnswer / 2)       // 半分
+            ];
+
+            // 正解に近い範囲の誤答を選択
+            const validWrongChoices = wrongChoices.filter(choice =>
+                choice > 0 &&
+                choice !== correctAnswer &&
+                choice <= correctAnswer * 10000 &&
+                choice >= correctAnswer / 10000
+            );
+
+            // ランダムに3つの誤答を選択
+            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+                choices.push(shuffled[i]);
+            }
+
+            // 不足分をランダムに補完
+            while (choices.length < 3) {
+                let wrongAnswer;
+                const rand = Math.random();
+
+                if (rand < 0.3) {
+                    // 正解の近くの値
+                    wrongAnswer = correctAnswer + (Math.random() - 0.5) * correctAnswer * 0.5;
+                } else if (rand < 0.6) {
+                    // 正解の10倍または1/10
+                    wrongAnswer = Math.random() < 0.5 ? correctAnswer * 10 : correctAnswer / 10;
+                } else {
+                    // 正解の100倍または1/100
+                    wrongAnswer = Math.random() < 0.5 ? correctAnswer * 100 : correctAnswer / 100;
+                }
+
+                // 有効数字2桁までに丸める
+                wrongAnswer = roundToTwoSignificantDigits(wrongAnswer);
+
+                if (wrongAnswer > 0 && wrongAnswer !== correctAnswer && !choices.includes(wrongAnswer)) {
+                    choices.push(wrongAnswer);
+                }
+            }
+
+            // 3つまでに制限
+            choices.splice(3);
+
+            // 正解を追加
+            choices.push(correctAnswer);
+
+            // Fisher-Yatesシャッフルでランダムに配置
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+
+            return choices;
+        }
+
         // 最小公倍数モード専用の選択肢を生成
         function generateLcmChoices(correctAnswer, num1, num2) {
             const choices = [];
@@ -2707,8 +3597,13 @@
             // 正解を追加
             choices.push(correctAnswer);
 
-            // 数字の小さい順にソート
-            return choices.sort((a, b) => a - b);
+            // Fisher-Yatesシャッフルでランダムに配置
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+
+            return choices;
         }
 
         // 選択肢を生成
@@ -2786,18 +3681,29 @@
             } else {
                 ufo.textContent = problem.question;
             }
-            // UFOの最大幅200pxを考慮して、左右に余裕を持たせる
-            const minLeft = 20; // 左端から20px以上
-            const maxLeft = window.innerWidth - 220; // 右端から220px以上（UFO最大幅200px + 余裕20px）
-            ufo.style.left = Math.random() * (maxLeft - minLeft) + minLeft + 'px';
-            ufo.style.top = '-80px';
-            
+            // 長い問題文を考慮して、より広い余裕を持たせる
+            // 問題文の長さに応じて動的に計算（文字数 × 15px + 余裕）
+            const textLength = problem.question.length;
+            const estimatedWidth = Math.max(200, textLength * 15); // 最小200px、または文字数×15px
+            const minLeft = 60; // 左端から60px以上（範囲を狭める）
+            const maxLeft = window.innerWidth - estimatedWidth - 60; // 右端から推定幅+60px以上（範囲を狭める）
+
+            // 安全な範囲を確保
+            if (maxLeft > minLeft) {
+                ufo.style.left = Math.random() * (maxLeft - minLeft) + minLeft + 'px';
+            } else {
+                // 画面が狭い場合は中央に配置
+                ufo.style.left = '50%';
+                ufo.style.transform = 'translateX(-50%)';
+            }
+            ufo.style.top = '-40px';
+
             gameArea.appendChild(ufo);
             gameState.currentUfo = ufo;
-            
+
             // UFOを降下させる
-            let position = -80;
-            const fallSpeed = (window.innerHeight + 80) / (gameState.problemSpeed / 50);
+            let position = -40;
+            const fallSpeed = (window.innerHeight + 40) / (gameState.problemSpeed / 50);
             
             const fallInterval = setInterval(() => {
                 if (!gameState.gameRunning) {
@@ -2834,7 +3740,7 @@
 
             const problem = generateProblem(gameState.mode, gameState.difficulty);
 
-            // 最小公倍数・最大公約数・小数⇔分数モードの場合は専用の選択肢生成を使用
+            // 最小公倍数・最大公約数・小数⇔分数・長さの単位・重さの単位・面積の単位・体積の単位・単位MIXモードの場合は専用の選択肢生成を使用
             let choices;
             if (gameState.mode === 'lcm') {
                 // 問題文から数値を抽出（例：「6，9」から6と9を取得）
@@ -2846,6 +3752,16 @@
                 choices = generateGcdChoices(problem.answer, numbers[0], numbers[1]);
             } else if (gameState.mode === 'fraction') {
                 choices = generateFractionChoices(problem.answer, problem.isDecimalToFraction);
+            } else if (gameState.mode === 'length') {
+                choices = generateLengthChoices(problem.answer);
+            } else if (gameState.mode === 'weight') {
+                choices = generateWeightChoices(problem.answer);
+            } else if (gameState.mode === 'area') {
+                choices = generateAreaChoices(problem.answer);
+            } else if (gameState.mode === 'volume') {
+                choices = generateVolumeChoices(problem.answer);
+            } else if (gameState.mode === 'unitMix') {
+                choices = generateUnitMixChoices(problem.answer, problem.unitType);
             } else {
                 choices = generateChoices(problem.answer);
             }
@@ -2864,11 +3780,19 @@
                 choices.forEach(choice => {
                     const button = document.createElement('button');
                     button.className = 'choice-btn';
+
+                    // 表示用のテキストを決定
+                    let displayText = choice;
+                    if (gameState.mode === 'area' || gameState.mode === 'volume' || gameState.mode === 'unitMix') {
+                        // 面積・体積・単位MIXモードでは大きな数値を万表記に変換
+                        displayText = formatLargeNumber(choice);
+                    }
+
                     // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
                     if (choice && typeof choice === 'string' && (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">'))) {
                         button.innerHTML = choice;
                     } else {
-                        button.textContent = choice;
+                        button.textContent = displayText;
                     }
                     button.onclick = () => selectAnswer(choice, button);
                     choicesContainer.appendChild(button);
@@ -2887,7 +3811,13 @@
                 
                 // UFOの位置と速度に基づいて得点を計算（位置1000点 × 速度倍率）
                 const ufoPosition = parseFloat(gameState.currentUfo.style.top);
-                const ufoLeft = parseFloat(gameState.currentUfo.style.left);
+                // UFOの実際の位置を取得（transform: translateX(-50%)を考慮）
+                let ufoLeft = parseFloat(gameState.currentUfo.style.left);
+                if (gameState.currentUfo.style.transform && gameState.currentUfo.style.transform.includes('translateX(-50%)')) {
+                    // transform: translateX(-50%)が適用されている場合、UFOの幅の半分を引く
+                    const ufoWidth = gameState.currentUfo.offsetWidth;
+                    ufoLeft = ufoLeft - (ufoWidth / 2);
+                }
                 const screenHeight = window.innerHeight;
                 const positionRatio = Math.max(0, Math.min(1, ufoPosition / screenHeight));
                 const basePoints = Math.round(1000 * (1 - positionRatio));
@@ -2901,12 +3831,12 @@
                     // ハイパー難易度の場合は1.2倍
                     points = Math.round(points * 1.2);
                 }
-                // 「ミックス」モードの場合はさらに1.1倍のボーナス
-                if (gameState.mode === 'all') {
-                    points = Math.round(points * 1.1);
-                }
-                
-                // フローティングスコアを表示（UFOの位置に）
+
+                // モードによる得点倍率を適用
+                const modeSettings = getModeSettings(gameState.mode);
+                points = Math.round(points * modeSettings.scoreMultiplier);
+
+                // フローティングスコアを表示（UFOの実際の位置に）
                 showFloatingScore(points, ufoLeft + 60, ufoPosition + 40);
                 
                 gameState.score += points;
@@ -3046,6 +3976,10 @@
             gameState.gameRunning = false; // カウントダウン中は false
             gameState.initialSpeedMultiplier = speed;
             gameState.speedMultiplier = speed;
+
+            // モードに応じた基本速度を設定
+            const modeSettings = getModeSettings(mode);
+            gameState.baseSpeed = modeSettings.baseSpeed;
             gameState.problemSpeed = gameState.baseSpeed / speed;
             gameState.wrongAnswerCount = 0;
             gameState.timeUp = false;
@@ -3423,6 +4357,16 @@
             if (gameState.bgmEnabled) {
                 resumeBgMusic();
             }
+        }
+
+        // 計算の種類選択画面に戻る
+        function returnToModeSelection() {
+            document.getElementById('speedScreen').classList.add('hidden');
+            document.getElementById('modeSelectionScreen').classList.remove('hidden');
+
+            // 上級者向けモードの背景をクリア
+            const speedScreen = document.getElementById('speedScreen');
+            speedScreen.classList.remove('speed-screen-advanced');
         }
 
         // 記録画面の初期表示（ノーマル記録を表示）
