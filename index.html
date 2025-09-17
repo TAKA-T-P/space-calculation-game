@@ -1270,6 +1270,14 @@
                 font-size: 1.1rem;
                 margin: 0.3rem 0;
             }
+
+            .choices button {
+                max-width: 120px;
+                min-width: 60px;
+                font-size: 0.8rem;
+                padding: 0.5rem 0.6rem;
+                min-height: 40px;
+            }
             
             #gameOverScreen p, #gameClearScreen p {
                 font-size: 1rem;
@@ -1470,8 +1478,7 @@
             <!-- モード表示が動的に挿入される -->
         </div>
         <div class="game-ui">
-            <div class="ui-item">スコア: <span id="score">0</span></div>
-            <div class="ui-item lives">残機: <span id="lives">3</span></div>
+            <div class="ui-item">スコア: <span id="score">0</span>　残機: <span id="lives" class="lives">3</span></div>
         </div>
 
         <div class="time-gauge-container">
@@ -1671,16 +1678,16 @@
                 'all': { baseSpeed: 10000, scoreMultiplier: 1.1 },
 
                 // 単位変換系（基本速度16秒、倍率は個別）
-                'length': { baseSpeed: 16000, scoreMultiplier: 1.5 },
+                'length': { baseSpeed: 16000, scoreMultiplier: 1.3 },
                 'weight': { baseSpeed: 16000, scoreMultiplier: 1.2 },
-                'area': { baseSpeed: 16000, scoreMultiplier: 2.0 },
-                'volume': { baseSpeed: 16000, scoreMultiplier: 2.0 },
-                'unitMix': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+                'area': { baseSpeed: 16000, scoreMultiplier: 1.6 },
+                'volume': { baseSpeed: 16000, scoreMultiplier: 1.6 },
+                'unitMix': { baseSpeed: 16000, scoreMultiplier: 1.6 },
 
                 // その他の計算
                 'reverse': { baseSpeed: 13000, scoreMultiplier: 1.2 },
-                'lcm': { baseSpeed: 16000, scoreMultiplier: 2.0 },
-                'gcd': { baseSpeed: 16000, scoreMultiplier: 2.0 },
+                'lcm': { baseSpeed: 16000, scoreMultiplier: 1.6 },
+                'gcd': { baseSpeed: 16000, scoreMultiplier: 1.6 },
                 'fraction': { baseSpeed: 13000, scoreMultiplier: 1.3 }
             };
 
