@@ -1035,11 +1035,12 @@
             }
 
             .retry-btn {
-                width: 60px;
-                height: 25px;
-                font-size: 0.7rem;
+                width: 100px;
+                height: 30px;
+                font-size: 0.8rem;
                 top: 15px;
                 left: 15px;
+                white-space: nowrap;
             }
             
             .top-buttons {
@@ -1361,6 +1362,48 @@
             text-shadow: 0 0 10px #ffaa00;
         }
 
+        .clear-records-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border: 2px solid #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 8px #ff4444;
+            z-index: 10;
+        }
+
+        .clear-records-btn:hover {
+            background: rgba(255, 68, 68, 0.3);
+            transform: scale(1.05);
+        }
+
+        .total-score-display {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .total-score-label {
+            font-size: 0.7rem;
+            color: #aaaaaa;
+            text-shadow: 0 0 3px #aaaaaa;
+            margin-bottom: 2px;
+        }
+
+        .total-score-value {
+            font-size: 1.2rem;
+            color: #00aaff;
+            text-shadow: 0 0 8px #00aaff;
+            font-weight: bold;
+        }
+
         .pagination-nav {
             display: flex;
             justify-content: center;
@@ -1407,6 +1450,76 @@
             text-shadow: 0 0 5px #00ffff;
             min-width: 50px;
             text-align: center;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1a1a2e;
+            border: 2px solid #00aaff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px #00aaff;
+            max-width: 400px;
+            width: 80%;
+        }
+
+        .modal-content p {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #ffffff;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .confirm-btn, .cancel-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 80px;
+        }
+
+        .confirm-btn {
+            border: 2px solid #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+            text-shadow: 0 0 8px #ff4444;
+        }
+
+        .confirm-btn:hover {
+            background: rgba(255, 68, 68, 0.3);
+            transform: scale(1.05);
+        }
+
+        .cancel-btn {
+            border: 2px solid #00aaff;
+            background: rgba(0, 170, 255, 0.1);
+            color: #00aaff;
+            text-shadow: 0 0 8px #00aaff;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(0, 170, 255, 0.3);
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -1469,7 +1582,8 @@
         <div class="mode-display" id="currentModeDisplay" style="
             position: absolute;
             top: 10px;
-            left: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 0.8rem;
             color: #88ccff;
             text-shadow: 0 0 3px rgba(136, 204, 255, 0.5);
@@ -1478,6 +1592,24 @@
         ">
             <!-- モード表示が動的に挿入される -->
         </div>
+        <button class="retry-btn" id="gameRetryBtn" onclick="retryCurrentGame()" style="
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            width: 100px;
+            height: 30px;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+            border: 2px solid #ffaa00;
+            background: rgba(255, 170, 0, 0.1);
+            color: #ffaa00;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #ffaa00;
+            z-index: 20;
+            white-space: nowrap;
+        ">リトライ</button>
         <div class="game-ui">
             スコア: <span id="score">0</span>　残機: <span id="lives" class="lives">3</span>
         </div>
@@ -1504,6 +1636,13 @@
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #ff6666;">地球を守れなかった・・・</p>
         <div class="score-display">最終スコア: <span id="finalScore">0</span></div>
         <div class="score-display">正解数: <span id="finalCorrectCount">0</span></div>
+        <div id="lastProblemDisplay" style="
+            font-size: 0.8rem;
+            color: #aaaaaa;
+            margin-top: 1rem;
+            text-align: center;
+            opacity: 0.8;
+        "></div>
         <button class="home-btn" onclick="restartGame()">ホーム</button>
     </div>
 
@@ -1533,9 +1672,13 @@
     </div>
 
     <div id="recordsScreen" class="screen hidden">
+        <button class="clear-records-btn" id="clearRecordsBtn">消去</button>
         <div class="records-header">
-            <button class="records-toggle-btn active" id="normalToggleBtn" data-difficulty="normal">ノーマル</button>
-            <button class="records-toggle-btn" id="hyperToggleBtn" data-difficulty="hyper">ハイパー</button>
+            <button class="records-toggle-btn" id="difficultyToggleBtn" data-difficulty="normal">ノーマル</button>
+            <div class="total-score-display">
+                <span class="total-score-label">TOTAL SCORE</span>
+                <span class="total-score-value" id="totalScoreValue">0</span>
+            </div>
         </div>
         <div class="pagination-nav">
             <button class="pagination-btn" id="recordsPrevBtn">←</button>
@@ -1546,6 +1689,17 @@
             <!-- Records will be populated by JavaScript -->
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <!-- 記録消去確認ダイアログ -->
+    <div id="clearConfirmDialog" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p>これまでの記録を消します。本当によろしいですか？</p>
+            <div class="modal-buttons">
+                <button class="confirm-btn" id="confirmClearBtn">はい</button>
+                <button class="cancel-btn" id="cancelClearBtn">いいえ</button>
+            </div>
+        </div>
     </div>
 
     <div id="instructionsScreen" class="screen hidden">
@@ -1584,7 +1738,8 @@
             timeUp: false,
             bgmEnabled: true,
             currentModePage: 1,
-            currentRecordsPage: 1
+            currentRecordsPage: 1,
+            lastFailedProblem: null
         };
 
         let gameTimer;
@@ -1673,23 +1828,23 @@
             const settings = {
                 // 基本的な四則演算
                 'addition': { baseSpeed: 10000, scoreMultiplier: 1.0 },
-                'subtraction': { baseSpeed: 10000, scoreMultiplier: 1.0 },
+                'subtraction': { baseSpeed: 10000, scoreMultiplier: 1.05 },
                 'multiplication': { baseSpeed: 10000, scoreMultiplier: 1.0 },
-                'division': { baseSpeed: 10000, scoreMultiplier: 1.0 },
-                'all': { baseSpeed: 10000, scoreMultiplier: 1.1 },
+                'division': { baseSpeed: 10000, scoreMultiplier: 1.05 },
+                'all': { baseSpeed: 10000, scoreMultiplier: 1.05 },
 
                 // 単位変換系（基本速度16秒、倍率は個別）
-                'length': { baseSpeed: 16000, scoreMultiplier: 1.3 },
-                'weight': { baseSpeed: 16000, scoreMultiplier: 1.2 },
-                'area': { baseSpeed: 16000, scoreMultiplier: 1.6 },
-                'volume': { baseSpeed: 16000, scoreMultiplier: 1.6 },
-                'unitMix': { baseSpeed: 16000, scoreMultiplier: 1.6 },
+                'length': { baseSpeed: 16000, scoreMultiplier: 1.1 },
+                'weight': { baseSpeed: 16000, scoreMultiplier: 1.0 },
+                'area': { baseSpeed: 16000, scoreMultiplier: 1.5 },
+                'volume': { baseSpeed: 16000, scoreMultiplier: 1.5 },
+                'unitMix': { baseSpeed: 16000, scoreMultiplier: 1.5 },
 
                 // その他の計算
-                'reverse': { baseSpeed: 13000, scoreMultiplier: 1.2 },
-                'lcm': { baseSpeed: 16000, scoreMultiplier: 1.6 },
-                'gcd': { baseSpeed: 16000, scoreMultiplier: 1.6 },
-                'fraction': { baseSpeed: 13000, scoreMultiplier: 1.3 }
+                'reverse': { baseSpeed: 13000, scoreMultiplier: 1.15 },
+                'lcm': { baseSpeed: 16000, scoreMultiplier: 1.2 },
+                'gcd': { baseSpeed: 16000, scoreMultiplier: 1.2 },
+                'fraction': { baseSpeed: 13000, scoreMultiplier: 1.05 }
             };
 
             return settings[mode] || { baseSpeed: 10000, scoreMultiplier: 1.0 };
@@ -2346,7 +2501,7 @@
         function changeRecordsPageTo(page) {
             if (page >= 1 && page <= recordPages.length) {
                 gameState.currentRecordsPage = page;
-                const currentDifficulty = document.querySelector('.records-toggle-btn.active').dataset.difficulty;
+                const currentDifficulty = document.getElementById('difficultyToggleBtn').dataset.difficulty;
                 updateRecordsPage(currentDifficulty);
             }
         }
@@ -2377,6 +2532,44 @@
         function getRecord(mode, difficulty) {
             const recordKey = `record_${mode}_${difficulty}`;
             return JSON.parse(localStorage.getItem(recordKey) || '{}');
+        }
+
+        function clearAllRecords() {
+            // 全ての記録キーを取得して削除
+            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction'];
+            const difficulties = ['normal', 'hyper'];
+
+            modes.forEach(mode => {
+                difficulties.forEach(difficulty => {
+                    const recordKey = `record_${mode}_${difficulty}`;
+                    localStorage.removeItem(recordKey);
+                });
+            });
+
+            // 記録画面を更新
+            updateRecordsDisplay();
+
+            // TOTAL SCOREを更新
+            const currentDifficulty = document.getElementById('difficultyToggleBtn').dataset.difficulty;
+            const totalScore = calculateTotalScore(currentDifficulty);
+            const totalScoreElement = document.getElementById('totalScoreValue');
+            if (totalScoreElement) {
+                totalScoreElement.textContent = totalScore.toLocaleString();
+            }
+        }
+
+        function calculateTotalScore(difficulty) {
+            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction'];
+            let totalScore = 0;
+
+            modes.forEach(mode => {
+                const record = getRecord(mode, difficulty);
+                if (record && record.score) {
+                    totalScore += record.score;
+                }
+            });
+
+            return totalScore;
         }
 
         function getSpeedLabel(speed) {
@@ -3736,6 +3929,8 @@
                 if (position >= window.innerHeight) {
                     clearInterval(fallInterval);
                     if (gameState.gameRunning) {
+                        // 最後の問題を保存
+                        gameState.lastFailedProblem = gameState.currentProblem;
                         gameOver();
                     }
                 }
@@ -3838,8 +4033,8 @@
                     // ノーマル難易度の場合は1.0倍（変更なし）
                     points = Math.round(points * 1.0);
                 } else if (gameState.difficulty === 'hyper') {
-                    // ハイパー難易度の場合は1.2倍
-                    points = Math.round(points * 1.2);
+                    // ハイパー難易度の場合、一律1.3倍
+                    points = Math.round(points * 1.3);
                 }
 
                 // モードによる得点倍率を適用
@@ -3909,6 +4104,8 @@
                 document.getElementById('lives').textContent = gameState.lives;
                 
                 if (gameState.lives <= 0) {
+                    // 最後の問題を保存
+                    gameState.lastFailedProblem = gameState.currentProblem;
                     setTimeout(gameOver, 500);
                 }
                 // 不正解の場合、UFOは残したまま（正解するまで消えない）
@@ -4062,6 +4259,16 @@
             document.getElementById('finalScore').textContent = gameState.score;
             document.getElementById('finalCorrectCount').textContent = gameState.correctCount;
 
+            // 最後の問題を表示
+            const lastProblemDisplay = document.getElementById('lastProblemDisplay');
+            if (gameState.lastFailedProblem) {
+                const problemText = gameState.lastFailedProblem.question;
+                const answerText = gameState.lastFailedProblem.answer;
+                lastProblemDisplay.innerHTML = `最後の問題: ${problemText} → 答え: ${answerText}`;
+            } else {
+                lastProblemDisplay.innerHTML = '';
+            }
+
             // 設定情報を表示
             const existingSettingsInfo = gameOverScreen.querySelector('.game-settings-info');
             if (existingSettingsInfo) {
@@ -4203,6 +4410,30 @@
 
         }
 
+        // プレイ中リトライ機能：現在のゲームを停止して同じ設定で再開
+        function retryCurrentGame() {
+            // 現在の設定を保存
+            const currentMode = gameState.mode;
+            const currentDifficulty = gameState.difficulty;
+            const currentSpeed = gameState.initialSpeedMultiplier;
+
+            // ゲームを停止
+            gameState.gameRunning = false;
+            if (gameTimer) {
+                clearInterval(gameTimer);
+            }
+            if (gameState.currentFallInterval) {
+                clearInterval(gameState.currentFallInterval);
+            }
+
+            // ゲームエリアをクリア
+            document.getElementById('gameArea').innerHTML = '';
+            document.getElementById('choices').innerHTML = '';
+
+            // 同じ設定でゲームを再開
+            startGame(currentMode, currentDifficulty, currentSpeed);
+        }
+
         // リトライ機能：同じ設定でゲームを再開
         function retryGame() {
             // ゲームクリア音楽を停止
@@ -4300,7 +4531,8 @@
             if (score >= 9000) return 'LV.4 宇宙船の操縦士';
             if (score >= 6000) return 'LV.3 流れ星を追う者';
             if (score >= 3000) return 'LV.2 見習い宇宙飛行士';
-            return 'LV.1 ひよっこ訓練生';
+            if (score >= 1) return 'LV.1 ひよっこ訓練生';
+            return 'LV.0 よちよち赤ちゃん';
         }
 
         // 時間ゲージを更新
@@ -4388,11 +4620,28 @@
         // 選択された難易度の記録を表示
         function showRecordsForDifficulty(difficulty) {
             // トグルボタンの状態を更新
-            document.getElementById('normalToggleBtn').classList.toggle('active', difficulty === 'normal');
-            document.getElementById('hyperToggleBtn').classList.toggle('active', difficulty === 'hyper');
+            const toggleBtn = document.getElementById('difficultyToggleBtn');
+            if (toggleBtn) {
+                toggleBtn.dataset.difficulty = difficulty;
+                toggleBtn.textContent = difficulty === 'normal' ? 'ノーマル' : 'ハイパー';
+            }
+
+            // TOTAL SCOREを更新
+            const totalScore = calculateTotalScore(difficulty);
+            const totalScoreElement = document.getElementById('totalScoreValue');
+            if (totalScoreElement) {
+                totalScoreElement.textContent = totalScore.toLocaleString();
+            }
 
             // ページネーション機能を使用して記録を表示
             updateRecordsPage(difficulty);
+        }
+
+        function toggleDifficulty() {
+            const toggleBtn = document.getElementById('difficultyToggleBtn');
+            const currentDifficulty = toggleBtn.dataset.difficulty;
+            const newDifficulty = currentDifficulty === 'normal' ? 'hyper' : 'normal';
+            showRecordsForDifficulty(newDifficulty);
         }
 
         // 背景音楽を制御
@@ -4516,6 +4765,21 @@
                 changeRecordsPageTo(gameState.currentRecordsPage + 1);
             });
 
+            // 記録消去ボタンのイベントリスナー
+            document.getElementById('clearRecordsBtn').addEventListener('click', () => {
+                document.getElementById('clearConfirmDialog').classList.remove('hidden');
+            });
+
+            // 確認ダイアログのイベントリスナー
+            document.getElementById('confirmClearBtn').addEventListener('click', () => {
+                clearAllRecords();
+                document.getElementById('clearConfirmDialog').classList.add('hidden');
+            });
+
+            document.getElementById('cancelClearBtn').addEventListener('click', () => {
+                document.getElementById('clearConfirmDialog').classList.add('hidden');
+            });
+
             document.querySelectorAll('.mode-btn, .top-btn, .instructions-btn, .records-toggle-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     if (btn.classList.contains('speed-btn')) {
@@ -4523,7 +4787,7 @@
                     } else if (btn.classList.contains('difficulty-btn')) {
                         selectDifficulty(btn.dataset.difficulty);
                     } else if (btn.classList.contains('records-toggle-btn')) {
-                        showRecordsForDifficulty(btn.dataset.difficulty);
+                        toggleDifficulty();
                     } else {
                         selectMode(btn.dataset.mode);
                     }
