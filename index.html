@@ -3292,10 +3292,11 @@
                 roundToTwoSignificantDigits(correctAnswer / 2)       // 半分
             ];
 
-            // 正解に近い範囲の誤答を選択
+            // 正解に近い範囲の誤答を選択（1億未満の制限を追加）
             const validWrongChoices = wrongChoices.filter(choice =>
                 choice > 0 &&
                 choice !== correctAnswer &&
+                choice < 100000000 &&
                 choice <= correctAnswer * 10000 &&
                 choice >= correctAnswer / 10000
             );
@@ -3350,10 +3351,11 @@
                 roundToTwoSignificantDigits(correctAnswer / 2)       // 半分
             ];
 
-            // 正解に近い範囲の誤答を選択
+            // 正解に近い範囲の誤答を選択（1億未満の制限を追加）
             const validWrongChoices = wrongChoices.filter(choice =>
                 choice > 0 &&
                 choice !== correctAnswer &&
+                choice < 100000000 &&
                 choice <= correctAnswer * 10000 &&
                 choice >= correctAnswer / 10000
             );
