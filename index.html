@@ -939,7 +939,7 @@
 
         .record-row {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             padding: 8px 12px;
             border: 2px solid #00aaff;
             background: rgba(0, 170, 255, 0.1);
@@ -947,12 +947,19 @@
             border-radius: 8px;
             text-shadow: 0 0 8px #00aaff;
             transition: all 0.3s;
+            gap: 4px;
         }
 
         .record-row-top {
             display: flex;
+            justify-content: space-between;
             align-items: center;
             width: 100%;
+        }
+
+        .record-title {
+            text-align: center;
+            font-size: 0.9rem;
         }
 
         .record-row:hover {
