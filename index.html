@@ -807,6 +807,67 @@
             text-shadow: 0 0 5px #9370db;
         }
 
+        /* 記録画面のハイパー向けスタイル */
+        .records-screen-advanced {
+            background: radial-gradient(ellipse at center,
+                rgba(75, 0, 130, 0.4) 0%,
+                rgba(48, 25, 52, 0.6) 30%,
+                rgba(25, 25, 112, 0.3) 60%,
+                rgba(0, 0, 0, 0.8) 100%);
+        }
+
+        .records-screen-advanced::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(1px 1px at 20% 30%, rgba(138, 43, 226, 0.3), transparent),
+                radial-gradient(1px 1px at 80% 70%, rgba(75, 0, 130, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 90%, rgba(148, 0, 211, 0.3), transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px, 150px 150px, 120px 120px;
+            animation: mysticalFloat 15s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .records-screen-advanced h1 {
+            color: #dda0dd;
+            text-shadow: 0 0 15px #9370db;
+        }
+
+        .records-screen-advanced .records-toggle-btn {
+            border-color: #9370db;
+            color: #dda0dd;
+            text-shadow: 0 0 8px #9370db;
+            box-shadow: 0 0 15px rgba(147, 112, 219, 0.3);
+        }
+
+        .records-screen-advanced .records-toggle-btn:hover {
+            background: rgba(147, 112, 219, 0.3);
+            box-shadow: 0 0 25px rgba(147, 112, 219, 0.5);
+        }
+
+        .records-screen-advanced .clear-records-btn {
+            border-color: #9370db;
+            color: #dda0dd;
+            text-shadow: 0 0 5px #9370db;
+        }
+
+        .records-screen-advanced .home-btn {
+            border-color: #9370db;
+            color: #dda0dd;
+            text-shadow: 0 0 5px #9370db;
+        }
+
+        .records-screen-advanced .records-container {
+            color: #dda0dd;
+            text-shadow: 0 0 5px #9370db;
+        }
+
         .game-screen-advanced .choices button {
             border-color: #9370db;
             color: #dda0dd;
@@ -873,7 +934,7 @@
             gap: 8px;
             margin: 0.8rem auto;
             max-width: 650px;
-            padding: 0 20px;
+            padding: 140px 20px 0 20px;
         }
 
         .record-row {
@@ -1031,7 +1092,17 @@
             }
 
             .records-header {
-                margin-bottom: 0.3rem;
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #0a0a1a;
+                z-index: 10;
+                padding: 8px 0;
+                border-bottom: 1px solid #333;
             }
 
             .retry-btn {
@@ -1082,7 +1153,7 @@
             }
             
             .records-table {
-                padding: 0 10px;
+                padding: 120px 10px 0 10px;
                 gap: 6px;
                 margin: 0.5rem auto;
             }
@@ -1110,8 +1181,17 @@
             }
 
             .records-header {
+                display: flex;
+                justify-content: center;
                 gap: 10px;
-                margin-bottom: 0.5rem;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: #0a0a1a;
+                z-index: 10;
+                padding: 10px 0;
+                border-bottom: 1px solid #333;
             }
 
             .records-toggle-btn {
@@ -1248,6 +1328,21 @@
                 margin: 0.5rem 0;
                 padding: 8px 15px;
             }
+
+            .pagination-nav {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: #0a0a1a;
+                z-index: 9;
+                padding: 8px 0;
+                border-bottom: 1px solid #333;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1334,7 +1429,14 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 0.3rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #0a0a1a;
+            z-index: 10;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
         }
 
         .records-toggle-btn {
@@ -1409,7 +1511,14 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
-            margin-bottom: 0;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: #0a0a1a;
+            z-index: 9;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
         }
 
         .pagination-btn {
@@ -1832,6 +1941,17 @@
                 'multiplication': { baseSpeed: 10000, scoreMultiplier: 1.0 },
                 'division': { baseSpeed: 10000, scoreMultiplier: 1.05 },
                 'all': { baseSpeed: 10000, scoreMultiplier: 1.05 },
+
+                // 小数の計算
+                'decimalAddition': { baseSpeed: 13000, scoreMultiplier: 1.1 },
+                'decimalSubtraction': { baseSpeed: 13000, scoreMultiplier: 1.1 },
+                'decimalMultiplication': { baseSpeed: 13000, scoreMultiplier: 1.1 },
+                'decimalDivision': { baseSpeed: 13000, scoreMultiplier: 1.2 },
+                'decimalMix': { baseSpeed: 13000, scoreMultiplier: 1.1 },
+
+                // 分数の計算
+                'fractionAddition': { baseSpeed: 16000, scoreMultiplier: 1.3 },
+                'fractionSubtraction': { baseSpeed: 16000, scoreMultiplier: 1.3 },
 
                 // 単位変換系（基本速度16秒、倍率は個別）
                 'length': { baseSpeed: 16000, scoreMultiplier: 1.1 },
@@ -2391,7 +2511,9 @@
         const modePages = [
             ['addition', 'subtraction', 'multiplication', 'division', 'all'],
             ['length', 'weight', 'area', 'volume', 'unitMix'],
-            ['reverse', 'lcm', 'gcd', 'fraction']
+            ['reverse', 'lcm', 'gcd', 'fraction'],
+            ['decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix'],
+            ['fractionAddition', 'fractionSubtraction']
         ];
 
         // モードページを更新する関数
@@ -2404,8 +2526,8 @@
 
             container.innerHTML = '';
 
-            // ページに応じて背景を変更
-            if (gameState.currentModePage === 3) {
+            // ハイパー難易度に応じて背景を変更
+            if (isHyperMode(gameState.difficulty)) {
                 modeScreen.classList.add('mode-selection-expert');
                 modeScreen.classList.remove('mode-selection-advanced');
             } else {
@@ -2536,7 +2658,7 @@
 
         function clearAllRecords() {
             // 全ての記録キーを取得して削除
-            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction'];
+            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction', 'decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix', 'fractionAddition', 'fractionSubtraction'];
             const difficulties = ['normal', 'hyper'];
 
             modes.forEach(mode => {
@@ -2559,7 +2681,7 @@
         }
 
         function calculateTotalScore(difficulty) {
-            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction'];
+            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction', 'decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix', 'fractionAddition', 'fractionSubtraction'];
             let totalScore = 0;
 
             modes.forEach(mode => {
@@ -2594,6 +2716,13 @@
                 case 'gcd': return '最大公約数';
                 case 'all': return 'ミックス';
                 case 'fraction': return '小数⇔分数';
+                case 'decimalAddition': return '小数のたし算';
+                case 'decimalSubtraction': return '小数のひき算';
+                case 'decimalMultiplication': return '小数のかけ算';
+                case 'decimalDivision': return '小数のわり算';
+                case 'decimalMix': return '小数MIX';
+                case 'fractionAddition': return '分数のたし算';
+                case 'fractionSubtraction': return '分数のひき算';
                 case 'length': return '長さの単位';
                 case 'weight': return '重さの単位';
                 case 'area': return '面積の単位';
@@ -2641,6 +2770,16 @@
                 case 'gcd':
                 case 'fraction':
                     return '小５～';
+                case 'decimalAddition':
+                case 'decimalSubtraction':
+                    return '小４～';
+                case 'decimalMultiplication':
+                case 'decimalDivision':
+                case 'decimalMix':
+                    return '小５～';
+                case 'fractionAddition':
+                case 'fractionSubtraction':
+                    return '小５～';
                 case 'length':
                     return isHyper ? '小４～' : '小３～';
                 case 'weight':
@@ -2656,10 +2795,9 @@
             }
         }
 
-        // 上級者向けモード（3ページ目のモード）かどうかを判定する関数
-        function isAdvancedMode(mode) {
-            const advancedModes = ['reverse', 'lcm', 'gcd', 'fraction'];
-            return advancedModes.includes(mode);
+        // ハイパー難易度かどうかを判定する関数
+        function isHyperMode(difficulty) {
+            return difficulty === 'hyper';
         }
 
         function getModeInstruction(mode) {
@@ -2668,6 +2806,13 @@
                 case 'subtraction': return 'ひき算を計算せよ。';
                 case 'multiplication': return 'かけ算を計算せよ。';
                 case 'division': return 'わり算を計算せよ。';
+                case 'decimalAddition': return '小数のたし算を計算せよ。';
+                case 'decimalSubtraction': return '小数のひき算を計算せよ。';
+                case 'decimalMultiplication': return '小数のかけ算を計算せよ。';
+                case 'decimalDivision': return '小数のわり算を計算せよ。';
+                case 'decimalMix': return '小数の計算を解け。';
+                case 'fractionAddition': return '分数のたし算を計算せよ。';
+                case 'fractionSubtraction': return '分数のひき算を計算せよ。';
                 case 'reverse': return '□ にあてはまる数を求めよ。';
                 case 'lcm': return '最小公倍数を求めよ。';
                 case 'gcd': return '最大公約数を求めよ。';
@@ -2786,12 +2931,24 @@
             }
         }
 
+        // 指定されたモードがあるページのインデックスを検索する関数
+        function findModePageIndex(mode) {
+            for (let i = 0; i < modePages.length; i++) {
+                if (modePages[i].includes(mode)) {
+                    return i; // 0ベースのページインデックス
+                }
+            }
+            return -1; // 見つからない場合
+        }
+
         // 計算問題を生成
         function generateProblem(mode, difficulty) {
+            console.log('問題生成開始 - mode:', mode, 'difficulty:', difficulty);
             let num1, num2, operation, answer;
 
             const modes = mode === 'all' ? ['addition', 'subtraction', 'multiplication', 'division'] : [mode];
             const selectedMode = modes[Math.floor(Math.random() * modes.length)];
+            console.log('選択されたモード:', selectedMode);
 
             switch (selectedMode) {
                 case 'addition':
@@ -3153,12 +3310,962 @@
                 case 'unitMix':
                     // 単位MIXモード
                     return generateUnitMixProblem(difficulty);
+                case 'decimalAddition':
+                    // 小数のたし算モード
+                    return generateDecimalAdditionProblem(difficulty);
+                case 'decimalSubtraction':
+                    // 小数のひき算モード
+                    return generateDecimalSubtractionProblem(difficulty);
+                case 'decimalMultiplication':
+                    // 小数のかけ算モード
+                    return generateDecimalMultiplicationProblem(difficulty);
+                case 'decimalDivision':
+                    // 小数のわり算モード
+                    return generateDecimalDivisionProblem(difficulty);
+                case 'decimalMix':
+                    // 小数MIXモード：たし算・ひき算・かけ算・わり算からランダム選択
+                    const decimalModes = ['decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision'];
+                    const randomDecimalMode = decimalModes[Math.floor(Math.random() * decimalModes.length)];
+
+                    switch (randomDecimalMode) {
+                        case 'decimalAddition':
+                            return generateDecimalAdditionProblem(difficulty);
+                        case 'decimalSubtraction':
+                            return generateDecimalSubtractionProblem(difficulty);
+                        case 'decimalMultiplication':
+                            return generateDecimalMultiplicationProblem(difficulty);
+                        case 'decimalDivision':
+                            return generateDecimalDivisionProblem(difficulty);
+                    }
+                case 'fractionAddition':
+                    // 分数のたし算モード
+                    console.log('分数のたし算モードが選択されました');
+                    return generateFractionAdditionProblem(difficulty);
+                case 'fractionSubtraction':
+                    // 分数のひき算モード
+                    console.log('分数のひき算モードが選択されました');
+                    return generateFractionSubtractionProblem(difficulty);
             }
 
             return {
                 question: `${num1} ${operation} ${num2}`,
                 answer: answer
             };
+        }
+
+        // 小数のたし算問題を生成する関数
+        function generateDecimalAdditionProblem(difficulty) {
+            let num1, num2, answer;
+
+            if (difficulty === 'normal') {
+                // ノーマル：1桁+1桁の基本ルールを1/10または1/100に
+                const baseNum1 = Math.floor(Math.random() * 9) + 1;
+                const baseNum2 = Math.floor(Math.random() * 9) + 1;
+
+                // 1/10または1/100をランダムに選択
+                const divisor = Math.random() < 0.5 ? 10 : 100;
+                num1 = baseNum1 / divisor;
+                num2 = baseNum2 / divisor;
+
+                // 同じ小数桁数に統一
+                const decimalPlaces = divisor === 10 ? 1 : 2;
+                num1 = parseFloat(num1.toFixed(decimalPlaces));
+                num2 = parseFloat(num2.toFixed(decimalPlaces));
+                answer = parseFloat((num1 + num2).toFixed(decimalPlaces));
+
+            } else {
+                // ハイパー：2桁+2桁の基本ルールを1/10または1/100に（答えが10以下になるよう調整）
+                let baseNum1 = Math.floor(Math.random() * 90) + 10;
+                let baseNum2 = Math.floor(Math.random() * 90) + 10;
+
+                // 答えが100以下になるよう調整
+                const maxNum2 = Math.min(90, 100 - baseNum1);
+                baseNum2 = Math.floor(Math.random() * (maxNum2 - 10 + 1)) + 10;
+
+                // 1/10または1/100をランダムに選択
+                const divisor = Math.random() < 0.5 ? 10 : 100;
+                num1 = baseNum1 / divisor;
+                num2 = baseNum2 / divisor;
+
+                // 同じ小数桁数に統一
+                const decimalPlaces = divisor === 10 ? 1 : 2;
+                num1 = parseFloat(num1.toFixed(decimalPlaces));
+                num2 = parseFloat(num2.toFixed(decimalPlaces));
+                answer = parseFloat((num1 + num2).toFixed(decimalPlaces));
+            }
+
+            return {
+                question: `${num1} + ${num2}`,
+                answer: answer
+            };
+        }
+
+        // 小数のひき算問題を生成する関数
+        function generateDecimalSubtractionProblem(difficulty) {
+            let num1, num2, answer;
+
+            if (difficulty === 'normal') {
+                // ノーマル：ひき算の基本ルール（引く数と答えが1桁）を1/10または1/100に
+                const baseAnswer = Math.floor(Math.random() * 9) + 1;
+                const baseNum2 = Math.floor(Math.random() * 9) + 1;
+                const baseNum1 = baseAnswer + baseNum2;
+
+                // 1/10または1/100をランダムに選択
+                const divisor = Math.random() < 0.5 ? 10 : 100;
+                num1 = baseNum1 / divisor;
+                num2 = baseNum2 / divisor;
+                answer = baseAnswer / divisor;
+
+                // 同じ小数桁数に統一
+                const decimalPlaces = divisor === 10 ? 1 : 2;
+                num1 = parseFloat(num1.toFixed(decimalPlaces));
+                num2 = parseFloat(num2.toFixed(decimalPlaces));
+                answer = parseFloat(answer.toFixed(decimalPlaces));
+
+            } else {
+                // ハイパー：ひき算の基本ルール（引く数と答えが2桁、引かれる数は100以下）を1/10または1/100に
+                let baseAnswer = Math.floor(Math.random() * 90) + 10;
+                const baseNum2 = Math.floor(Math.random() * 90) + 10;
+                let baseNum1 = Math.min(100, baseAnswer + baseNum2);
+
+                // baseNum1が100になった場合、baseAnswerを再調整
+                if (baseNum1 === 100) {
+                    const adjustedBaseAnswer = baseNum1 - baseNum2;
+                    if (adjustedBaseAnswer >= 10) {
+                        baseAnswer = adjustedBaseAnswer;
+                    }
+                }
+
+                // 1/10または1/100をランダムに選択
+                const divisor = Math.random() < 0.5 ? 10 : 100;
+                num1 = baseNum1 / divisor;
+                num2 = baseNum2 / divisor;
+                answer = baseAnswer / divisor;
+
+                // 同じ小数桁数に統一
+                const decimalPlaces = divisor === 10 ? 1 : 2;
+                num1 = parseFloat(num1.toFixed(decimalPlaces));
+                num2 = parseFloat(num2.toFixed(decimalPlaces));
+                answer = parseFloat(answer.toFixed(decimalPlaces));
+            }
+
+            return {
+                question: `${num1} - ${num2}`,
+                answer: answer
+            };
+        }
+
+        // 小数のかけ算問題を生成する関数
+        function generateDecimalMultiplicationProblem(difficulty) {
+            let num1, num2, answer;
+
+            // 小数桁数を計算するヘルパー関数
+            function getDecimalPlaces(num) {
+                const str = num.toString();
+                if (str.includes('.')) {
+                    return str.split('.')[1].length;
+                }
+                return 0;
+            }
+
+            if (difficulty === 'normal') {
+                // ノーマル：基本かけ算（1桁×1桁）をベースに変換
+                const baseNum1 = Math.floor(Math.random() * 10) + 1;
+                const baseNum2 = Math.floor(Math.random() * 10) + 1;
+
+                // かけられる数を1/10または1/100に
+                const divisor1 = Math.random() < 0.5 ? 10 : 100;
+                num1 = baseNum1 / divisor1;
+
+                // かける数を1/10・1/100または10倍・100倍に
+                const rand = Math.random();
+                if (rand < 0.25) {
+                    num2 = baseNum2 / 10;    // 1/10
+                } else if (rand < 0.5) {
+                    num2 = baseNum2 / 100;   // 1/100
+                } else if (rand < 0.75) {
+                    num2 = baseNum2 * 10;    // 10倍
+                } else {
+                    num2 = baseNum2 * 100;   // 100倍
+                }
+
+                // 各数値の小数桁数を正確に設定
+                const decimalPlaces1 = divisor1 === 10 ? 1 : 2;
+                let decimalPlaces2 = 0;
+                if (rand < 0.25) decimalPlaces2 = 1;      // 1/10
+                else if (rand < 0.5) decimalPlaces2 = 2;  // 1/100
+                else decimalPlaces2 = 0;                  // 10倍・100倍
+
+                // かけられる数・かける数ともに小数第2位の場合、かける数を10倍して答えを小数第3位までにする
+                if (divisor1 === 100 && rand < 0.5) {
+                    num2 = num2 * 10;
+                    decimalPlaces2 = decimalPlaces2 - 1; // 10倍すると小数桁数が1桁減る
+                }
+
+                num1 = parseFloat(num1.toFixed(decimalPlaces1));
+                num2 = parseFloat(num2.toFixed(decimalPlaces2));
+
+                // 答えの小数桁数は、かけ算なので各数値の小数桁数の合計
+                answer = num1 * num2;
+                const answerDecimalPlaces = decimalPlaces1 + decimalPlaces2;
+                answer = parseFloat(answer.toFixed(answerDecimalPlaces));
+
+            } else {
+                // ハイパー：基本かけ算（答えが100以下）をベースに変換
+                let baseNum1, baseNum2;
+                do {
+                    baseNum1 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
+                    baseNum2 = Math.floor(Math.random() * 9) + 1;   // 1-9の範囲
+                } while (baseNum1 * baseNum2 > 100);
+
+                // かけられる数を1/10または1/100に
+                const divisor1 = Math.random() < 0.5 ? 10 : 100;
+                num1 = baseNum1 / divisor1;
+
+                // かける数を1/10・1/100または10倍・100倍に
+                const rand = Math.random();
+                if (rand < 0.25) {
+                    num2 = baseNum2 / 10;    // 1/10
+                } else if (rand < 0.5) {
+                    num2 = baseNum2 / 100;   // 1/100
+                } else if (rand < 0.75) {
+                    num2 = baseNum2 * 10;    // 10倍
+                } else {
+                    num2 = baseNum2 * 100;   // 100倍
+                }
+
+                // 各数値の小数桁数を正確に設定
+                const decimalPlaces1 = divisor1 === 10 ? 1 : 2;
+                let decimalPlaces2 = 0;
+                if (rand < 0.25) decimalPlaces2 = 1;      // 1/10
+                else if (rand < 0.5) decimalPlaces2 = 2;  // 1/100
+                else decimalPlaces2 = 0;                  // 10倍・100倍
+
+                // かけられる数・かける数ともに小数第2位の場合、かける数を10倍して答えを小数第3位までにする
+                if (divisor1 === 100 && rand < 0.5) {
+                    num2 = num2 * 10;
+                    decimalPlaces2 = decimalPlaces2 - 1; // 10倍すると小数桁数が1桁減る
+                }
+
+                num1 = parseFloat(num1.toFixed(decimalPlaces1));
+                num2 = parseFloat(num2.toFixed(decimalPlaces2));
+
+                // 答えの小数桁数は、かけ算なので各数値の小数桁数の合計
+                answer = num1 * num2;
+                const answerDecimalPlaces = decimalPlaces1 + decimalPlaces2;
+                answer = parseFloat(answer.toFixed(answerDecimalPlaces));
+            }
+
+            return {
+                question: `${num1} × ${num2}`,
+                answer: answer
+            };
+        }
+
+        // 小数のかけ算専用の選択肢を生成する関数
+        function generateDecimalMultiplicationChoices(correctAnswer) {
+            const choices = new Set();
+
+            // 小数桁数を計算する関数
+            function getDecimalPlaces(num) {
+                const str = num.toString();
+                if (str.includes('.')) {
+                    return str.split('.')[1].length;
+                }
+                return 0;
+            }
+
+            // 正解を追加
+            choices.add(correctAnswer);
+
+            // 1. 小数点を1桁右にずらした答え（10倍）
+            const shiftedRight = parseFloat((correctAnswer * 10).toFixed(getDecimalPlaces(correctAnswer) + 1));
+            if (shiftedRight !== correctAnswer && shiftedRight > 0) {
+                choices.add(shiftedRight);
+            }
+
+            // 2. 小数点を1桁左にずらした答え（1/10倍）
+            if (correctAnswer >= 0.1) { // 0.01未満にならないようにする
+                const shiftedLeft = parseFloat((correctAnswer / 10).toFixed(getDecimalPlaces(correctAnswer) + 1));
+                if (shiftedLeft !== correctAnswer && shiftedLeft > 0) {
+                    choices.add(shiftedLeft);
+                }
+            }
+
+            // 3. その他の間違い選択肢を生成
+            let attempts = 0;
+            while (choices.size < 4 && attempts < 100) {
+                let wrongAnswer;
+                const rand = Math.random();
+
+                if (rand < 0.3) {
+                    // 少し大きい値
+                    const increment = Math.pow(10, -getDecimalPlaces(correctAnswer)) * (Math.floor(Math.random() * 3) + 1);
+                    wrongAnswer = correctAnswer + increment;
+                } else if (rand < 0.6) {
+                    // 少し小さい値
+                    const decrement = Math.pow(10, -getDecimalPlaces(correctAnswer)) * (Math.floor(Math.random() * 3) + 1);
+                    wrongAnswer = correctAnswer - decrement;
+                } else {
+                    // ランダムな値（正解の50%〜150%範囲）
+                    const factor = 0.5 + Math.random();
+                    wrongAnswer = correctAnswer * factor;
+                }
+
+                if (wrongAnswer > 0) {
+                    const roundedWrong = parseFloat(wrongAnswer.toFixed(Math.min(getDecimalPlaces(correctAnswer) + 1, 4)));
+                    if (!choices.has(roundedWrong) && roundedWrong !== correctAnswer) {
+                        choices.add(roundedWrong);
+                    }
+                }
+                attempts++;
+            }
+
+            // 選択肢が不足している場合のフォールバック
+            while (choices.size < 4) {
+                const increment = Math.pow(10, -getDecimalPlaces(correctAnswer));
+                const fallbackChoice = parseFloat((correctAnswer + increment * (choices.size - 1)).toFixed(getDecimalPlaces(correctAnswer)));
+                if (fallbackChoice > 0 && !choices.has(fallbackChoice)) {
+                    choices.add(fallbackChoice);
+                } else {
+                    break;
+                }
+            }
+
+            return Array.from(choices).sort(() => Math.random() - 0.5);
+        }
+
+        // 小数のわり算専用の選択肢を生成する関数
+        function generateDecimalDivisionChoices(correctAnswer) {
+            const choices = new Set();
+
+            // 小数桁数を計算する関数
+            function getDecimalPlaces(num) {
+                const str = num.toString();
+                if (str.includes('.')) {
+                    return str.split('.')[1].length;
+                }
+                return 0;
+            }
+
+            // 正解を追加
+            choices.add(correctAnswer);
+
+            // 1. 小数点を1桁右にずらした答え（10倍）
+            const shiftedRight = parseFloat((correctAnswer * 10).toFixed(getDecimalPlaces(correctAnswer) + 1));
+            if (shiftedRight !== correctAnswer && shiftedRight > 0) {
+                choices.add(shiftedRight);
+            }
+
+            // 2. 小数点を1桁左にずらした答え（1/10倍）
+            if (correctAnswer >= 0.1) { // 0.01未満にならないようにする
+                const shiftedLeft = parseFloat((correctAnswer / 10).toFixed(getDecimalPlaces(correctAnswer) + 1));
+                if (shiftedLeft !== correctAnswer && shiftedLeft > 0) {
+                    choices.add(shiftedLeft);
+                }
+            }
+
+            // 3. その他の間違い選択肢を生成
+            let attempts = 0;
+            while (choices.size < 4 && attempts < 100) {
+                let wrongAnswer;
+                const rand = Math.random();
+
+                if (rand < 0.3) {
+                    // 正解に小さな値を加算/減算
+                    const variation = Math.pow(10, -getDecimalPlaces(correctAnswer)) * (Math.floor(Math.random() * 5) + 1);
+                    wrongAnswer = Math.random() < 0.5 ? correctAnswer + variation : correctAnswer - variation;
+                } else if (rand < 0.6) {
+                    // 正解の約半分または約2倍
+                    wrongAnswer = Math.random() < 0.5 ? correctAnswer / 2 : correctAnswer * 2;
+                } else {
+                    // ランダムな近似値
+                    const factor = 0.8 + Math.random() * 0.4; // 0.8 ～ 1.2倍
+                    wrongAnswer = correctAnswer * factor;
+                }
+
+                // 適切に丸めて正の値のみ追加
+                if (wrongAnswer > 0) {
+                    const roundedWrong = parseFloat(wrongAnswer.toFixed(getDecimalPlaces(correctAnswer)));
+                    if (roundedWrong !== correctAnswer && roundedWrong > 0 && !choices.has(roundedWrong)) {
+                        choices.add(roundedWrong);
+                    }
+                }
+                attempts++;
+            }
+
+            // 選択肢が不足している場合のフォールバック
+            while (choices.size < 4) {
+                const increment = Math.pow(10, -getDecimalPlaces(correctAnswer));
+                const fallbackChoice = parseFloat((correctAnswer + increment * (choices.size - 1)).toFixed(getDecimalPlaces(correctAnswer)));
+                if (fallbackChoice > 0 && !choices.has(fallbackChoice)) {
+                    choices.add(fallbackChoice);
+                } else {
+                    break;
+                }
+            }
+
+            return Array.from(choices).sort(() => Math.random() - 0.5);
+        }
+
+        // 小数計算専用の選択肢を生成する関数
+        function generateDecimalChoices(correctAnswer) {
+            const choices = new Set();
+
+            // 小数桁数を判定
+            const answerStr = correctAnswer.toString();
+            let decimalPlaces = 0;
+            if (answerStr.includes('.')) {
+                decimalPlaces = answerStr.split('.')[1].length;
+            }
+
+            // 正解を適切に丸めて追加
+            const roundedCorrect = parseFloat(correctAnswer.toFixed(decimalPlaces));
+            choices.add(roundedCorrect);
+
+            // 間違いの選択肢を生成
+            let attempts = 0;
+            while (choices.size < 4 && attempts < 200) {
+                let wrongAnswer;
+                const rand = Math.random();
+
+                if (rand < 0.5) {
+                    // 正解より小さい値を生成
+                    const variation = Math.pow(10, -decimalPlaces) * (Math.floor(Math.random() * 9) + 1);
+                    wrongAnswer = correctAnswer - variation;
+                } else {
+                    // 正解より大きい値を生成
+                    const variation = Math.pow(10, -decimalPlaces) * (Math.floor(Math.random() * 9) + 1);
+                    wrongAnswer = correctAnswer + variation;
+                }
+
+                // 適切に丸めて正の値のみ追加
+                if (wrongAnswer > 0) {
+                    const roundedWrong = parseFloat(wrongAnswer.toFixed(decimalPlaces));
+                    if (roundedWrong !== roundedCorrect && roundedWrong > 0) {
+                        choices.add(roundedWrong);
+                    }
+                }
+                attempts++;
+            }
+
+            // 選択肢が不足している場合のフォールバック処理
+            while (choices.size < 4) {
+                const increment = Math.pow(10, -decimalPlaces);
+                const fallbackChoice = parseFloat((correctAnswer + increment * (choices.size - 1)).toFixed(decimalPlaces));
+                if (fallbackChoice > 0 && !choices.has(fallbackChoice)) {
+                    choices.add(fallbackChoice);
+                } else {
+                    const fallbackChoice2 = parseFloat((correctAnswer - increment * choices.size).toFixed(decimalPlaces));
+                    if (fallbackChoice2 > 0) {
+                        choices.add(fallbackChoice2);
+                    } else {
+                        choices.add(parseFloat((correctAnswer + increment * choices.size).toFixed(decimalPlaces)));
+                    }
+                }
+            }
+
+            return Array.from(choices).sort(() => Math.random() - 0.5);
+        }
+
+        // 小数のわり算問題を生成する関数
+        function generateDecimalDivisionProblem(difficulty) {
+            let num1, num2, answer;
+
+            // 基本のわり算問題を生成
+            if (difficulty === 'normal') {
+                // ノーマル：基本わり算（余りなし）をベース
+                answer = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 9) + 1;
+                num1 = answer * num2;
+            } else {
+                // ハイパー：より複雑な基本わり算をベース
+                do {
+                    if (Math.random() < 0.5) {
+                        answer = Math.floor(Math.random() * 9) + 1;
+                        num2 = Math.floor(Math.random() * 10) + 11;
+                        num1 = answer * num2;
+                    } else {
+                        answer = Math.floor(Math.random() * 10) + 11;
+                        num2 = Math.floor(Math.random() * 9) + 1;
+                        num1 = answer * num2;
+                    }
+                } while (num1 > 100);
+            }
+
+            // わられる数・わる数をそれぞれランダムで1倍、1/10、1/100に変換
+            const dividendMultipliers = [1, 0.1, 0.01]; // 1倍、1/10、1/100
+            const divisorMultipliers = [1, 0.1, 0.01];   // 1倍、1/10、1/100
+
+            let isValidProblem = false;
+            let attempts = 0;
+
+            while (!isValidProblem && attempts < 100) {
+                // ランダムに倍率を選択
+                const dividendMultiplier = dividendMultipliers[Math.floor(Math.random() * 3)];
+                const divisorMultiplier = divisorMultipliers[Math.floor(Math.random() * 3)];
+
+                // 小数を計算
+                const decimalNum1 = num1 * dividendMultiplier;
+                const decimalNum2 = num2 * divisorMultiplier;
+
+                // 両方が整数になる場合は除外
+                const isNum1Integer = Number.isInteger(decimalNum1);
+                const isNum2Integer = Number.isInteger(decimalNum2);
+
+                if (!(isNum1Integer && isNum2Integer)) {
+                    // 小数点桁数を計算
+                    const num1DecimalPlaces = dividendMultiplier === 1 ? 0 : (dividendMultiplier === 0.1 ? 1 : 2);
+                    const num2DecimalPlaces = divisorMultiplier === 1 ? 0 : (divisorMultiplier === 0.1 ? 1 : 2);
+
+                    // 答えを計算（わり算なので小数点桁数は引き算）
+                    answer = decimalNum1 / decimalNum2;
+                    const answerDecimalPlaces = Math.max(0, num1DecimalPlaces - num2DecimalPlaces + 2); // 最大2桁まで
+
+                    // 小数を適切にフォーマット
+                    num1 = parseFloat(decimalNum1.toFixed(num1DecimalPlaces));
+                    num2 = parseFloat(decimalNum2.toFixed(num2DecimalPlaces));
+                    answer = parseFloat(answer.toFixed(answerDecimalPlaces));
+
+                    isValidProblem = true;
+                }
+                attempts++;
+            }
+
+            // 念のため、問題が生成できなかった場合のフォールバック
+            if (!isValidProblem) {
+                num1 = 1.2;
+                num2 = 0.3;
+                answer = 4;
+            }
+
+            return {
+                question: `${num1} ÷ ${num2}`,
+                answer: answer
+            };
+        }
+
+        // ランダムな分数を生成する関数
+        function generateRandomFraction() {
+            const denominator = Math.floor(Math.random() * 11) + 2; // 2-12
+            const numerator = Math.floor(Math.random() * (denominator - 1)) + 1; // 1 to denominator-1
+            return { n: numerator, d: denominator };
+        }
+
+        // 分数のたし算問題を生成する関数
+        function generateFractionAdditionProblem(difficulty) {
+            console.log('分数のたし算問題生成開始:', difficulty);
+            try {
+                // 分母を直接決定（答えが100以内になるよう小さめに）
+                let denom1 = Math.floor(Math.random() * 8) + 2; // 2-9
+                let denom2 = Math.floor(Math.random() * 8) + 2; // 2-9
+
+                // 分子は分母より小さい数とする（最小値1を保証）
+                let num1 = Math.floor(Math.random() * Math.max(1, denom1 - 1)) + 1;
+                let num2 = Math.floor(Math.random() * Math.max(1, denom2 - 1)) + 1;
+
+                // 分子が分母以上になった場合の調整
+                if (num1 >= denom1) num1 = denom1 - 1;
+                if (num2 >= denom2) num2 = denom2 - 1;
+                if (num1 <= 0) num1 = 1;
+                if (num2 <= 0) num2 = 1;
+
+                // 生成した分数を約分する
+                const fraction1 = reduceFraction(num1, denom1);
+                const fraction2 = reduceFraction(num2, denom2);
+
+                num1 = fraction1.numerator;
+                denom1 = fraction1.denominator;
+                num2 = fraction2.numerator;
+                denom2 = fraction2.denominator;
+
+                // 約分後に整数になった場合の調整
+                if (denom1 === 1) {
+                    num1 = 1;
+                    denom1 = 2;
+                }
+                if (denom2 === 1) {
+                    num2 = 1;
+                    denom2 = 3;
+                }
+
+                // ハイパーモードでは一方もしくは両方の分数を帯分数にする
+                let wholeNum1 = 0;
+                let wholeNum2 = 0;
+
+                if (difficulty === 'hyper') {
+                    // ハイパーモードでは必ず一方もしくは両方が帯分数になるように保証
+                    const mixedMode = Math.floor(Math.random() * 3); // 0: 第1分数のみ帯分数, 1: 第2分数のみ帯分数, 2: 両方帯分数
+
+                    if (mixedMode === 0 || mixedMode === 2) {
+                        wholeNum1 = Math.floor(Math.random() * 2) + 1; // 1-2の整数部分（100超えを防ぐため小さく）
+                    }
+
+                    if (mixedMode === 1 || mixedMode === 2) {
+                        wholeNum2 = Math.floor(Math.random() * 2) + 1; // 1-2の整数部分（100超えを防ぐため小さく）
+                    }
+
+                    // 万が一両方とも0のままの場合（バグ防止）、第1分数を帯分数にする
+                    if (wholeNum1 === 0 && wholeNum2 === 0) {
+                        wholeNum1 = 1;
+                    }
+                }
+
+                // 分数のたし算を計算
+                const commonDenominator = lcm(denom1, denom2);
+                const totalNum1 = (wholeNum1 * denom1 + num1) * (commonDenominator / denom1);
+                const totalNum2 = (wholeNum2 * denom2 + num2) * (commonDenominator / denom2);
+                const sumNumerator = totalNum1 + totalNum2;
+
+                // 約分
+                let answerReduced = reduceFraction(sumNumerator, commonDenominator);
+
+                // 答えの分母または分子が100を超える場合は調整
+                if (answerReduced.numerator > 100 || answerReduced.denominator > 100) {
+                    // ハイパーモードでは帯分数を保持したまま簡単な問題に変更
+                    if (difficulty === 'hyper') {
+                        num1 = 1;
+                        denom1 = 2;
+                        num2 = 1;
+                        denom2 = 3;
+                        // 帯分数は維持（少なくとも1つは帯分数にする）
+                        if (wholeNum1 === 0 && wholeNum2 === 0) {
+                            wholeNum1 = 1;
+                        }
+                    } else {
+                        // ノーマルモードは真分数のまま
+                        num1 = 1;
+                        denom1 = 2;
+                        num2 = 1;
+                        denom2 = 3;
+                        wholeNum1 = 0;
+                        wholeNum2 = 0;
+                    }
+
+                    // 再計算
+                    const newCommonDenominator = lcm(denom1, denom2);
+                    const newTotalNum1 = (wholeNum1 * denom1 + num1) * (newCommonDenominator / denom1);
+                    const newTotalNum2 = (wholeNum2 * denom2 + num2) * (newCommonDenominator / denom2);
+                    const newSumNumerator = newTotalNum1 + newTotalNum2;
+                    answerReduced = reduceFraction(newSumNumerator, newCommonDenominator);
+                }
+
+                // 答えの表示形式を決定
+                let answerHTML;
+                if (difficulty === 'hyper' && answerReduced.numerator > answerReduced.denominator) {
+                    // ハイパーで1を超える分数は帯分数で表記
+                    answerHTML = fractionToHTML(answerReduced.numerator, answerReduced.denominator, true);
+                } else {
+                    answerHTML = fractionToHTML(answerReduced.numerator, answerReduced.denominator);
+                }
+
+                // 問題の表示形式
+                let fraction1HTML, fraction2HTML;
+                if (wholeNum1 > 0) {
+                    // 帯分数の場合、仮分数として表現
+                    const improperNum1 = wholeNum1 * denom1 + num1;
+                    fraction1HTML = fractionToHTML(improperNum1, denom1, true);
+                } else {
+                    fraction1HTML = fractionToHTML(num1, denom1);
+                }
+
+                if (wholeNum2 > 0) {
+                    // 帯分数の場合、仮分数として表現
+                    const improperNum2 = wholeNum2 * denom2 + num2;
+                    fraction2HTML = fractionToHTML(improperNum2, denom2, true);
+                } else {
+                    fraction2HTML = fractionToHTML(num2, denom2);
+                }
+
+                const result = {
+                    question: `${fraction1HTML} + ${fraction2HTML}`,
+                    answer: answerHTML,
+                    answerFraction: answerReduced
+                };
+                console.log('分数のたし算問題生成完了:', result);
+                return result;
+            } catch (error) {
+                // エラーが発生した場合のフォールバック
+                console.error('分数のたし算問題生成でエラー:', error);
+                const fallbackAnswer = fractionToHTML(5, 6);
+                return {
+                    question: `${fractionToHTML(1, 2)} + ${fractionToHTML(1, 3)}`,
+                    answer: fallbackAnswer,
+                    answerFraction: { numerator: 5, denominator: 6 }
+                };
+            }
+        }
+
+        // 分数のひき算問題を生成する関数
+        function generateFractionSubtractionProblem(difficulty) {
+            console.log('分数のひき算問題生成開始:', difficulty);
+            try {
+                // 分母を直接決定（答えが100以内になるよう小さめに）
+                let denom1 = Math.floor(Math.random() * 8) + 2; // 2-9
+                let denom2 = Math.floor(Math.random() * 8) + 2; // 2-9
+
+                // 分子は分母より小さい数とする（最小値1を保証）
+                let num1 = Math.floor(Math.random() * Math.max(1, denom1 - 1)) + 1;
+                let num2 = Math.floor(Math.random() * Math.max(1, denom2 - 1)) + 1;
+
+                // 分子が分母以上になった場合の調整
+                if (num1 >= denom1) num1 = denom1 - 1;
+                if (num2 >= denom2) num2 = denom2 - 1;
+                if (num1 <= 0) num1 = 1;
+                if (num2 <= 0) num2 = 1;
+
+                // 生成した分数を約分する
+                const fraction1 = reduceFraction(num1, denom1);
+                const fraction2 = reduceFraction(num2, denom2);
+
+                num1 = fraction1.numerator;
+                denom1 = fraction1.denominator;
+                num2 = fraction2.numerator;
+                denom2 = fraction2.denominator;
+
+                // 約分後に整数になった場合の調整
+                if (denom1 === 1) {
+                    num1 = 1;
+                    denom1 = 2;
+                }
+                if (denom2 === 1) {
+                    num2 = 1;
+                    denom2 = 3;
+                }
+
+                // ハイパーモードでは一方もしくは両方の分数を帯分数にする
+                let wholeNum1 = 0;
+                let wholeNum2 = 0;
+
+                if (difficulty === 'hyper') {
+                    // ハイパーモードでは必ず一方もしくは両方が帯分数になるように保証
+                    const mixedMode = Math.floor(Math.random() * 3); // 0: 第1分数のみ帯分数, 1: 第2分数のみ帯分数, 2: 両方帯分数
+
+                    if (mixedMode === 0 || mixedMode === 2) {
+                        wholeNum1 = Math.floor(Math.random() * 2) + 1; // 1-2の整数部分（100超えを防ぐため小さく）
+                    }
+
+                    if (mixedMode === 1 || mixedMode === 2) {
+                        wholeNum2 = Math.floor(Math.random() * 2) + 1; // 1-2の整数部分（100超えを防ぐため小さく）
+                    }
+
+                    // 万が一両方とも0のままの場合（バグ防止）、第1分数を帯分数にする
+                    if (wholeNum1 === 0 && wholeNum2 === 0) {
+                        wholeNum1 = 1;
+                    }
+                }
+
+                // 分数のひき算を計算
+                const commonDenominator = lcm(denom1, denom2);
+                const totalNum1 = (wholeNum1 * denom1 + num1) * (commonDenominator / denom1);
+                const totalNum2 = (wholeNum2 * denom2 + num2) * (commonDenominator / denom2);
+
+                // 負の数にならないよう、第2分数が第1分数より大きい場合は順序を入れ替える
+                let fraction1HTML, fraction2HTML;
+                let subtractNumerator;
+
+                if (totalNum1 >= totalNum2) {
+                    // 正常な順序：第1分数 - 第2分数
+                    subtractNumerator = totalNum1 - totalNum2;
+
+                    if (wholeNum1 > 0) {
+                        const improperNum1 = wholeNum1 * denom1 + num1;
+                        fraction1HTML = fractionToHTML(improperNum1, denom1, true);
+                    } else {
+                        fraction1HTML = fractionToHTML(num1, denom1);
+                    }
+
+                    if (wholeNum2 > 0) {
+                        const improperNum2 = wholeNum2 * denom2 + num2;
+                        fraction2HTML = fractionToHTML(improperNum2, denom2, true);
+                    } else {
+                        fraction2HTML = fractionToHTML(num2, denom2);
+                    }
+                } else {
+                    // 順序を入れ替える：第2分数 - 第1分数
+                    subtractNumerator = totalNum2 - totalNum1;
+
+                    // 分数の順序を入れ替え
+                    [num1, denom1, wholeNum1, num2, denom2, wholeNum2] = [num2, denom2, wholeNum2, num1, denom1, wholeNum1];
+
+                    if (wholeNum1 > 0) {
+                        const improperNum1 = wholeNum1 * denom1 + num1;
+                        fraction1HTML = fractionToHTML(improperNum1, denom1, true);
+                    } else {
+                        fraction1HTML = fractionToHTML(num1, denom1);
+                    }
+
+                    if (wholeNum2 > 0) {
+                        const improperNum2 = wholeNum2 * denom2 + num2;
+                        fraction2HTML = fractionToHTML(improperNum2, denom2, true);
+                    } else {
+                        fraction2HTML = fractionToHTML(num2, denom2);
+                    }
+                }
+
+                // 約分
+                let answerReduced = reduceFraction(subtractNumerator, commonDenominator);
+
+                // 答えの分母または分子が100を超える場合は調整
+                if (answerReduced.numerator > 100 || answerReduced.denominator > 100) {
+                    // ハイパーモードでは帯分数を保持したまま簡単な問題に変更
+                    if (difficulty === 'hyper') {
+                        num1 = 2;
+                        denom1 = 3;
+                        num2 = 1;
+                        denom2 = 3;
+                        // 帯分数は維持（少なくとも1つは帯分数にする）
+                        if (wholeNum1 === 0 && wholeNum2 === 0) {
+                            wholeNum1 = 1;
+                        }
+                    } else {
+                        // ノーマルモードは真分数のまま
+                        num1 = 2;
+                        denom1 = 3;
+                        num2 = 1;
+                        denom2 = 3;
+                        wholeNum1 = 0;
+                        wholeNum2 = 0;
+                    }
+
+                    // 再計算
+                    const newCommonDenominator = lcm(denom1, denom2);
+                    const newTotalNum1 = (wholeNum1 * denom1 + num1) * (newCommonDenominator / denom1);
+                    const newTotalNum2 = (wholeNum2 * denom2 + num2) * (newCommonDenominator / denom2);
+                    const newSubtractNumerator = newTotalNum1 - newTotalNum2;
+                    answerReduced = reduceFraction(newSubtractNumerator, newCommonDenominator);
+
+                    // 表示用分数も更新
+                    if (wholeNum1 > 0) {
+                        const improperNum1 = wholeNum1 * denom1 + num1;
+                        fraction1HTML = fractionToHTML(improperNum1, denom1, true);
+                    } else {
+                        fraction1HTML = fractionToHTML(num1, denom1);
+                    }
+                    fraction2HTML = fractionToHTML(num2, denom2);
+                }
+
+                // 答えの表示形式を決定
+                let answerHTML;
+                if (difficulty === 'hyper' && answerReduced.numerator > answerReduced.denominator) {
+                    // ハイパーで1を超える分数は帯分数で表記
+                    answerHTML = fractionToHTML(answerReduced.numerator, answerReduced.denominator, true);
+                } else {
+                    answerHTML = fractionToHTML(answerReduced.numerator, answerReduced.denominator);
+                }
+
+                const result = {
+                    question: `${fraction1HTML} - ${fraction2HTML}`,
+                    answer: answerHTML,
+                    answerFraction: answerReduced
+                };
+                console.log('分数のひき算問題生成完了:', result);
+                return result;
+            } catch (error) {
+                // エラーが発生した場合のフォールバック
+                console.error('分数のひき算問題生成でエラー:', error);
+                const fallbackAnswer = fractionToHTML(1, 6);
+                return {
+                    question: `${fractionToHTML(1, 2)} - ${fractionToHTML(1, 3)}`,
+                    answer: fallbackAnswer,
+                    answerFraction: { numerator: 1, denominator: 6 }
+                };
+            }
+        }
+
+        // 分数のたし算専用の選択肢を生成する関数
+        function generateFractionAdditionChoices(correctAnswer, correctFraction, difficulty) {
+            const choices = new Set();
+            choices.add(correctAnswer);
+
+            // 間違いの選択肢を生成
+            while (choices.size < 4) {
+                let wrongChoice;
+
+                // いくつかのパターンで間違いを生成（正解と同じ分母を優先）
+                const pattern = Math.floor(Math.random() * 5); // パターンを5つに増やし、同分母を優先
+
+                if (pattern === 0 || pattern === 1) {
+                    // 正解と同じ分母で分子を変える（50%以上の確率で同分母の誤答を生成）
+                    let newNumerator = correctFraction.numerator + (Math.random() < 0.5 ? Math.floor(Math.random() * 3) + 1 : -(Math.floor(Math.random() * 3) + 1));
+                    if (newNumerator > 0 && newNumerator !== correctFraction.numerator) {
+                        // 既約分数に変換
+                        const reduced = reduceFraction(newNumerator, correctFraction.denominator);
+
+                        // ハイパーモードで仮分数の場合は帯分数で表示
+                        if (difficulty === 'hyper' && reduced.numerator > reduced.denominator) {
+                            wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator, true);
+                        } else {
+                            wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator);
+                        }
+                    }
+                } else if (pattern === 2) {
+                    // 分子を変える（既約分数になるように調整）
+                    let newNumerator = correctFraction.numerator + (Math.random() < 0.5 ? 1 : -1);
+                    if (newNumerator > 0 && newNumerator !== correctFraction.numerator) {
+                        // 既約分数に変換
+                        const reduced = reduceFraction(newNumerator, correctFraction.denominator);
+
+                        // ハイパーモードで仮分数の場合は帯分数で表示
+                        if (difficulty === 'hyper' && reduced.numerator > reduced.denominator) {
+                            wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator, true);
+                        } else {
+                            wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator);
+                        }
+                    }
+                } else if (pattern === 3) {
+                    // 分母を変える（既約分数になるように調整）
+                    let newDenominator = correctFraction.denominator + (Math.random() < 0.5 ? 1 : -1);
+                    if (newDenominator > 0 && newDenominator !== correctFraction.denominator) {
+                        // 既約分数に変換
+                        const reduced = reduceFraction(correctFraction.numerator, newDenominator);
+
+                        // ハイパーモードで仮分数の場合は帯分数で表示
+                        if (difficulty === 'hyper' && reduced.numerator > reduced.denominator) {
+                            wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator, true);
+                        } else {
+                            wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator);
+                        }
+                    }
+                } else {
+                    // ランダムな分数を生成
+                    const randomFraction = generateRandomFraction();
+                    const reduced = reduceFraction(randomFraction.n, randomFraction.d);
+
+                    // ハイパーモードで仮分数の場合は帯分数で表示
+                    if (difficulty === 'hyper' && reduced.numerator > reduced.denominator) {
+                        wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator, true);
+                    } else {
+                        wrongChoice = fractionToHTML(reduced.numerator, reduced.denominator);
+                    }
+                }
+
+                if (wrongChoice && wrongChoice !== correctAnswer && !choices.has(wrongChoice)) {
+                    choices.add(wrongChoice);
+                }
+            }
+
+            // 選択肢が不足している場合のフォールバック処理
+            while (choices.size < 4) {
+                const randomFraction = generateRandomFraction();
+                const reduced = reduceFraction(randomFraction.n, randomFraction.d);
+
+                // ハイパーモードで仮分数の場合は帯分数で表示
+                let fallbackChoice;
+                if (difficulty === 'hyper' && reduced.numerator > reduced.denominator) {
+                    fallbackChoice = fractionToHTML(reduced.numerator, reduced.denominator, true);
+                } else {
+                    fallbackChoice = fractionToHTML(reduced.numerator, reduced.denominator);
+                }
+
+                if (fallbackChoice !== correctAnswer && !choices.has(fallbackChoice)) {
+                    choices.add(fallbackChoice);
+                } else {
+                    break;
+                }
+            }
+
+            return Array.from(choices).sort(() => Math.random() - 0.5);
         }
 
         // 分数から選択肢を生成する関数
@@ -3967,6 +5074,27 @@
                 choices = generateVolumeChoices(problem.answer);
             } else if (gameState.mode === 'unitMix') {
                 choices = generateUnitMixChoices(problem.answer, problem.unitType);
+            } else if (gameState.mode === 'decimalMultiplication') {
+                choices = generateDecimalMultiplicationChoices(problem.answer);
+            } else if (gameState.mode === 'decimalDivision') {
+                choices = generateDecimalDivisionChoices(problem.answer);
+            } else if (gameState.mode === 'decimalMix') {
+                // 小数MIXモードでは問題の種類に応じて適切な選択肢生成関数を使用
+                if (problem.question.includes('×')) {
+                    choices = generateDecimalMultiplicationChoices(problem.answer);
+                } else if (problem.question.includes('÷')) {
+                    choices = generateDecimalDivisionChoices(problem.answer);
+                } else {
+                    choices = generateDecimalChoices(problem.answer);
+                }
+            } else if (gameState.mode === 'decimalAddition' || gameState.mode === 'decimalSubtraction') {
+                choices = generateDecimalChoices(problem.answer);
+            } else if (gameState.mode === 'fractionAddition') {
+                // 分数のたし算用の選択肢生成
+                choices = generateFractionAdditionChoices(problem.answer, problem.answerFraction, gameState.difficulty);
+            } else if (gameState.mode === 'fractionSubtraction') {
+                // 分数のひき算用の選択肢生成（たし算と同じ関数を使用）
+                choices = generateFractionAdditionChoices(problem.answer, problem.answerFraction, gameState.difficulty);
             } else {
                 choices = generateChoices(problem.answer);
             }
@@ -4199,8 +5327,8 @@
             const gameScreen = document.getElementById('gameScreen');
             gameScreen.classList.remove('hidden');
 
-            // 上級者向けモードの場合は特別な背景を適用
-            if (isAdvancedMode(mode)) {
+            // ハイパー難易度の場合は特別な背景を適用
+            if (isHyperMode(gameState.difficulty)) {
                 gameScreen.classList.add('game-screen-advanced');
             } else {
                 gameScreen.classList.remove('game-screen-advanced');
@@ -4482,13 +5610,15 @@
                 return;
             }
             gameState.mode = mode;
+            // 選択されたモードをlocalStorageに保存
+            localStorage.setItem('lastSelectedMode', mode);
             document.getElementById('modeSelectionScreen').classList.add('hidden');
 
             const speedScreen = document.getElementById('speedScreen');
             speedScreen.classList.remove('hidden');
 
-            // 上級者向けモードの場合は特別な背景を適用
-            if (isAdvancedMode(mode)) {
+            // ハイパー難易度の場合は特別な背景を適用
+            if (isHyperMode(gameState.difficulty)) {
                 speedScreen.classList.add('speed-screen-advanced');
             } else {
                 speedScreen.classList.remove('speed-screen-advanced');
@@ -4498,7 +5628,21 @@
         // 難易度選択
         function selectDifficulty(difficulty) {
             gameState.difficulty = difficulty;
-            gameState.currentModePage = 1; // モードページを初期化
+
+            // 前回遊んだモードのページを検索して開く
+            const lastMode = localStorage.getItem('lastSelectedMode');
+            if (lastMode) {
+                // 前回のモードがあるページを検索
+                const pageIndex = findModePageIndex(lastMode);
+                if (pageIndex !== -1) {
+                    gameState.currentModePage = pageIndex + 1; // 1ベースのページ番号
+                } else {
+                    gameState.currentModePage = 1; // モードが見つからない場合は1ページ目
+                }
+            } else {
+                gameState.currentModePage = 1; // 初回は1ページ目
+            }
+
             document.getElementById('modeScreen').classList.add('hidden');
             document.getElementById('modeSelectionScreen').classList.remove('hidden');
             updateModePage(); // モードページを更新
@@ -4606,7 +5750,7 @@
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('modeSelectionScreen').classList.remove('hidden');
 
-            // 上級者向けモードの背景をクリア
+            // ハイパー難易度の背景をクリア
             const speedScreen = document.getElementById('speedScreen');
             speedScreen.classList.remove('speed-screen-advanced');
         }
@@ -4624,6 +5768,14 @@
             if (toggleBtn) {
                 toggleBtn.dataset.difficulty = difficulty;
                 toggleBtn.textContent = difficulty === 'normal' ? 'ノーマル' : 'ハイパー';
+            }
+
+            // ハイパー難易度の場合は特別な背景を適用
+            const recordsScreen = document.getElementById('recordsScreen');
+            if (isHyperMode(difficulty)) {
+                recordsScreen.classList.add('records-screen-advanced');
+            } else {
+                recordsScreen.classList.remove('records-screen-advanced');
             }
 
             // TOTAL SCOREを更新
