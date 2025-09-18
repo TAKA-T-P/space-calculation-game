@@ -69,6 +69,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
+            row-gap: 8px;
             justify-content: center;
         }
 
@@ -962,6 +963,20 @@
             font-size: 0.9rem;
         }
 
+        .mode-selection-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #0a0a1a;
+            z-index: 15;
+            border-bottom: 1px solid #333;
+        }
+
+        #modeSelectionScreen h1 {
+            margin-top: 80px;
+        }
+
         .record-row:hover {
             background: rgba(0, 170, 255, 0.2);
             transform: scale(1.01);
@@ -1083,6 +1098,16 @@
 
             .time-gauge-background {
                 width: 16px;
+            }
+
+            .mode-buttons {
+                gap: 10px;
+                row-gap: 5px;
+            }
+
+            #modeSelectionScreen h1 {
+                margin-top: 60px;
+            }
                 height: 200px;
             }
 
@@ -1686,7 +1711,7 @@
     </div>
 
     <div id="modeSelectionScreen" class="screen hidden">
-        <div class="pagination-nav">
+        <div class="pagination-nav mode-selection-nav">
             <button class="pagination-btn" id="modePrevBtn">←</button>
             <span class="page-info" id="modePageInfo">1 / 2</span>
             <button class="pagination-btn" id="modeNextBtn">→</button>
