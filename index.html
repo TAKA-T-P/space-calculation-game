@@ -1380,6 +1380,17 @@
                 padding: 0.8rem;
                 line-height: 1.6;
             }
+
+            /* モバイル向け背景画像表示改善 */
+            #storyBackgroundContainer {
+                position: fixed !important;
+                background-attachment: scroll !important;
+                background-size: cover !important;
+                opacity: 0.4 !important;
+                z-index: -1 !important;
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
+            }
         }
 
         .countdown-overlay {
@@ -1949,7 +1960,7 @@
         <div class="story-content" style="position: relative; min-height: 75vh; display: flex; align-items: center; justify-content: center;">
             <!-- 背景イラスト -->
             <div id="storyBackgroundContainer" style="
-                position: absolute;
+                position: fixed;
                 top: 0;
                 left: 0;
                 right: 0;
@@ -1958,8 +1969,10 @@
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
-                opacity: 0.25;
-                z-index: 1;
+                background-attachment: fixed;
+                opacity: 0.3;
+                z-index: -1;
+                pointer-events: none;
             "></div>
 
             <!-- テキスト表示 -->
@@ -2934,11 +2947,26 @@
             console.log('displayNewStoryContentV2 called with page:', page);
             const paddedPage = page.toString().padStart(2, '0');
 
-            // 背景画像を更新
+            // 背景画像を更新（モバイル対応強化）
             const backgroundContainer = document.getElementById('storyBackgroundContainer');
             const imageUrl = `STORY_${paddedPage}.png`;
+
+            // モバイル向け設定を強化
             backgroundContainer.style.backgroundImage = `url('${imageUrl}')`;
-            console.log('Background image set to:', imageUrl);
+            backgroundContainer.style.backgroundSize = 'cover';
+            backgroundContainer.style.backgroundPosition = 'center';
+            backgroundContainer.style.backgroundRepeat = 'no-repeat';
+
+            // モバイル検出と追加設定
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                backgroundContainer.style.backgroundAttachment = 'scroll';
+                backgroundContainer.style.transform = 'translateZ(0)';
+                backgroundContainer.style.webkitTransform = 'translateZ(0)';
+                console.log('Mobile background image optimizations applied');
+            }
+
+            console.log('Background image set to:', imageUrl, 'Mobile:', isMobile);
 
             // 新しいストーリーテキスト定義 V2 - 完全版ストーリー
             const newStoryTextsV2 = {
