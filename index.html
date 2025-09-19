@@ -1928,6 +1928,10 @@
     </div>
 
     <div id="storyScreen" class="screen hidden">
+        <!-- プロローグBGM -->
+        <audio id="storyBGM" loop preload="auto">
+            <source src="スペースホッパー.mp3" type="audio/mpeg">
+        </audio>
         <div class="story-container">
             <div class="story-text" id="storyText">
                 はるか銀河のかなた──<br><br>
@@ -1944,10 +1948,6 @@
     </div>
 
     <div id="storyLibraryScreen" class="screen hidden">
-        <!-- ストーリーBGM -->
-        <audio id="storyBGM" loop preload="auto">
-            <source src="スペースホッパー.mp3" type="audio/mpeg">
-        </audio>
         <div class="story-navigation" style="position: absolute; top: 20px; left: 20px; z-index: 20;">
             <!-- ページ切り替えボタン -->
             <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
@@ -2944,6 +2944,11 @@
                 storyTextElement.style.animation = 'scroll-up 25s linear infinite';
                 console.log('Prologue scroll animation started');
             }
+
+            // プロローグBGMを開始（BGM有効時のみ）
+            setTimeout(() => {
+                playStoryBGM();
+            }, 500);
         }
 
         // ストーリーライブラリ画面を表示する関数
