@@ -2091,8 +2091,25 @@
             // タイトル画面が初期表示の場合、コピーライトを表示
             const modeScreen = document.getElementById('modeScreen');
             const titleCopyright = document.getElementById('titleCopyright');
+
+            // 強制的にクレジットを表示
+            if (titleCopyright) {
+                titleCopyright.style.display = 'block';
+                console.log('Copyright display forced to block');
+            }
+
             if (modeScreen && !modeScreen.classList.contains('hidden') && titleCopyright) {
                 titleCopyright.style.display = 'block';
+                console.log('Copyright shown on title screen');
+            }
+        });
+
+        // ページ読み込み完了時にもクレジットを確実に表示
+        window.addEventListener('load', function() {
+            const titleCopyright = document.getElementById('titleCopyright');
+            if (titleCopyright) {
+                titleCopyright.style.display = 'block';
+                console.log('Copyright shown on window load');
             }
         });
 
@@ -9486,7 +9503,7 @@
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
         z-index: 1000;
         pointer-events: auto;
-        display: none;
+        display: block;
         cursor: pointer;
         user-select: none;
         -webkit-user-select: none;
