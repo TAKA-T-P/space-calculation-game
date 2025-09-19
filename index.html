@@ -2927,6 +2927,9 @@
 
         // ストーリー画面を表示する関数
         function showStory() {
+            // タイトル画面のBGMを停止
+            pauseBgMusic();
+
             document.getElementById('instructionsScreen').classList.add('hidden');
             document.getElementById('storyScreen').classList.remove('hidden');
 
@@ -2945,6 +2948,9 @@
 
         // ストーリーライブラリ画面を表示する関数
         function showStoryLibrary() {
+            // タイトル画面のBGMを停止
+            pauseBgMusic();
+
             document.getElementById('modeScreen').classList.add('hidden');
             // タイトル画面以外ではコピーライトを非表示
             document.getElementById('titleCopyright').style.display = 'none';
@@ -6504,8 +6510,15 @@
             gameScreen.style.boxShadow = '';
             gameScreen.style.borderColor = '';
 
-            // ストーリーBGMを停止
+            // ストーリーBGMを停止してタイトルBGMを再開
             stopStoryBGM();
+
+            // タイトル画面のBGMを再開（BGMが有効な場合）
+            if (gameState.bgmEnabled) {
+                setTimeout(() => {
+                    resumeBgMusic();
+                }, 500);
+            }
 
             // 画面をリセット
             document.getElementById('gameScreen').classList.add('hidden');
