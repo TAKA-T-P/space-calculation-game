@@ -9404,6 +9404,75 @@
 
             return generatePositiveNegativeAdditionProblem(difficulty);
         }
+
+        // クレジット裏技システム
+        let copyrightClickCount = 0;
+        let copyrightClickTimer = null;
+
+        function handleCopyrightClick() {
+            copyrightClickCount++;
+            console.log('Copyright clicked:', copyrightClickCount);
+
+            // 3秒以内に連続クリックでないとリセット
+            if (copyrightClickTimer) {
+                clearTimeout(copyrightClickTimer);
+            }
+
+            copyrightClickTimer = setTimeout(() => {
+                copyrightClickCount = 0;
+                console.log('Copyright click counter reset');
+            }, 3000);
+
+            // 10回クリックで裏技発動
+            if (copyrightClickCount >= 10) {
+                unlockAllStories();
+                copyrightClickCount = 0;
+                clearTimeout(copyrightClickTimer);
+            }
+
+            // 視覚的フィードバック（5回以上でヒント）
+            if (copyrightClickCount >= 5) {
+                const creditElement = document.getElementById('titleCopyright');
+                creditElement.style.color = '#ffff00';
+                creditElement.style.textShadow = '0 0 10px #ffff00';
+                setTimeout(() => {
+                    creditElement.style.color = '#cccccc';
+                    creditElement.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.9)';
+                }, 500);
+            }
+        }
+
+        function unlockAllStories() {
+            console.log('🎉 CHEAT ACTIVATED: Unlocking all stories!');
+
+            // ローカルストレージに大量の撃墜数を保存
+            const cheatScore = {
+                totalCorrect: 9999,
+                isCheatActivated: true,
+                unlockTimestamp: Date.now()
+            };
+
+            localStorage.setItem('gameStats', JSON.stringify(cheatScore));
+
+            // 視覚的な成功演出
+            const creditElement = document.getElementById('titleCopyright');
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+                creditElement.style.color = flashCount % 2 === 0 ? '#00ff00' : '#ff0000';
+                creditElement.style.textShadow = flashCount % 2 === 0 ? '0 0 20px #00ff00' : '0 0 20px #ff0000';
+                flashCount++;
+
+                if (flashCount >= 8) {
+                    clearInterval(flashInterval);
+                    creditElement.style.color = '#cccccc';
+                    creditElement.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.9)';
+
+                    // 成功メッセージ表示
+                    alert('🎉 裏技成功！\n全てのストーリーが解放されました！\n\nストーリーモードで確認してください。');
+                    console.log('All stories unlocked! Total correct count set to 9999');
+                }
+            }, 200);
+        }
     </script>
 
     <!-- タイトル画面専用コピーライト表記 -->
@@ -9416,9 +9485,14 @@
         color: #cccccc;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
         z-index: 1000;
-        pointer-events: none;
+        pointer-events: auto;
         display: none;
-    ">© 2025 T.TAKEMOTO</div>
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+    " onclick="handleCopyrightClick()">© 2025 T.TAKEMOTO</div>
 
 </body>
 </html>
