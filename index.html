@@ -9462,14 +9462,17 @@
         function unlockAllStories() {
             console.log('🎉 CHEAT ACTIVATED: Unlocking all stories!');
 
-            // ローカルストレージに大量の撃墜数を保存
-            const cheatScore = {
+            // 正しいキーで撃墜数を保存（ストーリー解放に必要）
+            localStorage.setItem('totalCorrectCount', '9999');
+
+            // チート記録も保存
+            const cheatRecord = {
                 totalCorrect: 9999,
                 isCheatActivated: true,
                 unlockTimestamp: Date.now()
             };
 
-            localStorage.setItem('gameStats', JSON.stringify(cheatScore));
+            localStorage.setItem('cheatRecord', JSON.stringify(cheatRecord));
 
             // 視覚的な成功演出
             const creditElement = document.getElementById('titleCopyright');
@@ -9487,6 +9490,13 @@
                     // 成功メッセージ表示
                     alert('🎉 裏技成功！\n全てのストーリーが解放されました！\n\nストーリーモードで確認してください。');
                     console.log('All stories unlocked! Total correct count set to 9999');
+
+                    // ストーリーライブラリが開いている場合は更新
+                    const storyLibraryScreen = document.getElementById('storyLibraryScreen');
+                    if (storyLibraryScreen && !storyLibraryScreen.classList.contains('hidden')) {
+                        updateStoryLibrary();
+                        console.log('Story library automatically updated after cheat');
+                    }
                 }
             }, 200);
         }
