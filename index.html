@@ -1126,8 +1126,8 @@
             }
 
             .mode-buttons {
-                gap: 10px;
-                row-gap: 5px;
+                gap: 8px;
+                row-gap: 2px;
                 padding-top: 120px;
             }
 
@@ -1436,7 +1436,18 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
-            
+
+            .mode-buttons {
+                gap: 6px;
+                row-gap: 1px;
+                padding-top: 100px;
+            }
+
+            .mode-btn {
+                padding: 10px 25px;
+                font-size: 1.1rem;
+            }
+
             .ui-item {
                 font-size: 0.8rem;
                 padding: 5px 10px;
@@ -1775,19 +1786,6 @@
     </div>
 
     <div id="gameScreen" class="screen hidden">
-        <div class="mode-display" id="currentModeDisplay" style="
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.8rem;
-            color: #88ccff;
-            text-shadow: 0 0 3px rgba(136, 204, 255, 0.5);
-            z-index: 10;
-            pointer-events: none;
-        ">
-            <!-- モード表示が動的に挿入される -->
-        </div>
         <button class="retry-btn" id="gameRetryBtn" onclick="retryCurrentGame()" style="
             position: fixed;
             top: 10px;
@@ -1806,6 +1804,19 @@
             z-index: 20;
             white-space: nowrap;
         ">リトライ</button>
+        <div class="mode-display" id="currentModeDisplay" style="
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #88ccff;
+            text-shadow: 0 0 3px rgba(136, 204, 255, 0.5);
+            z-index: 10;
+            pointer-events: none;
+        ">
+            <!-- モード表示が動的に挿入される -->
+        </div>
         <div class="game-ui">
             スコア: <span id="score">0</span>　残機: <span id="lives" class="lives">3</span>
         </div>
