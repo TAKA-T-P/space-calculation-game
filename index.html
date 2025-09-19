@@ -1353,6 +1353,35 @@
             box-sizing: border-box;
         }
 
+        /* モバイル向けのフォントサイズ調整 */
+        @media (max-width: 768px) {
+            .story-library-scroll {
+                font-size: 1rem;
+                padding: 1rem;
+                line-height: 1.8;
+            }
+
+            .story-text {
+                font-size: 1rem;
+                padding: 1rem;
+                line-height: 1.8;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .story-library-scroll {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+                line-height: 1.6;
+            }
+
+            .story-text {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+                line-height: 1.6;
+            }
+        }
+
         .countdown-overlay {
             position: fixed;
             top: 0;
