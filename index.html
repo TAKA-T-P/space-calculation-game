@@ -2957,7 +2957,10 @@
             document.getElementById('storyLibraryScreen').classList.remove('hidden');
             updateStoryLibrary();
 
-            // ストーリーBGMを開始
+            // ストーリーBGMボタンの表示を更新
+            updateStoryBGMButton();
+
+            // ストーリーBGMを開始（BGM有効時のみ）
             setTimeout(() => {
                 playStoryBGM();
             }, 500);
@@ -9473,13 +9476,15 @@
         }
 
         function playStoryBGM() {
-            if (storyBGMElement && !isBGMPlaying) {
+            if (storyBGMElement && !isBGMPlaying && gameState.bgmEnabled) {
                 storyBGMElement.play().then(() => {
                     isBGMPlaying = true;
                     console.log('Story BGM started playing');
                 }).catch(error => {
                     console.log('BGM autoplay blocked:', error);
                 });
+            } else if (!gameState.bgmEnabled) {
+                console.log('Story BGM disabled by user setting');
             }
         }
 
@@ -9501,18 +9506,55 @@
         }
 
         function toggleStoryBGM() {
-            if (isBGMPlaying) {
-                pauseStoryBGM();
-                document.getElementById('bgmToggleBtn').textContent = '🔇 BGM';
-            } else {
+            // グローバルBGM設定を切り替え（タイトル画面と同期）
+            gameState.bgmEnabled = !gameState.bgmEnabled;
+
+            // BGM設定をローカルストレージに保存
+            localStorage.setItem('bgmEnabled', gameState.bgmEnabled);
+
+            // タイトル画面のBGMボタンも更新
+            const titleBgmButton = document.getElementById('bgmToggle');
+            const storyBgmButton = document.getElementById('bgmToggleBtn');
+
+            if (gameState.bgmEnabled) {
+                if (titleBgmButton) {
+                    titleBgmButton.textContent = 'BGM ON';
+                    titleBgmButton.classList.remove('off');
+                }
+                if (storyBgmButton) {
+                    storyBgmButton.textContent = '🎵 BGM';
+                }
                 playStoryBGM();
-                document.getElementById('bgmToggleBtn').textContent = '🎵 BGM';
+            } else {
+                if (titleBgmButton) {
+                    titleBgmButton.textContent = 'BGM OFF';
+                    titleBgmButton.classList.add('off');
+                }
+                if (storyBgmButton) {
+                    storyBgmButton.textContent = '🔇 BGM';
+                }
+                pauseStoryBGM();
+            }
+
+            console.log('BGM setting toggled:', gameState.bgmEnabled);
+        }
+
+        // ストーリーBGMボタンの表示を更新
+        function updateStoryBGMButton() {
+            const storyBgmButton = document.getElementById('bgmToggleBtn');
+            if (storyBgmButton) {
+                if (gameState.bgmEnabled) {
+                    storyBgmButton.textContent = '🎵 BGM';
+                } else {
+                    storyBgmButton.textContent = '🔇 BGM';
+                }
             }
         }
 
         // ページ読み込み時にBGMを初期化
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initializeStoryBGM, 100);
+            setTimeout(updateStoryBGMButton, 150);
         });
 
         // クレジット裏技システム
