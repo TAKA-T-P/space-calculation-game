@@ -1320,8 +1320,9 @@
             color: #00ffff;
             text-shadow: 0 0 20px #00ffff;
             line-height: 2.5;
-            animation: scroll-up 20s linear infinite;
-            white-space: nowrap;
+            animation: scroll-up 25s linear infinite;
+            white-space: pre-line;
+            padding: 2rem;
         }
         
         @keyframes scroll-up {
@@ -1331,6 +1332,14 @@
             100% {
                 transform: translateY(-100vh);
             }
+        }
+
+        .story-library-scroll {
+            animation: scroll-up 20s linear;
+            white-space: pre-line;
+            position: absolute;
+            width: 100%;
+            top: 0;
         }
 
         .countdown-overlay {
@@ -1478,6 +1487,7 @@
             .story-text {
                 font-size: 1.2rem;
                 line-height: 2;
+                padding: 1rem;
             }
 
             .countdown-number {
@@ -1751,6 +1761,7 @@
             <button class="mode-btn difficulty-btn" data-difficulty="normal">ノーマル</button>
             <button class="mode-btn difficulty-btn" data-difficulty="hyper">ハイパー</button>
         </div>
+        <button class="story-btn" onclick="showStoryLibrary()" style="margin-top: 2rem;">ストーリー</button>
     </div>
 
     <div id="modeSelectionScreen" class="screen hidden">
@@ -1879,6 +1890,57 @@
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
+    <div id="storyLibraryScreen" class="screen hidden">
+        <div class="story-navigation" style="position: absolute; top: 20px; left: 20px; z-index: 20;">
+            <!-- ページ切り替えボタン -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <button class="pagination-btn" id="storyPrevBtn" onclick="changeStoryPage(-1)" style="padding: 4px 8px; font-size: 0.8rem; min-width: auto;">←</button>
+                <span class="page-info" id="storyPageInfo" style="font-size: 0.8rem; color: #ffffff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);">1 / 1</span>
+                <button class="pagination-btn" id="storyNextBtn" onclick="changeStoryPage(1)" style="padding: 4px 8px; font-size: 0.8rem; min-width: auto;">→</button>
+            </div>
+
+            <!-- UFO撃墜数表示 -->
+            <div class="story-status">
+                <p style="color: #00ffff; font-size: 0.8rem; margin: 0.1rem 0; text-shadow: 0 0 3px #00ffff;">これまでのUFO撃墜数　<span id="totalCorrectDisplay">0</span></p>
+                <p style="color: #ffaa00; font-size: 0.7rem; margin: 0.1rem 0; text-shadow: 0 0 2px #ffaa00;" id="nextUnlockDisplay">あと○機 撃墜で次のストーリーが解放</p>
+            </div>
+        </div>
+
+        <div class="story-content" style="position: relative; min-height: 75vh; display: flex; align-items: center; justify-content: center;">
+            <!-- 背景イラスト -->
+            <div id="storyBackgroundContainer" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('STORY_01.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                opacity: 0.25;
+                z-index: 1;
+            "></div>
+
+            <!-- テキスト表示 -->
+            <div class="story-text-container" style="position: relative; z-index: 10; width: 100%; height: 100vh; overflow: hidden;">
+                <div id="storyLibraryText" style="
+                    color: #ffffff;
+                    font-size: 1.5rem;
+                    line-height: 2.5;
+                    text-align: center;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+                    font-weight: bold;
+                    padding: 2rem;
+                ">
+                    読み込み中...
+                </div>
+            </div>
+        </div>
+
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
     <div id="recordsScreen" class="screen hidden">
         <button class="clear-records-btn" id="clearRecordsBtn">消去</button>
         <div class="records-header">
@@ -1899,13 +1961,34 @@
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
-    <!-- 記録消去確認ダイアログ -->
+    <!-- 記録消去確認ダイアログ（1段階目） -->
     <div id="clearConfirmDialog" class="modal-overlay hidden">
         <div class="modal-content">
             <p>これまでの記録を消します。本当によろしいですか？</p>
             <div class="modal-buttons">
                 <button class="confirm-btn" id="confirmClearBtn">はい</button>
                 <button class="cancel-btn" id="cancelClearBtn">いいえ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 記録消去確認ダイアログ（2段階目） -->
+    <div id="clearFinalConfirmDialog" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p>これまでの記録やUFO撃墜数、ストーリー解放状況などが全て初期化されますが、本当に後悔しませんね？</p>
+            <div class="modal-buttons">
+                <button class="confirm-btn" id="confirmFinalClearBtn">はい</button>
+                <button class="cancel-btn" id="cancelFinalClearBtn">いいえ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 初期化完了ダイアログ -->
+    <div id="clearCompleteDialog" class="modal-overlay hidden">
+        <div class="modal-content">
+            <p>初期化しました。</p>
+            <div class="modal-buttons">
+                <button class="confirm-btn" id="clearCompleteOkBtn">OK</button>
             </div>
         </div>
     </div>
@@ -1922,7 +2005,7 @@
                 ・ゲーム終了時のスコアによって称号が変わるぞ！</p>
             </div>
         </div>
-        <button class="story-btn" onclick="showStory()">ストーリー</button>
+        <button class="story-btn" onclick="showStory()">プロローグ</button>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
@@ -1951,6 +2034,16 @@
         };
 
         let gameTimer;
+
+        // 初期化時にタイトル画面のコピーライトを表示
+        document.addEventListener('DOMContentLoaded', function() {
+            // タイトル画面が初期表示の場合、コピーライトを表示
+            const modeScreen = document.getElementById('modeScreen');
+            const titleCopyright = document.getElementById('titleCopyright');
+            if (modeScreen && !modeScreen.classList.contains('hidden') && titleCopyright) {
+                titleCopyright.style.display = 'block';
+            }
+        });
 
         // 最大公約数を求める関数
         function gcd(a, b) {
@@ -2753,6 +2846,101 @@
             document.getElementById('storyScreen').classList.remove('hidden');
         }
 
+        // ストーリーライブラリ画面を表示する関数
+        function showStoryLibrary() {
+            document.getElementById('modeScreen').classList.add('hidden');
+            // タイトル画面以外ではコピーライトを非表示
+            document.getElementById('titleCopyright').style.display = 'none';
+            document.getElementById('storyLibraryScreen').classList.remove('hidden');
+            updateStoryLibrary();
+        }
+
+        // ストーリーライブラリの表示を更新する関数
+        let currentStoryPage = 1;
+        function updateStoryLibrary() {
+            const totalCorrect = getTotalCorrectCount();
+            const unlockedLevel = getUnlockedStoryLevel();
+            const nextRequirement = getNextLevelRequirement();
+
+            // 撃墜数表示を更新
+            document.getElementById('totalCorrectDisplay').textContent = totalCorrect;
+
+            // 次の解放までの表示を更新
+            const nextUnlockDisplay = document.getElementById('nextUnlockDisplay');
+            if (nextRequirement > 0) {
+                nextUnlockDisplay.textContent = `あと${nextRequirement}機 撃墜で次のストーリーが解放`;
+            } else {
+                nextUnlockDisplay.textContent = '全てのストーリーが解放済み！';
+            }
+
+            // ページネーション更新
+            document.getElementById('storyPageInfo').textContent = `${currentStoryPage} / ${unlockedLevel}`;
+            document.getElementById('storyPrevBtn').disabled = currentStoryPage <= 1;
+            document.getElementById('storyNextBtn').disabled = currentStoryPage >= unlockedLevel;
+
+            // ストーリーコンテンツを読み込み
+            loadStoryContentWithScroll(currentStoryPage);
+        }
+
+        // ストーリーページを変更する関数
+        function changeStoryPage(direction) {
+            const unlockedLevel = getUnlockedStoryLevel();
+            const newPage = currentStoryPage + direction;
+
+            if (newPage >= 1 && newPage <= unlockedLevel) {
+                currentStoryPage = newPage;
+                updateStoryLibrary();
+            }
+        }
+
+        // ストーリーコンテンツを読み込む関数（スクロール表示版）
+        function loadStoryContentWithScroll(page) {
+            console.log('loadStoryContentWithScroll called with page:', page);
+            const paddedPage = page.toString().padStart(2, '0');
+
+            // 背景画像を更新
+            const backgroundContainer = document.getElementById('storyBackgroundContainer');
+            const imageUrl = `STORY_${paddedPage}.png`;
+            backgroundContainer.style.backgroundImage = `url('${imageUrl}')`;
+            console.log('Background image set to:', imageUrl);
+
+            // デフォルトテキストを定義
+            const defaultTexts = {
+                1: 'はるか銀河のかなた──\n\n計算エネルギーを食べるナゾのUFO軍団が\n地球と星々にせまっている！\n\n君は選ばれし"計算パイロット"。\n正しい答えを導き出すことで\nエネルギービームが発射される！\n\n計算の力で宇宙を守りぬき\n伝説の「宇宙計算マスター」を目指せ！',
+                2: 'UFO軍団の第一波を撃退した君。\n\nしかし、これはまだ始まりに過ぎなかった...\n\nより強力なUFOが現れ始めている。\n計算力をさらに鍛えて立ち向かおう！',
+                3: '新たな脅威が出現！\n\n計算力で敵の弱点を見つけ出し、\nさらなる勝利を目指そう！',
+                4: '戦いは激化している...\n\n君の計算スキルが\n宇宙の命運を分ける！',
+                5: '中間地点に到達！\n\nこれまでの経験を活かし、\nさらに強敵に立ち向かおう！',
+                6: '敵の本拠地が見えてきた...\n\n計算の力で道を切り開け！',
+                7: '最終決戦が近づいている！\n\nこれまで培った力を結集せよ！',
+                8: '敵の最終防衛線を突破！\n\nあと少しで勝利だ！',
+                9: 'ついに敵の母艦を発見！\n\n最後の戦いに備えよ！',
+                10: '長い戦いの末、ついにUFO軍団の母艦を発見！\n\n君の計算力が宇宙の運命を決める。\n最後の戦いに勝利し、\n真の「宇宙計算マスター」となれ！'
+            };
+
+            // defaultTextsを使ってスクロール表示
+            const textElement = document.getElementById('storyLibraryText');
+            const defaultText = defaultTexts[page] || `ストーリー ${page}\n\n新たな章が始まる...\n\n計算の力で困難を乗り越えよう！`;
+
+            // アニメーションをリセットしてから開始
+            textElement.className = '';
+            textElement.innerHTML = defaultText.replace(/\n/g, '<br>');
+
+            // 少し待ってからアニメーションを開始
+            setTimeout(() => {
+                textElement.style.position = 'absolute';
+                textElement.style.width = '100%';
+                textElement.style.top = '0';
+                textElement.style.animation = 'scroll-up 20s linear';
+                textElement.className = 'story-library-scroll';
+                console.log('Animation class applied, element:', textElement);
+                console.log('Element computed style:', window.getComputedStyle(textElement).animation);
+                console.log('Element position:', window.getComputedStyle(textElement).position);
+            }, 100);
+
+            console.log('NEW: Story scroll animation started for page:', page);
+        }
+
         // スコア管理
         function saveScore(score, mode, difficulty, speed, isGameClear = false) {
             const recordKey = `record_${mode}_${difficulty}`;
@@ -2786,6 +2974,9 @@
                     localStorage.removeItem(recordKey);
                 });
             });
+
+            // 累積正解数をリセット
+            localStorage.removeItem('totalCorrectCount');
 
             // 記録画面を更新
             updateRecordsDisplay();
@@ -2955,6 +3146,40 @@
 
                 displayElement.innerHTML = `${difficultyText}　${modeText}<br>得点倍率：${scoreMultiplier}　残機ボーナス：${lifeBonus}`;
             }
+        }
+
+        // 累積正解数を取得する関数
+        function getTotalCorrectCount() {
+            return parseInt(localStorage.getItem('totalCorrectCount') || '0');
+        }
+
+        // 累積正解数を更新する関数
+        function updateTotalCorrectCount() {
+            const current = getTotalCorrectCount();
+            localStorage.setItem('totalCorrectCount', (current + 1).toString());
+        }
+
+        // ストーリー解放レベルを取得する関数
+        function getUnlockedStoryLevel() {
+            const totalCorrect = getTotalCorrectCount();
+            for (let n = 10; n >= 1; n--) {
+                const required = n * n * 5;
+                if (totalCorrect >= required) {
+                    return n;
+                }
+            }
+            return 1; // 最低でもレベル1は見れる
+        }
+
+        // 次のレベルまでの必要数を取得する関数
+        function getNextLevelRequirement() {
+            const currentLevel = getUnlockedStoryLevel();
+            if (currentLevel >= 10) return 0; // 最大レベル
+
+            const nextLevel = currentLevel + 1;
+            const nextRequired = nextLevel * nextLevel * 5;
+            const current = getTotalCorrectCount();
+            return nextRequired - current;
         }
 
         // 推奨学年を取得する関数
@@ -5597,6 +5822,7 @@
                 
                 gameState.score += points;
                 gameState.correctCount++;
+                updateTotalCorrectCount(); // 累積正解数を更新
                 document.getElementById('score').textContent = gameState.score;
                 
                 // 正解するたびに速度を0.1倍ずつ加算（各モードで上限設定）
@@ -5942,6 +6168,8 @@
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
+            // タイトル画面表示時にコピーライトを表示
+            document.getElementById('titleCopyright').style.display = 'block';
 
             // 勝利間近演出をクリア
             const gameScreen = document.getElementById('gameScreen');
@@ -6018,17 +6246,23 @@
         function selectMode(mode) {
             if (mode === 'story') {
                 document.getElementById('modeScreen').classList.add('hidden');
+                // タイトル画面以外ではコピーライトを非表示
+                document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('storyScreen').classList.remove('hidden');
                 return;
             }
             if (mode === 'records') {
                 document.getElementById('modeScreen').classList.add('hidden');
+                // タイトル画面以外ではコピーライトを非表示
+                document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('recordsScreen').classList.remove('hidden');
                 updateRecordsDisplay();
                 return;
             }
             if (mode === 'instructions') {
                 document.getElementById('modeScreen').classList.add('hidden');
+                // タイトル画面以外ではコピーライトを非表示
+                document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('instructionsScreen').classList.remove('hidden');
                 return;
             }
@@ -6070,6 +6304,8 @@
             }
 
             document.getElementById('modeScreen').classList.add('hidden');
+            // タイトル画面以外ではコピーライトを非表示
+            document.getElementById('titleCopyright').style.display = 'none';
             document.getElementById('modeSelectionScreen').classList.remove('hidden');
             updateModePage(); // モードページを更新
         }
@@ -6156,9 +6392,12 @@
             document.getElementById('modeSelectionScreen').classList.add('hidden');
             document.getElementById('speedScreen').classList.add('hidden');
             document.getElementById('storyScreen').classList.add('hidden');
+            document.getElementById('storyLibraryScreen').classList.add('hidden');
             document.getElementById('recordsScreen').classList.add('hidden');
             document.getElementById('instructionsScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.remove('hidden');
+            // タイトル画面表示時にコピーライトを表示
+            document.getElementById('titleCopyright').style.display = 'block';
 
             // ゲームエリアをクリア
             document.getElementById('gameArea').innerHTML = '';
@@ -6348,14 +6587,30 @@
                 document.getElementById('clearConfirmDialog').classList.remove('hidden');
             });
 
-            // 確認ダイアログのイベントリスナー
+            // 1段階目確認ダイアログのイベントリスナー
             document.getElementById('confirmClearBtn').addEventListener('click', () => {
-                clearAllRecords();
                 document.getElementById('clearConfirmDialog').classList.add('hidden');
+                document.getElementById('clearFinalConfirmDialog').classList.remove('hidden');
             });
 
             document.getElementById('cancelClearBtn').addEventListener('click', () => {
                 document.getElementById('clearConfirmDialog').classList.add('hidden');
+            });
+
+            // 2段階目確認ダイアログのイベントリスナー
+            document.getElementById('confirmFinalClearBtn').addEventListener('click', () => {
+                clearAllRecords();
+                document.getElementById('clearFinalConfirmDialog').classList.add('hidden');
+                document.getElementById('clearCompleteDialog').classList.remove('hidden');
+            });
+
+            document.getElementById('cancelFinalClearBtn').addEventListener('click', () => {
+                document.getElementById('clearFinalConfirmDialog').classList.add('hidden');
+            });
+
+            // 初期化完了ダイアログのイベントリスナー
+            document.getElementById('clearCompleteOkBtn').addEventListener('click', () => {
+                document.getElementById('clearCompleteDialog').classList.add('hidden');
             });
 
             document.querySelectorAll('.mode-btn, .top-btn, .instructions-btn, .records-toggle-btn').forEach(btn => {
@@ -9070,5 +9325,20 @@
             return generatePositiveNegativeAdditionProblem(difficulty);
         }
     </script>
+
+    <!-- タイトル画面専用コピーライト表記 -->
+    <div id="titleCopyright" style="
+        position: fixed;
+        bottom: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.75rem;
+        color: #cccccc;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        pointer-events: none;
+        display: none;
+    ">© 2025 T.TAKEMOTO</div>
+
 </body>
 </html>
