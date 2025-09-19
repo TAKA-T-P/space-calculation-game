@@ -1322,10 +1322,7 @@
             line-height: 2.5;
             white-space: pre-line;
             padding: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+            animation: scroll-up 25s linear infinite;
         }
         
         @keyframes scroll-up {
@@ -1379,6 +1376,11 @@
                 font-size: 0.9rem;
                 padding: 0.8rem;
                 line-height: 1.6;
+                animation: scroll-up 25s linear infinite !important;
+                display: block !important;
+                height: auto !important;
+                align-items: initial !important;
+                justify-content: initial !important;
             }
 
             /* モバイル向け背景画像表示改善 */
@@ -2893,6 +2895,18 @@
         function showStory() {
             document.getElementById('instructionsScreen').classList.add('hidden');
             document.getElementById('storyScreen').classList.remove('hidden');
+
+            // プロローグテキストのスクロールアニメーションを強制開始
+            const storyTextElement = document.getElementById('storyText');
+            if (storyTextElement) {
+                // アニメーションをリセット
+                storyTextElement.style.animation = 'none';
+                storyTextElement.offsetHeight; // 強制リフロー
+
+                // アニメーションを再開始
+                storyTextElement.style.animation = 'scroll-up 25s linear infinite';
+                console.log('Prologue scroll animation started');
+            }
         }
 
         // ストーリーライブラリ画面を表示する関数
