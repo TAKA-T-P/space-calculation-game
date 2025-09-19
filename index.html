@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>宇宙計算ゲーム v2.0</title>
-    <!-- キャッシュクリア用コメント：修正版 2024-12-19 -->
+    <!-- キャッシュクリア用コメント：ストーリーテキスト修正版 2025-01-19-v1.2.0 -->
     <style>
         * {
             margin: 0;
@@ -2958,8 +2958,15 @@
             const textElement = document.getElementById('storyLibraryText');
             const defaultText = defaultTexts[page] || `ストーリー ${page}\n\n新たな章が始まる...\n\n計算の力で困難を乗り越えよう！`;
 
-            // アニメーションをリセットしてから開始
+            // 完全にリセットしてから開始（キャッシュバスティング）
+            textElement.style.cssText = '';
             textElement.className = '';
+            textElement.innerHTML = '';
+
+            // 強制的にリフロー
+            textElement.offsetHeight;
+
+            // 新しいコンテンツを設定
             textElement.innerHTML = defaultText.replace(/\n/g, '<br>');
 
             // 画面中央に静的表示
@@ -2968,7 +2975,8 @@
                 console.log('Story text displayed statically in center');
             }, 100);
 
-            console.log('NEW: Story text displayed for page:', page);
+            console.log('NEW: Story text displayed for page:', page, '- Version: 1.2.0 - Cache busted');
+            console.log('Displayed text content:', defaultText);
         }
 
         // スコア管理
