@@ -1315,14 +1315,17 @@
         }
         
         .story-text {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             text-align: center;
             color: #00ffff;
             text-shadow: 0 0 20px #00ffff;
             line-height: 2.5;
-            animation: scroll-up 25s linear infinite;
             white-space: pre-line;
             padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         
         @keyframes scroll-up {
@@ -1335,11 +1338,16 @@
         }
 
         .story-library-scroll {
-            animation: scroll-up 20s linear;
             white-space: pre-line;
             position: absolute;
             width: 100%;
             top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            font-size: 1.4rem;
         }
 
         .countdown-overlay {
@@ -2926,19 +2934,16 @@
             textElement.className = '';
             textElement.innerHTML = defaultText.replace(/\n/g, '<br>');
 
-            // 少し待ってからアニメーションを開始
+            // 画面中央に静的表示
             setTimeout(() => {
                 textElement.style.position = 'absolute';
                 textElement.style.width = '100%';
                 textElement.style.top = '0';
-                textElement.style.animation = 'scroll-up 20s linear';
                 textElement.className = 'story-library-scroll';
-                console.log('Animation class applied, element:', textElement);
-                console.log('Element computed style:', window.getComputedStyle(textElement).animation);
-                console.log('Element position:', window.getComputedStyle(textElement).position);
+                console.log('Story text displayed statically in center');
             }, 100);
 
-            console.log('NEW: Story scroll animation started for page:', page);
+            console.log('NEW: Story text displayed for page:', page);
         }
 
         // スコア管理
