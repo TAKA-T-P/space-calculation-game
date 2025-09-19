@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>宇宙計算ゲーム v2.0</title>
-    <!-- キャッシュクリア用コメント：ストーリーテキスト修正版 2025-01-19-v1.2.0 -->
+    <!-- 完全新実装：ストーリーシステム V2.0.0 - 2025-01-19 - 関数名/変数名完全変更 -->
     <style>
         * {
             margin: 0;
@@ -1964,7 +1964,7 @@
 
             <!-- テキスト表示 -->
             <div class="story-text-container" style="position: relative; z-index: 10; width: 100%; height: 100vh; overflow: hidden;">
-                <div id="storyLibraryText" style="
+                <div id="newStoryDisplayTextV2" style="
                     color: #ffffff;
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
                     font-weight: bold;
@@ -2914,8 +2914,8 @@
             document.getElementById('storyPrevBtn').disabled = currentStoryPage <= 1;
             document.getElementById('storyNextBtn').disabled = currentStoryPage >= unlockedLevel;
 
-            // ストーリーコンテンツを読み込み
-            loadStoryContentWithScroll(currentStoryPage);
+            // 新しいストーリーコンテンツを表示 V2
+            displayNewStoryContentV2(currentStoryPage);
         }
 
         // ストーリーページを変更する関数
@@ -2929,9 +2929,9 @@
             }
         }
 
-        // ストーリーコンテンツを読み込む関数（スクロール表示版）
-        function loadStoryContentWithScroll(page) {
-            console.log('loadStoryContentWithScroll called with page:', page);
+        // 新しいストーリーコンテンツ表示関数 V2
+        function displayNewStoryContentV2(page) {
+            console.log('displayNewStoryContentV2 called with page:', page);
             const paddedPage = page.toString().padStart(2, '0');
 
             // 背景画像を更新
@@ -2940,8 +2940,8 @@
             backgroundContainer.style.backgroundImage = `url('${imageUrl}')`;
             console.log('Background image set to:', imageUrl);
 
-            // デフォルトテキストを定義
-            const defaultTexts = {
+            // 新しいストーリーテキスト定義 V2
+            const newStoryTextsV2 = {
                 1: 'はるか銀河のかなた──\n\n計算エネルギーを食べるナゾのUFO軍団が\n地球と星々にせまっている！\n\n君は選ばれし"計算パイロット"。\n正しい答えを導き出すことで\nエネルギービームが発射される！\n\n計算の力で宇宙を守りぬき\n伝説の「宇宙計算マスター」を目指せ！',
                 2: 'UFO軍団の第一波を撃退した君。\n\nしかし、これはまだ始まりに過ぎなかった...\n\nより強力なUFOが現れ始めている。\n計算力をさらに鍛えて立ち向かおう！',
                 3: '新たな脅威が出現！\n\n計算力で敵の弱点を見つけ出し、\nさらなる勝利を目指そう！',
@@ -2954,29 +2954,29 @@
                 10: '長い戦いの末、ついにUFO軍団の母艦を発見！\n\n君の計算力が宇宙の運命を決める。\n最後の戦いに勝利し、\n真の「宇宙計算マスター」となれ！'
             };
 
-            // defaultTextsを使ってスクロール表示
-            const textElement = document.getElementById('storyLibraryText');
-            const defaultText = defaultTexts[page] || `ストーリー ${page}\n\n新たな章が始まる...\n\n計算の力で困難を乗り越えよう！`;
+            // 新しいストーリーテキストを使って表示 V2
+            const newTextElementV2 = document.getElementById('newStoryDisplayTextV2');
+            const newStoryTextV2 = newStoryTextsV2[page] || `ストーリー ${page}\n\n新たな章が始まる...\n\n計算の力で困難を乗り越えよう！`;
 
-            // 完全にリセットしてから開始（キャッシュバスティング）
-            textElement.style.cssText = '';
-            textElement.className = '';
-            textElement.innerHTML = '';
+            // 完全にリセットしてから開始（新しいキャッシュバスティング V2）
+            newTextElementV2.style.cssText = '';
+            newTextElementV2.className = '';
+            newTextElementV2.innerHTML = '';
 
             // 強制的にリフロー
-            textElement.offsetHeight;
+            newTextElementV2.offsetHeight;
 
-            // 新しいコンテンツを設定
-            textElement.innerHTML = defaultText.replace(/\n/g, '<br>');
+            // 新しいコンテンツを設定 V2
+            newTextElementV2.innerHTML = newStoryTextV2.replace(/\n/g, '<br>');
 
-            // 画面中央に静的表示
+            // 画面中央に静的表示 V2
             setTimeout(() => {
-                textElement.className = 'story-library-scroll';
-                console.log('Story text displayed statically in center');
+                newTextElementV2.className = 'story-library-scroll';
+                console.log('NEW STORY V2: Text displayed statically in center');
             }, 100);
 
-            console.log('NEW: Story text displayed for page:', page, '- Version: 1.2.0 - Cache busted');
-            console.log('Displayed text content:', defaultText);
+            console.log('NEW STORY SYSTEM V2: Story text displayed for page:', page, '- Version: 2.0.0 - Complete Cache Reset');
+            console.log('NEW STORY CONTENT V2:', newStoryTextV2);
         }
 
         // スコア管理
