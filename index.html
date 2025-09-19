@@ -1803,9 +1803,6 @@
 
     <div id="modeScreen" class="screen">
         <button class="instructions-btn" data-mode="instructions">説明</button>
-        <div class="top-buttons">
-            <button class="top-btn" data-mode="records">記録</button>
-        </div>
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1>宇宙計算ゲーム</h1>
         <p style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
@@ -1814,7 +1811,10 @@
             <button class="mode-btn difficulty-btn" data-difficulty="normal">ノーマル</button>
             <button class="mode-btn difficulty-btn" data-difficulty="hyper">ハイパー</button>
         </div>
-        <button class="story-btn" onclick="showStoryLibrary()" style="margin-top: 2rem;">ストーリー</button>
+        <div class="bottom-buttons" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; align-items: center;">
+            <button class="story-btn" onclick="showStoryLibrary()">ストーリー</button>
+            <button class="story-btn" data-mode="records">レコード</button>
+        </div>
     </div>
 
     <div id="modeSelectionScreen" class="screen hidden">
