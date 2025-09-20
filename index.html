@@ -180,9 +180,9 @@
 
         .ufo {
             position: absolute;
-            min-width: 120px;
+            min-width: 132px;
             width: auto;
-            max-width: 200px;
+            max-width: 220px;
             height: 80px;
             background: linear-gradient(45deg, #ff6600, #ff9900);
             border-radius: 50% 50% 20% 20%;
@@ -1103,15 +1103,15 @@
             .choices {
                 bottom: 75px;
                 gap: 10px;
-                max-width: 95vw;
-                width: 95vw;
+                max-width: 80vw;
+                width: 80vw;
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: 1fr 1fr;
             }
 
             #gameScreen .choice-btn {
                 padding: 16px 8px;
-                font-size: 1.3rem;
+                font-size: 1.4rem;
                 width: 100%;
                 height: 60px;
                 white-space: nowrap;
@@ -1312,6 +1312,27 @@
         }
 
         /* 極小画面対応 */
+        /* プロローグ画面用のbody背景オーバーライド */
+        body.story-mode {
+            background: none !important;
+        }
+
+        #storyScreen {
+            background-image: url('prologue.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+            min-height: 100vh !important;
+            width: 100vw !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1 !important;
+            /* デバッグ用: 背景画像が読み込まれない場合の代替色 */
+            background-color: #ff0000 !important;
+        }
+
         .story-container {
             width: 100%;
             height: 100vh;
@@ -1320,6 +1341,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background: transparent;
+            z-index: 1;
         }
         
         .story-text {
@@ -1331,6 +1354,9 @@
             white-space: pre-line;
             padding: 2rem;
             animation: scroll-up 25s linear infinite;
+            background: transparent;
+            position: relative;
+            z-index: 2;
         }
         
         @keyframes scroll-up {
@@ -1400,6 +1426,11 @@
                 z-index: -1 !important;
                 transform: translateZ(0);
                 -webkit-transform: translateZ(0);
+            }
+
+            #storyScreen {
+                background-attachment: scroll !important;
+                background-size: cover !important;
             }
         }
 
@@ -1500,12 +1531,12 @@
 
         @media (max-width: 480px) {
             .choices {
-                width: 98vw;
+                width: 85vw;
                 gap: 8px;
             }
 
             #gameScreen .choice-btn {
-                font-size: 1.0rem;
+                font-size: 1.1rem;
                 padding: 14px 6px;
                 height: 50px;
                 white-space: nowrap;
@@ -2943,6 +2974,9 @@
         function showStory() {
             // タイトル画面のBGMを停止
             pauseBgMusic();
+
+            // bodyにstory-modeクラスを追加
+            document.body.classList.add('story-mode');
 
             document.getElementById('instructionsScreen').classList.add('hidden');
             document.getElementById('storyScreen').classList.remove('hidden');
@@ -5656,7 +5690,7 @@
 
             // 速さの3用法モードの場合はフォントサイズを調整する
             if (gameState.mode === 'speedThreeWays') {
-                ufo.style.fontSize = '0.95em';
+                ufo.style.fontSize = '1.05em';
             }
 
             // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
@@ -6534,6 +6568,9 @@
 
             // ストーリーBGMを停止してタイトルBGMを再開
             stopStoryBGM();
+
+            // bodyからstory-modeクラスを削除
+            document.body.classList.remove('story-mode');
 
             // タイトル画面のBGMを再開（BGMが有効な場合）
             if (gameState.bgmEnabled) {
