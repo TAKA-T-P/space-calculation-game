@@ -69,13 +69,74 @@
             color: #00ffff;
         }
 
+        .mode-scroll-container {
+            height: 65vh;
+            overflow-y: auto;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 90%;
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            background: rgba(0, 0, 30, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .mode-scroll-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .mode-scroll-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .mode-scroll-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #00ffff, #0088ff);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+        }
+
+        .mode-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #44ffff, #4499ff);
+        }
+
+        .records-scroll-container {
+            height: 60vh;
+            overflow-y: auto;
+            padding: 0px 20px 20px 20px;
+            margin: 20px auto;
+            max-width: 95%;
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            background: rgba(0, 0, 30, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .records-scroll-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .records-scroll-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .records-scroll-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #00ffff, #0088ff);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+        }
+
+        .records-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #44ffff, #4499ff);
+        }
+
         .mode-buttons {
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            row-gap: 8px;
-            justify-content: center;
-            padding-top: 140px;
+            flex-direction: column;
+            gap: 2px;
+            justify-content: flex-start;
+            padding: 0;
         }
 
         #modeScreen .mode-buttons {
@@ -1863,19 +1924,17 @@
     </div>
 
     <div id="modeSelectionScreen" class="screen hidden">
-        <div class="pagination-nav mode-selection-nav">
-            <button class="pagination-btn" id="modePrevBtn">←</button>
-            <span class="page-info" id="modePageInfo">1 / 2</span>
-            <button class="pagination-btn" id="modeNextBtn">→</button>
-        </div>
         <h1>計算の種類を選ぼう</h1>
-        <div class="mode-buttons" id="modeButtonsContainer">
-            <!-- ボタンは JavaScript で動的に生成 -->
+        <div class="mode-scroll-container">
+            <div class="mode-buttons" id="modeButtonsContainer">
+                <!-- ボタンは JavaScript で動的に生成 -->
+            </div>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
     <div id="speedScreen" class="screen hidden">
+        <button class="home-btn" onclick="returnToModeSelection()" style="position: fixed; top: 60px; right: 20px; z-index: 1000; width: 60px; height: 30px;">戻る</button>
         <div id="currentSettingsDisplay" style="font-size: 0.8rem; color: #aaaaaa; text-align: center; margin-bottom: 1rem; line-height: 1.3;">
             <!-- 現在の設定情報をここに表示 -->
         </div>
@@ -1889,7 +1948,6 @@
         </div>
         <p style="font-size: 1rem; margin: 1.5rem 0; color: #ffaa00; text-shadow: 0 0 5px #ffaa00;">UFOが速いほど、クリアが難しくなるぞ！</p>
         <div style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
-            <button class="back-btn" onclick="returnToModeSelection()">戻る</button>
             <button class="home-btn" onclick="returnToTitle()">ホーム</button>
         </div>
     </div>
@@ -2063,13 +2121,10 @@
                 <span class="total-score-value" id="totalScoreValue">0</span>
             </div>
         </div>
-        <div class="pagination-nav">
-            <button class="pagination-btn" id="recordsPrevBtn">←</button>
-            <span class="page-info" id="recordsPageInfo">1 / 2</span>
-            <button class="pagination-btn" id="recordsNextBtn">→</button>
-        </div>
-        <div class="records-table" id="recordsTable">
-            <!-- Records will be populated by JavaScript -->
+        <div class="records-scroll-container">
+            <div class="records-table" id="recordsTable">
+                <!-- Records will be populated by JavaScript -->
+            </div>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
@@ -2859,9 +2914,6 @@
         // モードページを更新する関数
         function updateModePage() {
             const container = document.getElementById('modeButtonsContainer');
-            const pageInfo = document.getElementById('modePageInfo');
-            const prevBtn = document.getElementById('modePrevBtn');
-            const nextBtn = document.getElementById('modeNextBtn');
             const modeScreen = document.getElementById('modeSelectionScreen');
 
             container.innerHTML = '';
@@ -2875,18 +2927,26 @@
                 modeScreen.classList.remove('mode-selection-expert');
             }
 
-            const currentPageModes = modePages[gameState.currentModePage - 1];
-            currentPageModes.forEach(mode => {
+            // 全ページの全モードを表示
+            const allModes = modePages.flat();
+            allModes.forEach(mode => {
                 const buttonContainer = document.createElement('div');
                 buttonContainer.style.display = 'flex';
-                buttonContainer.style.flexDirection = 'column';
+                buttonContainer.style.flexDirection = 'row';
                 buttonContainer.style.alignItems = 'center';
-                buttonContainer.style.margin = '0.5rem';
+                buttonContainer.style.justifyContent = 'space-between';
+                buttonContainer.style.margin = '1px 0';
+                buttonContainer.style.padding = '10px';
+                buttonContainer.style.background = 'rgba(0, 30, 60, 0.3)';
+                buttonContainer.style.borderRadius = '10px';
+                buttonContainer.style.border = '1px solid rgba(0, 255, 255, 0.3)';
 
                 const button = document.createElement('button');
                 button.className = 'mode-btn';
                 button.dataset.mode = mode;
                 button.textContent = getModeLabel(mode);
+                button.style.flex = '1';
+                button.style.margin = '0 10px 0 0';
                 button.addEventListener('click', () => selectMode(mode));
 
                 const gradeLabel = document.createElement('div');
@@ -2894,18 +2954,14 @@
                 gradeLabel.style.fontSize = '0.7rem';
                 gradeLabel.style.color = '#88ccff';
                 gradeLabel.style.textShadow = '0 0 3px rgba(136, 204, 255, 0.5)';
-                gradeLabel.style.marginTop = '0.2rem';
+                gradeLabel.style.minWidth = '80px';
+                gradeLabel.style.textAlign = 'right';
                 gradeLabel.textContent = getRecommendedGrade(mode, gameState.difficulty);
 
                 buttonContainer.appendChild(button);
                 buttonContainer.appendChild(gradeLabel);
                 container.appendChild(buttonContainer);
             });
-
-            pageInfo.textContent = `${gameState.currentModePage} / ${modePages.length}`;
-
-            prevBtn.disabled = gameState.currentModePage === 1;
-            nextBtn.disabled = gameState.currentModePage === modePages.length;
         }
 
         // モードページを変更する関数
@@ -2922,14 +2978,12 @@
         // 記録ページを更新する関数
         function updateRecordsPage(difficulty = 'normal') {
             const recordsTable = document.getElementById('recordsTable');
-            const pageInfo = document.getElementById('recordsPageInfo');
-            const prevBtn = document.getElementById('recordsPrevBtn');
-            const nextBtn = document.getElementById('recordsNextBtn');
 
             recordsTable.innerHTML = '';
 
-            const currentPageModes = recordPages[gameState.currentRecordsPage - 1];
-            currentPageModes.forEach(mode => {
+            // 全ページの全モードを表示
+            const allModes = recordPages.flat();
+            allModes.forEach(mode => {
                 const record = getRecord(mode, difficulty);
                 const categoryLabel = getModeLabel(mode);
 
@@ -2954,11 +3008,6 @@
 
                 recordsTable.appendChild(recordRow);
             });
-
-            pageInfo.textContent = `${gameState.currentRecordsPage} / ${recordPages.length}`;
-
-            prevBtn.disabled = gameState.currentRecordsPage === 1;
-            nextBtn.disabled = gameState.currentRecordsPage === recordPages.length;
         }
 
         // 記録ページを変更する関数
@@ -6760,21 +6809,25 @@
                 document.removeEventListener('click', initAudio);
             }, { once: true });
 
-            // モードページネーションボタンのイベント
+            // モードページネーションボタンのイベント（スクロール形式に変更により無効化）
+            /*
             document.getElementById('modePrevBtn').addEventListener('click', () => {
                 changeModePageTo(gameState.currentModePage - 1);
             });
             document.getElementById('modeNextBtn').addEventListener('click', () => {
                 changeModePageTo(gameState.currentModePage + 1);
             });
+            */
 
-            // 記録ページネーションボタンのイベント
+            // 記録ページネーションボタンのイベント（スクロール形式に変更により無効化）
+            /*
             document.getElementById('recordsPrevBtn').addEventListener('click', () => {
                 changeRecordsPageTo(gameState.currentRecordsPage - 1);
             });
             document.getElementById('recordsNextBtn').addEventListener('click', () => {
                 changeRecordsPageTo(gameState.currentRecordsPage + 1);
             });
+            */
 
             // 記録消去ボタンのイベントリスナー
             document.getElementById('clearRecordsBtn').addEventListener('click', () => {
