@@ -224,12 +224,13 @@
             bottom: 75px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
             gap: 20px;
             z-index: 50;
-            flex-wrap: wrap;
-            justify-content: center;
             max-width: 90vw;
+            width: 600px;
         }
 
         .choice-btn {
@@ -245,6 +246,11 @@
             min-width: 100px;
             z-index: 40;
             position: relative;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .choice-btn:hover {
@@ -1098,14 +1104,16 @@
                 bottom: 75px;
                 gap: 10px;
                 max-width: 95vw;
+                width: 95vw;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
             }
-            
+
             #gameScreen .choice-btn {
                 padding: 16px 8px;
                 font-size: 1.3rem;
-                min-width: calc(50% - 10px);
-                flex: 1 1 calc(50% - 10px);
-                max-width: calc(50% - 10px);
+                width: 100%;
+                height: 60px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -1491,9 +1499,15 @@
         }
 
         @media (max-width: 480px) {
+            .choices {
+                width: 98vw;
+                gap: 8px;
+            }
+
             #gameScreen .choice-btn {
                 font-size: 1.0rem;
                 padding: 14px 6px;
+                height: 50px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -7929,11 +7943,11 @@
                     // 答えを計算
                     const answer = Math.round(baseAmount * percentage / 100);
 
-                    // 問題文を作成
-                    const question = `${baseAmount.toLocaleString()}円の${percentageText}は？`;
+                    // 問題文を作成（2行表記）
+                    const question = `${baseAmount}円の<br>${percentageText}は（　）円`;
 
-                    // 答えを「○円」形式で表示
-                    const answerText = `${answer.toLocaleString()}円`;
+                    // 答えを数字のみで表示
+                    const answerText = `${answer}`;
 
                     console.log('割合（金額）問題生成完了:', question, '=', answerText);
 
@@ -7955,16 +7969,16 @@
             console.warn('割合（金額）問題生成に失敗、フォールバック使用');
             if (difficulty === 'normal') {
                 return {
-                    question: '3000円の20％は？',
-                    answer: '600円',
+                    question: '3000円の<br>20％は（　）円',
+                    answer: '600',
                     baseAmount: 3000,
                     percentage: 20,
                     answerValue: 600
                 };
             } else {
                 return {
-                    question: '5000円の15％増しは？',
-                    answer: '5750円',
+                    question: '5000円の<br>15％増しは（　）円',
+                    answer: '5750',
                     baseAmount: 5000,
                     percentage: 115,
                     answerValue: 5750
@@ -8010,8 +8024,8 @@
                         wrongValue = baseValues[Math.floor(Math.random() * baseValues.length)];
                     }
 
-                    // 「○円」形式で追加
-                    const wrongChoice = `${wrongValue.toLocaleString()}円`;
+                    // 数字のみで追加
+                    const wrongChoice = `${wrongValue}`;
 
                     if (wrongValue !== correctValue && wrongValue > 0) {
                         choices.add(wrongChoice);
@@ -8032,7 +8046,7 @@
                 let fallbackIndex = 0;
                 while (choices.size < 4 && fallbackIndex < fallbackValues.length) {
                     const fallbackValue = fallbackValues[fallbackIndex];
-                    const fallbackChoice = `${fallbackValue.toLocaleString()}円`;
+                    const fallbackChoice = `${fallbackValue}`;
 
                     if (fallbackValue !== correctValue && fallbackValue > 0) {
                         choices.add(fallbackChoice);
@@ -8044,7 +8058,7 @@
                 console.error('割合（金額）選択肢生成エラー:', error);
 
                 // 基本的なフォールバック（100の倍数）
-                const basicChoices = ['300円', '500円', '800円', '1000円', '1200円', '1500円', '2000円', '2500円'];
+                const basicChoices = ['300', '500', '800', '1000', '1200', '1500', '2000', '2500'];
                 basicChoices.forEach(choice => {
                     if (choices.size < 4 && choice !== correctAnswer) {
                         choices.add(choice);
