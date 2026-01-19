@@ -2012,11 +2012,7 @@
         <h1 class="game-title">スペース計算ラリー</h1>
         <p style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
         <div class="mode-buttons">
-            <button class="game-start-btn three-minute-btn" id="threeMinuteBtn" style="
-                background: linear-gradient(180deg, #ff6600 0%, #ff3300 100%);
-                border-color: #ff9900;
-                box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
-            ">３分集中</button>
+            <button class="game-start-btn" id="threeMinuteBtn">３分集中</button>
             <button class="game-start-btn" id="gameStartBtn">UFOバトル</button>
         </div>
     </div>
@@ -6284,7 +6280,7 @@
 
                 // 新しいスコア計算: 基本点 × モード倍率 + コンボボーナス
                 const basePoints = getBasePointsBySpeed(gameState.initialSpeedMultiplier);
-                const comboBonus = gameState.comboCount * 10;
+                const comboBonus = Math.min(gameState.comboCount * 10, 300); // 上限300点（30コンボまで）
                 let scoreMultiplier;
 
                 // 難易度による倍率（ハイパーモードは個別の倍率を使用）
