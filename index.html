@@ -1726,6 +1726,25 @@
             .countdown-number {
                 font-size: 4rem;
             }
+
+            .game-title {
+                font-size: 2.2rem !important;
+            }
+
+            #modeSelectionScreen #difficultyToggleBtn {
+                font-size: 0.85rem !important;
+                padding: 0.5rem 1rem !important;
+            }
+
+            #modeSelectionScreen h1 {
+                font-size: 1.3rem !important;
+                margin-top: 1.5rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            #instructionsScreen .instructions-content + div {
+                margin: 1rem 0 !important;
+            }
         }
 
         .instructions-content {
@@ -2029,13 +2048,13 @@
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
         <button class="confirm-btn" id="modeConfirmBtn" disabled style="
             position: fixed;
-            bottom: 110px;
+            bottom: 20px;
             right: 30px;
             padding: 15px 40px;
             font-size: 1.3rem;
             border: 2px solid #00ffff;
-            background: rgba(0, 255, 255, 0.1);
-            color: #00ffff;
+            background: rgba(0, 100, 200, 0.95);
+            color: #ffffff;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s;
@@ -6667,9 +6686,9 @@
             // プレビューエリアを表示
             previewArea.style.display = 'block';
 
-            // アニメーションを開始（ゆっくりスクロール）
+            // アニメーションを開始（スクロール）
             setTimeout(() => {
-                scroller.style.animation = 'scroll-left 60s linear infinite';
+                scroller.style.animation = 'scroll-left 30s linear infinite';
             }, 100);
         }
 
