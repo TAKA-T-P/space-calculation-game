@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>宇宙計算ゲーム v2.0</title>
+    <title>スペース計算ラリー v2.0</title>
     <!-- 完全新実装：ストーリーシステム V2.0.0 - 2025-01-19 - 関数名/変数名完全変更 -->
     <style>
         * {
@@ -69,11 +69,40 @@
             color: #00ffff;
         }
 
+        .game-title {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 3.5rem !important;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #00ffff 0%, #0099ff 50%, #0066ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 25px rgba(0, 255, 255, 0.8))
+                    drop-shadow(0 0 15px rgba(0, 153, 255, 0.6))
+                    drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+            animation: title-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes title-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 25px rgba(0, 255, 255, 0.8))
+                        drop-shadow(0 0 15px rgba(0, 153, 255, 0.6))
+                        drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 35px rgba(0, 255, 255, 1))
+                        drop-shadow(0 0 25px rgba(0, 153, 255, 0.8))
+                        drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+            }
+        }
+
         .mode-scroll-container {
-            height: 65vh;
+            height: 50vh;
             overflow-y: auto;
             padding: 20px;
-            margin: 20px auto;
+            padding-bottom: 20px;
+            margin: 0px auto 20px auto;
             max-width: 90%;
             border: 2px solid #00ffff;
             border-radius: 15px;
@@ -149,7 +178,9 @@
             margin-top: 0.5rem;
         }
 
-        .mode-btn {
+        .mode-btn,
+        .game-start-btn,
+        .difficulty-switch-btn {
             padding: 15px 30px;
             font-size: 1.2rem;
             border: 2px solid #00ffff;
@@ -161,7 +192,9 @@
             text-shadow: 0 0 10px #00ffff;
         }
 
-        .mode-btn:hover {
+        .mode-btn:hover,
+        .game-start-btn:hover,
+        .difficulty-switch-btn:hover {
             background: rgba(0, 255, 255, 0.3);
             transform: scale(1.1);
             box-shadow: 0 0 30px #00ffff;
@@ -415,6 +448,23 @@
             }
         }
 
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .preview-item {
+            display: inline-block;
+            margin: 0 40px;
+            font-size: 1.5rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
         .danger-overlay {
             position: fixed;
             top: 0;
@@ -475,6 +525,28 @@
             z-index: 30;
             transition: all 0.3s;
             text-shadow: 0 0 5px #00ffff;
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #666666;
+            color: #666666;
+            text-shadow: none;
+        }
+
+        .confirm-btn:not(:disabled):hover {
+            background: rgba(0, 255, 255, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        .mode-btn.selected {
+            background: rgba(0, 255, 255, 0.4);
+            border-color: #00ff00;
+            color: #00ff00;
+            text-shadow: 0 0 15px #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
         }
 
         .home-btn:hover {
@@ -1611,7 +1683,9 @@
                 padding-top: 100px;
             }
 
-            .mode-btn {
+            .mode-btn,
+            .game-start-btn,
+            .difficulty-switch-btn {
                 padding: 10px 25px;
                 font-size: 1.1rem;
             }
@@ -1910,27 +1984,64 @@
     <div id="modeScreen" class="screen">
         <button class="instructions-btn" data-mode="instructions">説明</button>
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
-        <h1>宇宙計算ゲーム</h1>
+        <h1 class="game-title">スペース計算ラリー</h1>
         <p style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
-        <p style="font-size: 1.1rem; margin: 0.3rem 0; color: #00ffff; text-shadow: 0 0 5px #00ffff;">ゲームモード（難しさ）を選ぼう</p>
         <div class="mode-buttons">
-            <button class="mode-btn difficulty-btn" data-difficulty="normal">ノーマル</button>
-            <button class="mode-btn difficulty-btn" data-difficulty="hyper">ハイパー</button>
-        </div>
-        <div class="bottom-buttons" style="margin-top: 2rem; display: flex; gap: 0.5rem; justify-content: center; align-items: center;">
-            <button class="story-btn" onclick="showStoryLibrary()">ストーリー</button>
-            <button class="story-btn" onclick="selectMode('records')">レコード</button>
+            <button class="game-start-btn" id="gameStartBtn">ゲームスタート</button>
         </div>
     </div>
 
     <div id="modeSelectionScreen" class="screen hidden">
-        <h1>計算の種類を選ぼう</h1>
+        <button class="difficulty-switch-btn" id="difficultyToggleBtn" style="
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1rem;
+            padding: 0.6rem 1.5rem;
+            z-index: 50;
+        ">ノーマル</button>
+        <h1 style="margin-top: 2rem; margin-bottom: 1rem;">計算の種類を選ぼう</h1>
         <div class="mode-scroll-container">
             <div class="mode-buttons" id="modeButtonsContainer">
                 <!-- ボタンは JavaScript で動的に生成 -->
             </div>
         </div>
+        <div id="problemPreviewArea" style="
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: rgba(0, 0, 20, 0.8);
+            border-top: 2px solid #00ffff;
+            overflow: hidden;
+            display: none;
+        ">
+            <div id="problemPreviewScroller" style="
+                display: flex;
+                align-items: center;
+                height: 100%;
+                white-space: nowrap;
+            ">
+                <!-- 問題がここに動的に追加される -->
+            </div>
+        </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+        <button class="confirm-btn" id="modeConfirmBtn" disabled style="
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00ffff;
+            z-index: 100;
+        ">決定</button>
     </div>
 
     <div id="speedScreen" class="screen hidden">
@@ -2047,7 +2158,7 @@
                 伝説の「宇宙計算マスター」を目指せ！
             </div>
         </div>
-        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+        <button class="home-btn" onclick="returnToInstructions()">戻る</button>
     </div>
 
     <div id="storyLibraryScreen" class="screen hidden">
@@ -2109,7 +2220,7 @@
             ">🎵 BGM</button>
         </div>
 
-        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+        <button class="home-btn" onclick="returnToInstructions()">戻る</button>
     </div>
 
     <div id="recordsScreen" class="screen hidden">
@@ -2126,7 +2237,7 @@
                 <!-- Records will be populated by JavaScript -->
             </div>
         </div>
-        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+        <button class="home-btn" onclick="returnToInstructions()">戻る</button>
     </div>
 
     <!-- 記録消去確認ダイアログ（1段階目） -->
@@ -2173,7 +2284,11 @@
                 ・ゲーム終了時のスコアによって称号が変わるぞ！</p>
             </div>
         </div>
-        <button class="story-btn" onclick="showStory()">プロローグ</button>
+        <div style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0;">
+            <button class="story-btn" onclick="showStory()">プロローグ</button>
+            <button class="story-btn" onclick="showStoryLibrary()">ストーリー</button>
+            <button class="story-btn" onclick="selectMode('records')">レコード</button>
+        </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
@@ -2181,6 +2296,7 @@
         let gameState = {
             mode: '',
             difficulty: '',
+            selectedMode: null,
             score: 0,
             correctCount: 0,
             lives: 3,
@@ -2195,7 +2311,7 @@
             currentFallInterval: null,
             wrongAnswerCount: 0,
             timeUp: false,
-            bgmEnabled: true,
+            bgmEnabled: false,
             currentModePage: 1,
             currentRecordsPage: 1,
             lastFailedProblem: null
@@ -3054,6 +3170,7 @@
             pauseBgMusic();
 
             document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('instructionsScreen').classList.add('hidden');
             // タイトル画面以外ではコピーライトを非表示
             document.getElementById('titleCopyright').style.display = 'none';
             document.getElementById('storyLibraryScreen').classList.remove('hidden');
@@ -6483,6 +6600,7 @@
             }
             if (mode === 'records') {
                 document.getElementById('modeScreen').classList.add('hidden');
+                document.getElementById('instructionsScreen').classList.add('hidden');
                 // タイトル画面以外ではコピーライトを非表示
                 document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('recordsScreen').classList.remove('hidden');
@@ -6496,9 +6614,82 @@
                 document.getElementById('instructionsScreen').classList.remove('hidden');
                 return;
             }
-            gameState.mode = mode;
+
+            // 選択されたモードを一時的に保存（まだ確定しない）
+            gameState.selectedMode = mode;
+
+            // すべてのモードボタンから選択状態を削除
+            const allModeButtons = document.querySelectorAll('#modeButtonsContainer .mode-btn');
+            allModeButtons.forEach(btn => btn.classList.remove('selected'));
+
+            // クリックされたボタンに選択状態を追加
+            const clickedButton = Array.from(allModeButtons).find(btn => btn.dataset.mode === mode);
+            if (clickedButton) {
+                clickedButton.classList.add('selected');
+            }
+
+            // 決定ボタンを有効化
+            const confirmBtn = document.getElementById('modeConfirmBtn');
+            confirmBtn.disabled = false;
+
+            // プレビューを表示
+            showProblemPreview(mode, gameState.difficulty);
+        }
+
+        // 問題プレビューを表示
+        function showProblemPreview(mode, difficulty) {
+            const previewArea = document.getElementById('problemPreviewArea');
+            const scroller = document.getElementById('problemPreviewScroller');
+
+            // 既存のプレビューをクリア
+            scroller.innerHTML = '';
+            scroller.style.animation = 'none';
+
+            // 10個の問題を生成
+            const problems = [];
+            for (let i = 0; i < 10; i++) {
+                const problem = generateProblem(mode, difficulty);
+                if (problem) {
+                    problems.push(problem);
+                }
+            }
+
+            // 問題を表示（2回繰り返してシームレスなループを実現）
+            for (let repeat = 0; repeat < 2; repeat++) {
+                problems.forEach(problem => {
+                    const item = document.createElement('div');
+                    item.className = 'preview-item';
+                    item.innerHTML = problem.question;
+                    scroller.appendChild(item);
+                });
+            }
+
+            // プレビューエリアを表示
+            previewArea.style.display = 'block';
+
+            // アニメーションを開始（ゆっくりスクロール）
+            setTimeout(() => {
+                scroller.style.animation = 'scroll-left 60s linear infinite';
+            }, 100);
+        }
+
+        // プレビューを非表示
+        function hideProblemPreview() {
+            const previewArea = document.getElementById('problemPreviewArea');
+            previewArea.style.display = 'none';
+        }
+
+        // モード選択の確定
+        function confirmModeSelection() {
+            if (!gameState.selectedMode) return;
+
+            gameState.mode = gameState.selectedMode;
             // 選択されたモードをlocalStorageに保存
-            localStorage.setItem('lastSelectedMode', mode);
+            localStorage.setItem('lastSelectedMode', gameState.mode);
+
+            // プレビューを非表示
+            hideProblemPreview();
+
             document.getElementById('modeSelectionScreen').classList.add('hidden');
 
             const speedScreen = document.getElementById('speedScreen');
@@ -6653,6 +6844,27 @@
             }
         }
 
+        // 説明画面に戻る
+        function returnToInstructions() {
+            // ストーリーBGMを停止
+            stopStoryBGM();
+
+            // bodyからstory-modeクラスを削除
+            document.body.classList.remove('story-mode');
+
+            // すべての画面を非表示
+            document.getElementById('storyScreen').classList.add('hidden');
+            document.getElementById('storyLibraryScreen').classList.add('hidden');
+            document.getElementById('recordsScreen').classList.add('hidden');
+            document.getElementById('modeScreen').classList.add('hidden');
+
+            // 説明画面を表示
+            document.getElementById('instructionsScreen').classList.remove('hidden');
+
+            // タイトル画面のコピーライトを非表示
+            document.getElementById('titleCopyright').style.display = 'none';
+        }
+
         // 計算の種類選択画面に戻る
         function returnToModeSelection() {
             document.getElementById('speedScreen').classList.add('hidden');
@@ -6776,21 +6988,15 @@
                 bgmButton.classList.add('off');
                 stopBgMusic();
             }
-            
-            // BGM設定をローカルストレージに保存
-            localStorage.setItem('bgmEnabled', gameState.bgmEnabled);
         }
 
         // イベントリスナー
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
-            
-            // BGM設定をロード
-            const savedBgmSetting = localStorage.getItem('bgmEnabled');
-            if (savedBgmSetting !== null) {
-                gameState.bgmEnabled = savedBgmSetting === 'true';
-            }
-            
+
+            // 初期難易度を設定
+            gameState.difficulty = 'normal';
+
             // BGMボタンの初期表示を更新
             const bgmButton = document.getElementById('bgmToggle');
             if (gameState.bgmEnabled) {
@@ -6800,7 +7006,7 @@
                 bgmButton.textContent = 'BGM OFF';
                 bgmButton.classList.add('off');
             }
-            
+
             // ユーザーがページをクリックしたら音楽を開始（自動再生制限対策）
             document.addEventListener('click', function initAudio() {
                 if (gameState.bgmEnabled) {
@@ -6873,6 +7079,71 @@
                     }
                 });
             });
+
+            // ゲームスタートボタンのイベントハンドラ
+            document.getElementById('gameStartBtn').addEventListener('click', () => {
+                // 選択状態をリセット
+                gameState.selectedMode = null;
+                document.getElementById('modeConfirmBtn').disabled = true;
+
+                // プレビューを非表示
+                hideProblemPreview();
+
+                // 前回遊んだモードのページを検索して開く
+                const lastMode = localStorage.getItem('lastSelectedMode');
+                if (lastMode) {
+                    const pageIndex = findModePageIndex(lastMode);
+                    if (pageIndex !== -1) {
+                        gameState.currentModePage = pageIndex + 1;
+                    } else {
+                        gameState.currentModePage = 1;
+                    }
+                } else {
+                    gameState.currentModePage = 1;
+                }
+
+                document.getElementById('modeScreen').classList.add('hidden');
+                document.getElementById('titleCopyright').style.display = 'none';
+                document.getElementById('modeSelectionScreen').classList.remove('hidden');
+                updateModePage();
+                resumeBgMusic();
+            });
+
+            // 難易度切り替えボタンのイベントハンドラ
+            const difficultyToggleBtn = document.getElementById('difficultyToggleBtn');
+            difficultyToggleBtn.addEventListener('click', () => {
+                // 難易度を切り替え
+                if (gameState.difficulty === 'normal') {
+                    gameState.difficulty = 'hyper';
+                    difficultyToggleBtn.textContent = 'ハイパー';
+                } else {
+                    gameState.difficulty = 'normal';
+                    difficultyToggleBtn.textContent = 'ノーマル';
+                }
+
+                // 選択されているモードを保持
+                const previousSelectedMode = gameState.selectedMode;
+
+                // モード選択ボタンの表示も更新（推奨学年などが変わるため）
+                updateModePage();
+
+                // 選択状態を復元
+                if (previousSelectedMode) {
+                    // 選択状態を再適用
+                    const allModeButtons = document.querySelectorAll('#modeButtonsContainer .mode-btn');
+                    allModeButtons.forEach(btn => {
+                        if (btn.dataset.mode === previousSelectedMode) {
+                            btn.classList.add('selected');
+                        }
+                    });
+
+                    // プレビューを新しい難易度で更新
+                    showProblemPreview(previousSelectedMode, gameState.difficulty);
+                }
+            });
+
+            // 決定ボタンのイベントハンドラ
+            document.getElementById('modeConfirmBtn').addEventListener('click', confirmModeSelection);
         });
 
         // 最大公約数を計算する関数
