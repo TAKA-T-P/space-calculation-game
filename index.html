@@ -2012,7 +2012,12 @@
         <h1 class="game-title">スペース計算ラリー</h1>
         <p style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
         <div class="mode-buttons">
-            <button class="game-start-btn" id="gameStartBtn">ゲームスタート</button>
+            <button class="game-start-btn three-minute-btn" id="threeMinuteBtn" style="
+                background: linear-gradient(180deg, #ff6600 0%, #ff3300 100%);
+                border-color: #ff9900;
+                box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+            ">３分集中</button>
+            <button class="game-start-btn" id="gameStartBtn">UFOバトル</button>
         </div>
     </div>
 
@@ -2160,7 +2165,7 @@
     <div id="gameClearScreen" class="screen hidden">
         <button class="retry-btn" onclick="retryGame()">リトライ</button>
         <h1>GAME CLEAR!</h1>
-        <p style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
+        <p id="clearMessage" style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
         <div class="score-display">最終スコア: <span id="clearScore">0</span></div>
         <div class="score-display">正解数: <span id="clearCorrectCount">0</span></div>
         <button class="home-btn" onclick="restartGame()">ホーム</button>
@@ -2301,12 +2306,12 @@
         <div class="instructions-content">
             <div class="instruction-section">
                 <h2>🎯 ゲームの遊び方</h2>
-                <p><strong>ゲーム概要：</strong>襲来するUFOを計算の力で撃退せよ！<br>正しい答えを選んで、60秒間地球を守り抜け！<br>難しさ・計算の種類・UFOの速さを選んだら、ゲームスタート！<br><br>
-                <strong>コツ：</strong><br>
-                ・早く答えるほど高得点！<br>
-                ・間違えると残機が減るので注意<br>
-                ・ハイパーモードは難しいけれど、正解時のスコアがアップ！<br>
-                ・ゲーム終了時のスコアによって称号が変わるぞ！</p>
+                <p><strong>UFOバトル：</strong>襲来するUFOを計算の力で撃退せよ！<br>
+                難しさ・計算の種類・UFOの速さを選んだら、ゲームスタート！<br>
+                正しい答えを選んで、60秒間地球を守り抜け！<br>
+                3回間違うとゲームオーバーだ！<br><br>
+                <strong>3分集中：</strong>3分間で何問解けるか？自分の限界にチャレンジ！<br>
+                ゲームオーバーはないので、思いっきり計算練習できる！</p>
             </div>
         </div>
         <div style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0;">
@@ -2324,6 +2329,7 @@
             selectedMode: null,
             score: 0,
             correctCount: 0,
+            comboCount: 0,
             lives: 3,
             timeLeft: 60,
             currentProblem: null,
@@ -2339,7 +2345,8 @@
             bgmEnabled: false,
             currentModePage: 1,
             currentRecordsPage: 1,
-            lastFailedProblem: null
+            lastFailedProblem: null,
+            isThreeMinuteMode: false
         };
 
         let gameTimer;
@@ -2502,6 +2509,87 @@
             };
 
             return settings[mode] || { baseSpeed: 10000, scoreMultiplier: 1.0 };
+        }
+
+        // ハイパーモード用の得点倍率を取得
+        function getHyperModeMultiplier(mode) {
+            const multipliers = {
+                // 基本的な四則演算
+                'addition': 1.3,
+                'subtraction': 1.4,
+                'multiplication': 1.3,
+                'division': 1.4,
+                'all': 1.4,
+
+                // 単位変換系
+                'weight': 1.5,
+                'length': 1.3,
+                'area': 2.0,
+                'volume': 2.0,
+                'unitMix': 2.0,
+
+                // その他の計算
+                'reverse': 1.5,
+                'improperMixed': 1.5,
+                'lcm': 1.4,
+                'gcd': 1.4,
+                'fraction': 1.3,
+
+                // 小数の計算
+                'decimalAddition': 1.6,
+                'decimalSubtraction': 1.6,
+                'decimalMultiplication': 1.7,
+                'decimalDivision': 2.0,
+                'decimalMix': 2.0,
+
+                // 分数の計算
+                'fractionAddition': 2.4,
+                'fractionSubtraction': 2.4,
+                'fractionMultiplication': 2.4,
+                'fractionDivision': 2.6,
+                'fractionAll': 2.6,
+
+                // 割合の計算
+                'percentageMoney': 1.8,
+                'percentageThreeWays': 2.6,
+                'speedThreeWays': 2.6,
+                'ratioSimplify': 1.6,
+                'proportionalEquation': 1.7,
+
+                // 正負の数
+                'positiveNegativeAddition': 1.35,
+                'positiveNegativeSubtraction': 1.4,
+                'positiveNegativeMultiplication': 1.35,
+                'positiveNegativeDivision': 1.4,
+                'positiveNegativeMix': 1.4
+            };
+
+            return multipliers[mode] || 1.3;
+        }
+
+        // 速度設定ごとの基本点を取得
+        function getBasePointsBySpeed(speed) {
+            switch(speed) {
+                case -1: return 1000;   // 3分集中モード
+                case 0.25: return 2800; // 超低速
+                case 0.5: return 2900;  // おそい
+                case 1.0: return 3000;  // ふつう
+                case 2.0: return 3100;  // はやい
+                case 3.0: return 3200;  // 超高速
+                default: return 3000;
+            }
+        }
+
+        // 速度設定ごとの残機ボーナスを取得
+        function getLifeBonusBySpeed(speed) {
+            switch(speed) {
+                case 0.25: return 1000; // 超低速
+                case 0.5: return 2000;  // おそい
+                case 1.0: return 3000;  // ふつう
+                case 2.0: return 4000;  // はやい
+                case 3.0: return 5000;  // 超高速
+                default: return 3000;
+            }
         }
 
         // 長さの単位モードの問題を生成する関数
@@ -3378,6 +3466,7 @@
 
         function getSpeedLabel(speed) {
             switch(speed) {
+                case -1: return '3分集中';
                 case 0.25: return '超低速';
                 case 0.5: return 'おそい';
                 case 1.0: return 'ふつう';
@@ -3512,11 +3601,17 @@
             if (displayElement && gameState.mode && gameState.difficulty) {
                 const modeText = getModeLabel(gameState.mode);
                 const difficultyText = getDifficultyLabel(gameState.difficulty);
-                const modeSettings = getModeSettings(gameState.mode);
-                const scoreMultiplier = modeSettings.scoreMultiplier.toFixed(2);
-                const lifeBonus = getLifeBonusPerMode(gameState.mode);
 
-                displayElement.innerHTML = `${difficultyText}　${modeText}<br>得点倍率：${scoreMultiplier}　残機ボーナス：${lifeBonus}`;
+                // 難易度に応じた倍率を取得
+                let scoreMultiplier;
+                if (gameState.difficulty === 'hyper') {
+                    scoreMultiplier = getHyperModeMultiplier(gameState.mode).toFixed(2);
+                } else {
+                    const modeSettings = getModeSettings(gameState.mode);
+                    scoreMultiplier = modeSettings.scoreMultiplier.toFixed(2);
+                }
+
+                displayElement.innerHTML = `${difficultyText}　${modeText}<br>得点倍率：${scoreMultiplier}`;
             }
         }
 
@@ -3733,15 +3828,25 @@
         }
 
         // フローティングスコアを表示
-        function showFloatingScore(points, x, y) {
+        function showFloatingScore(points, x, y, combo = 0) {
             const floatingScore = document.createElement('div');
             floatingScore.className = 'floating-score';
-            floatingScore.textContent = '+' + points;
+
+            // 得点テキスト（負の値の場合は「+」を付けない）
+            let scoreText = points >= 0 ? '+' + points : points;
+
+            // コンボがある場合はコンボ表示を追加
+            if (combo > 0) {
+                floatingScore.innerHTML = `${scoreText}<br><span style="font-size: 0.8em; color: #ffff00;">${combo} Combo!</span>`;
+            } else {
+                floatingScore.textContent = scoreText;
+            }
+
             floatingScore.style.left = x + 'px';
             floatingScore.style.top = y + 'px';
-            
+
             document.getElementById('gameArea').appendChild(floatingScore);
-            
+
             // 1秒後に要素を削除
             setTimeout(() => {
                 if (floatingScore.parentNode) {
@@ -5896,6 +6001,18 @@
                 ufo.textContent = problem.question;
                 console.log('DEBUG: UFO textContent設定完了');
             }
+
+            // 3分集中モードの場合はUFOを画面中央に固定表示
+            if (gameState.isThreeMinuteMode) {
+                ufo.style.left = '50%';
+                ufo.style.top = '30%';
+                ufo.style.transform = 'translateX(-50%)';
+                gameArea.appendChild(ufo);
+                gameState.currentUfo = ufo;
+                // 3分集中モードではUFOは動かない
+                return { ufo, fallInterval: null };
+            }
+
             // 長い問題文を考慮して、より広い余裕を持たせる
             // 問題文の長さに応じて動的に計算（文字数 × 15px + 余裕）
             const textLength = problem.question.length;
@@ -5919,17 +6036,17 @@
             // UFOを降下させる
             let position = -40;
             const fallSpeed = (window.innerHeight + 40) / (gameState.problemSpeed / 50);
-            
+
             const fallInterval = setInterval(() => {
                 if (!gameState.gameRunning) {
                     clearInterval(fallInterval);
                     return;
                 }
-                
+
                 position += fallSpeed;
                 ufo.style.top = position + 'px';
-                
-                
+
+
                 // UFOが画面下半分に来たら危険演出
                 const dangerOverlay = document.getElementById('dangerOverlay');
                 if (position > window.innerHeight / 2) {
@@ -5937,7 +6054,7 @@
                 } else {
                     dangerOverlay.classList.remove('active');
                 }
-                
+
                 if (position >= window.innerHeight) {
                     clearInterval(fallInterval);
                     if (gameState.gameRunning) {
@@ -5947,7 +6064,7 @@
                     }
                 }
             }, 50);
-            
+
             return { ufo, fallInterval };
         }
 
@@ -6158,104 +6275,152 @@
             } else {
                 isCorrect = selectedAnswer === gameState.currentProblem.answer;
             }
-            
+
             if (isCorrect) {
                 button.classList.add('correct');
-                
-                // UFOの位置と速度に基づいて得点を計算（位置1000点 × 速度倍率）
-                const ufoPosition = parseFloat(gameState.currentUfo.style.top);
-                // UFOの実際の位置を取得（transform: translateX(-50%)を考慮）
-                let ufoLeft = parseFloat(gameState.currentUfo.style.left);
-                if (gameState.currentUfo.style.transform && gameState.currentUfo.style.transform.includes('translateX(-50%)')) {
-                    // transform: translateX(-50%)が適用されている場合、UFOの幅の半分を引く
-                    const ufoWidth = gameState.currentUfo.offsetWidth;
-                    ufoLeft = ufoLeft - (ufoWidth / 2);
-                }
-                const screenHeight = window.innerHeight;
-                const positionRatio = Math.max(0, Math.min(1, ufoPosition / screenHeight));
-                const basePoints = Math.round(1000 * (1 - positionRatio));
-                let points = Math.round(basePoints * gameState.speedMultiplier);
 
-                // 難易度による倍率調整
-                if (gameState.difficulty === 'normal') {
-                    // ノーマル難易度の場合は1.0倍（変更なし）
-                    points = Math.round(points * 1.0);
-                } else if (gameState.difficulty === 'hyper') {
-                    // ハイパー難易度の場合、一律1.3倍
-                    points = Math.round(points * 1.3);
+                // コンボカウントを増やす
+                gameState.comboCount++;
+
+                // 新しいスコア計算: 基本点 × モード倍率 + コンボボーナス
+                const basePoints = getBasePointsBySpeed(gameState.initialSpeedMultiplier);
+                const comboBonus = gameState.comboCount * 10;
+                let scoreMultiplier;
+
+                // 難易度による倍率（ハイパーモードは個別の倍率を使用）
+                if (gameState.difficulty === 'hyper') {
+                    scoreMultiplier = getHyperModeMultiplier(gameState.mode);
+                } else {
+                    const modeSettings = getModeSettings(gameState.mode);
+                    scoreMultiplier = modeSettings.scoreMultiplier;
                 }
 
-                // モードによる得点倍率を適用
-                const modeSettings = getModeSettings(gameState.mode);
-                points = Math.round(points * modeSettings.scoreMultiplier);
+                let points = Math.round(basePoints * scoreMultiplier) + comboBonus;
 
-                // フローティングスコアを表示（UFOの実際の位置に）
-                showFloatingScore(points, ufoLeft + 60, ufoPosition + 40);
-                
+                // UFOの位置を取得
+                let ufoLeft;
+                let ufoTop;
+                if (gameState.isThreeMinuteMode) {
+                    ufoLeft = window.innerWidth / 2;
+                    ufoTop = window.innerHeight * 0.3;
+                } else {
+                    const ufoPosition = parseFloat(gameState.currentUfo.style.top);
+                    ufoLeft = parseFloat(gameState.currentUfo.style.left);
+                    if (gameState.currentUfo.style.transform && gameState.currentUfo.style.transform.includes('translateX(-50%)')) {
+                        const ufoWidth = gameState.currentUfo.offsetWidth;
+                        ufoLeft = ufoLeft - (ufoWidth / 2);
+                    }
+                    ufoTop = ufoPosition;
+                }
+
+                // フローティングスコアを表示（コンボ表示付き）
+                showFloatingScore(points, ufoLeft + 60, ufoTop + 40, gameState.comboCount);
+
                 gameState.score += points;
                 gameState.correctCount++;
                 updateTotalCorrectCount(); // 累積正解数を更新
                 document.getElementById('score').textContent = gameState.score;
-                
-                // 正解するたびに速度を0.1倍ずつ加算（各モードで上限設定）
-                // 超低速モードでは速度を固定
-                if (!gameState.timeUp && gameState.initialSpeedMultiplier !== 0.25) {
-                    gameState.speedMultiplier += 0.1;
-                    let maxMultiplier;
-                    if (gameState.initialSpeedMultiplier === 0.5) {
-                        // 「おそい」モード（0.5倍）の場合は1.5倍まで
-                        maxMultiplier = 1.5;
-                    } else if (gameState.initialSpeedMultiplier === 1.0) {
-                        // 「ふつう」モード（1.0倍）の場合は2.5倍まで
-                        maxMultiplier = 2.5;
-                    } else if (gameState.initialSpeedMultiplier === 2.0) {
-                        // 「はやい」モード（2.0倍）の場合は3.5倍まで
-                        maxMultiplier = 3.5;
-                    } else {
-                        // 「超高速」モード（3.0倍）は初期速度の4倍まで
-                        maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
+
+                // 3分集中モードでは速度加速なし
+                if (!gameState.isThreeMinuteMode) {
+                    // 正解するたびに速度を0.1倍ずつ加算（各モードで上限設定）
+                    // 超低速モードでは速度を固定
+                    if (!gameState.timeUp && gameState.initialSpeedMultiplier !== 0.25) {
+                        gameState.speedMultiplier += 0.1;
+                        let maxMultiplier;
+                        if (gameState.initialSpeedMultiplier === 0.5) {
+                            maxMultiplier = 1.5;
+                        } else if (gameState.initialSpeedMultiplier === 1.0) {
+                            maxMultiplier = 2.5;
+                        } else if (gameState.initialSpeedMultiplier === 2.0) {
+                            maxMultiplier = 3.5;
+                        } else {
+                            maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
+                        }
+                        if (gameState.speedMultiplier > maxMultiplier) {
+                            gameState.speedMultiplier = maxMultiplier;
+                        }
+                        gameState.problemSpeed = gameState.baseSpeed / gameState.speedMultiplier;
                     }
-                    if (gameState.speedMultiplier > maxMultiplier) {
-                        gameState.speedMultiplier = maxMultiplier;
-                    }
-                    gameState.problemSpeed = gameState.baseSpeed / gameState.speedMultiplier;
                 }
-                
+
                 // UFOの降下を停止
                 if (gameState.currentFallInterval) {
                     clearInterval(gameState.currentFallInterval);
                     gameState.currentFallInterval = null;
                 }
-                
+
                 // UFO消失演出を開始（正解音とUFO削除は演出内で処理）
                 destroyUfo(gameState.currentUfo);
                 gameState.currentUfo = null;
-                
-                
+
                 // 危険演出をリセット
                 document.getElementById('dangerOverlay').classList.remove('active');
-                
-                // 時間終了後の正解ならゲームクリア
-                if (gameState.timeUp) {
-                    setTimeout(gameClear, 500);
-                } else {
+
+                // 3分集中モードでは時間終了判定はタイマーで行う
+                if (gameState.isThreeMinuteMode) {
                     setTimeout(() => {
                         if (gameState.gameRunning) {
                             newProblem();
                         }
-                    }, 500); // 短い待機時間でテンポを改善
+                    }, 300);
+                } else {
+                    if (gameState.timeUp) {
+                        setTimeout(gameClear, 500);
+                    } else {
+                        setTimeout(() => {
+                            if (gameState.gameRunning) {
+                                newProblem();
+                            }
+                        }, 500);
+                    }
                 }
             } else {
                 button.classList.add('incorrect');
                 playIncorrectSound();
-                gameState.lives--;
-                gameState.wrongAnswerCount++;
-                document.getElementById('lives').textContent = gameState.lives;
-                
-                if (gameState.lives <= 0) {
-                    // 最後の問題を保存
-                    gameState.lastFailedProblem = gameState.currentProblem;
-                    setTimeout(gameOver, 500);
+
+                // コンボをリセット
+                gameState.comboCount = 0;
+
+                // 3分集中モードでは残機を減らさず、減点のみ
+                if (gameState.isThreeMinuteMode) {
+                    const basePoints = getBasePointsBySpeed(gameState.initialSpeedMultiplier);
+                    let scoreMultiplier;
+
+                    // 難易度による倍率（ハイパーモードは個別の倍率を使用）
+                    if (gameState.difficulty === 'hyper') {
+                        scoreMultiplier = getHyperModeMultiplier(gameState.mode);
+                    } else {
+                        const modeSettings = getModeSettings(gameState.mode);
+                        scoreMultiplier = modeSettings.scoreMultiplier;
+                    }
+
+                    let penaltyPoints = Math.round(basePoints * scoreMultiplier * 2);
+
+                    gameState.score -= penaltyPoints;
+                    // スコアがマイナスにならないようにする
+                    if (gameState.score < 0) {
+                        gameState.score = 0;
+                    }
+                    document.getElementById('score').textContent = gameState.score;
+
+                    // 減点表示
+                    const ufoLeft = window.innerWidth / 2;
+                    const ufoTop = window.innerHeight * 0.3;
+                    showFloatingScore(-penaltyPoints, ufoLeft + 60, ufoTop + 40);
+
+                    gameState.wrongAnswerCount++;
+                } else {
+                    // 通常モード
+                    gameState.lives--;
+                    gameState.wrongAnswerCount++;
+                    document.getElementById('lives').textContent = gameState.lives;
+
+                    if (gameState.lives <= 0) {
+                        // 最後の問題を保存
+                        gameState.lastFailedProblem = gameState.currentProblem;
+                        setTimeout(gameOver, 500);
+                    }
                 }
                 // 不正解の場合、UFOは残したまま（正解するまで消えない）
                 // ボタンの色だけリセット
@@ -6327,18 +6492,32 @@
             gameState.difficulty = difficulty;
             gameState.score = 0;
             gameState.correctCount = 0;
-            gameState.lives = 3;
-            gameState.timeLeft = 60;
+            gameState.comboCount = 0;
+            gameState.wrongAnswerCount = 0;
+            gameState.timeUp = false;
             gameState.gameRunning = false; // カウントダウン中は false
-            gameState.initialSpeedMultiplier = speed;
-            gameState.speedMultiplier = speed;
+
+            // 3分集中モードの場合の設定
+            if (gameState.isThreeMinuteMode) {
+                gameState.lives = 999; // 実質無限（表示は「∞」）
+                gameState.timeLeft = 180; // 3分間
+                gameState.initialSpeedMultiplier = -1; // 3分集中モードの識別用
+                gameState.speedMultiplier = 1.0; // 速度倍率は1.0固定
+            } else {
+                gameState.lives = 3;
+                gameState.timeLeft = 60;
+                gameState.initialSpeedMultiplier = speed;
+                gameState.speedMultiplier = speed;
+            }
 
             // モードに応じた基本速度を設定
             const modeSettings = getModeSettings(mode);
             gameState.baseSpeed = modeSettings.baseSpeed;
-            gameState.problemSpeed = gameState.baseSpeed / speed;
-            gameState.wrongAnswerCount = 0;
-            gameState.timeUp = false;
+
+            // 3分集中モードではUFOは動かないのでproblemSpeedは使わない
+            if (!gameState.isThreeMinuteMode) {
+                gameState.problemSpeed = gameState.baseSpeed / speed;
+            }
 
             // ゲーム開始時に背景音楽を一時停止
             pauseBgMusic();
@@ -6356,7 +6535,12 @@
             }
 
             document.getElementById('score').textContent = gameState.score;
-            document.getElementById('lives').textContent = gameState.lives;
+            // 3分集中モードでは残機を「∞」と表示
+            if (gameState.isThreeMinuteMode) {
+                document.getElementById('lives').textContent = '∞';
+            } else {
+                document.getElementById('lives').textContent = gameState.lives;
+            }
             updateTimeGauge();
 
             // モード表示を更新
@@ -6374,7 +6558,11 @@
                     if (gameState.timeLeft <= 0) {
                         gameState.timeUp = true;
                         clearInterval(gameTimer);
-                        // 時間終了時もUFOの降下は継続（画面下に落ちるまでに正解すればクリア）
+                        // 3分集中モードでは時間終了でゲームクリア
+                        if (gameState.isThreeMinuteMode) {
+                            threeMinuteModeEnd();
+                        }
+                        // 通常モードでは時間終了時もUFOの降下は継続（画面下に落ちるまでに正解すればクリア）
                     }
                 }, 1000);
 
@@ -6455,10 +6643,10 @@
             // ボーナス計算
             let bonusMessage = '';
             let totalBonus = 0;
-            
-            // 残機ボーナス（計算の種類によって変動）
+
+            // 残機ボーナス（速度設定によって変動）
             if (gameState.lives > 0) {
-                const livesPointPer = getLifeBonusPerMode(gameState.mode);
+                const livesPointPer = getLifeBonusBySpeed(gameState.initialSpeedMultiplier);
                 const livesBonus = gameState.lives * livesPointPer;
                 totalBonus += livesBonus;
                 bonusMessage += `<p style="font-size: 1.2rem; margin: 0.3rem 0; color: #00ff00; text-shadow: 0 0 10px #00ff00;">残機ボーナス: ${gameState.lives} × ${livesPointPer} = ${livesBonus}点</p>`;
@@ -6486,6 +6674,9 @@
             document.getElementById('gameScreen').classList.add('hidden');
             const gameClearScreen = document.getElementById('gameClearScreen');
             gameClearScreen.classList.remove('hidden');
+
+            // 通常モード用のメッセージに戻す
+            document.getElementById('clearMessage').textContent = '地球を守った！';
 
             // 設定情報を表示
             const existingSettingsInfo = gameClearScreen.querySelector('.game-settings-info');
@@ -6532,10 +6723,84 @@
             gameClearScreen.insertBefore(titleDiv, gameClearScreen.querySelector('.score-display'));
         }
 
+        // 3分集中モード終了
+        function threeMinuteModeEnd() {
+            gameState.gameRunning = false;
+            clearInterval(gameTimer);
+
+            // 勝利間近演出をクリア
+            document.getElementById('gameScreen').classList.remove('time-warning');
+
+            // UFOの降下を停止
+            if (gameState.currentFallInterval) {
+                clearInterval(gameState.currentFallInterval);
+                gameState.currentFallInterval = null;
+            }
+
+            // ファンファーレを再生
+            if (gameState.bgmEnabled) {
+                playGameClearMusic();
+            } else {
+                playFanfareSound();
+            }
+
+            // UFOを削除
+            document.querySelectorAll('.ufo').forEach(ufo => ufo.remove());
+
+            // 危険演出をリセット
+            document.getElementById('dangerOverlay').classList.remove('active');
+
+            document.getElementById('gameScreen').classList.add('hidden');
+            const gameClearScreen = document.getElementById('gameClearScreen');
+            gameClearScreen.classList.remove('hidden');
+
+            // 3分集中モード用のメッセージに変更
+            document.getElementById('clearMessage').textContent = '3分間終了！';
+
+            // 設定情報を表示（3分集中モード）
+            const existingSettingsInfo = gameClearScreen.querySelector('.game-settings-info');
+            if (existingSettingsInfo) {
+                existingSettingsInfo.remove();
+            }
+
+            const settingsDiv = document.createElement('div');
+            settingsDiv.className = 'game-settings-info';
+            const difficultyText = getDifficultyLabel(gameState.difficulty);
+            const modeText = getModeLabel(gameState.mode);
+            settingsDiv.textContent = `${difficultyText}　${modeText}　3分集中`;
+            gameClearScreen.insertBefore(settingsDiv, gameClearScreen.querySelector('h1'));
+
+            // ボーナスメッセージ（3分集中モードでは残機ボーナスなし）
+            const existingBonus = gameClearScreen.querySelector('.bonus-message');
+            if (existingBonus) {
+                existingBonus.remove();
+            }
+
+            // スコアを保存
+            saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier, true);
+
+            document.getElementById('clearScore').textContent = gameState.score;
+            document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
+
+            // 称号を表示
+            const existingTitle = gameClearScreen.querySelector('.title-display');
+            if (existingTitle) {
+                existingTitle.remove();
+            }
+
+            const titleDivThreeMin = document.createElement('div');
+            titleDivThreeMin.className = 'title-display game-clear-title';
+            titleDivThreeMin.textContent = getTitleByScore(gameState.score);
+            gameClearScreen.insertBefore(titleDivThreeMin, gameClearScreen.querySelector('.score-display'));
+        }
+
         // ゲーム再開
         function restartGame() {
             // ゲームクリア音楽を停止
             stopGameClearMusic();
+
+            // 3分集中モードフラグをリセット
+            gameState.isThreeMinuteMode = false;
 
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
@@ -6717,6 +6982,13 @@
 
             document.getElementById('modeSelectionScreen').classList.add('hidden');
 
+            // 3分集中モードの場合は速度選択をスキップしてゲーム開始
+            if (gameState.isThreeMinuteMode) {
+                // 3分集中モード用の特別な速度値（識別用）
+                startGame(gameState.mode, gameState.difficulty, -1);
+                return;
+            }
+
             const speedScreen = document.getElementById('speedScreen');
             speedScreen.classList.remove('hidden');
 
@@ -6763,27 +7035,27 @@
 
         // スコアに応じた称号を取得
         function getTitleByScore(score) {
+            // 5000点ごとに称号が上がる（0点はLV.0）
             if (score >= 100000) return 'LV.MAX 計算銀河の創造主';
-            if (score >= 92000) return 'LV.20 宇宙根源の答え';
-            if (score >= 84000) return 'LV.19 永遠の銀河覇者';
-            if (score >= 76000) return 'LV.18 伝説の宇宙勇者';
-            if (score >= 68000) return 'LV.17 星々の守護神';
-            if (score >= 60000) return 'LV.16 宇宙を統べる王';
-            if (score >= 55000) return 'LV.15 銀河連合の司令官';
-            if (score >= 50000) return 'LV.14 星雲の支配者';
-            if (score >= 45000) return 'LV.13 光の翼を持つ者';
-            if (score >= 40000) return 'LV.12 ブラックホール討伐者';
-            if (score >= 35000) return 'LV.11 暗黒星雲の戦士';
-            if (score >= 31000) return 'LV.10 太陽系の英雄';
-            if (score >= 27000) return 'LV.9 宇宙戦艦の隊長';
-            if (score >= 23000) return 'LV.8 光速の挑戦者';
-            if (score >= 19000) return 'LV.7 銀河の探検家';
-            if (score >= 15000) return 'LV.6 惑星の守護者';
-            if (score >= 12000) return 'LV.5 星空の冒険者';
-            if (score >= 9000) return 'LV.4 宇宙船の操縦士';
-            if (score >= 6000) return 'LV.3 流れ星を追う者';
-            if (score >= 3000) return 'LV.2 見習い宇宙飛行士';
-            if (score >= 1) return 'LV.1 ひよっこ訓練生';
+            if (score >= 95000) return 'LV.19 宇宙根源の答え';
+            if (score >= 90000) return 'LV.18 永遠の銀河覇者';
+            if (score >= 85000) return 'LV.17 伝説の宇宙勇者';
+            if (score >= 80000) return 'LV.16 星々の守護神';
+            if (score >= 75000) return 'LV.15 宇宙を統べる王';
+            if (score >= 70000) return 'LV.14 銀河連合の司令官';
+            if (score >= 65000) return 'LV.13 星雲の支配者';
+            if (score >= 60000) return 'LV.12 光の翼を持つ者';
+            if (score >= 55000) return 'LV.11 ブラックホール討伐者';
+            if (score >= 50000) return 'LV.10 暗黒星雲の戦士';
+            if (score >= 45000) return 'LV.9 太陽系の英雄';
+            if (score >= 40000) return 'LV.8 宇宙戦艦の隊長';
+            if (score >= 35000) return 'LV.7 光速の挑戦者';
+            if (score >= 30000) return 'LV.6 銀河の探検家';
+            if (score >= 25000) return 'LV.5 惑星の守護者';
+            if (score >= 20000) return 'LV.4 星空の冒険者';
+            if (score >= 15000) return 'LV.3 宇宙船の操縦士';
+            if (score >= 10000) return 'LV.2 流れ星を追う者';
+            if (score >= 5000) return 'LV.1 見習い宇宙飛行士';
             return 'LV.0 よちよち赤ちゃん';
         }
 
@@ -6791,7 +7063,9 @@
         function updateTimeGauge() {
             const timeGauge = document.getElementById('timeGauge');
             if (timeGauge) {
-                const percentage = (gameState.timeLeft / 60) * 100;
+                // 3分集中モードでは180秒、通常モードでは60秒が最大
+                const maxTime = gameState.isThreeMinuteMode ? 180 : 60;
+                const percentage = (gameState.timeLeft / maxTime) * 100;
                 timeGauge.style.height = percentage + '%';
             }
 
@@ -6817,6 +7091,9 @@
         // タイトルに戻る
         function returnToTitle() {
             gameState.gameRunning = false;
+            // 3分集中モードフラグをリセット
+            gameState.isThreeMinuteMode = false;
+
             if (gameTimer) {
                 clearInterval(gameTimer);
             }
@@ -7107,6 +7384,41 @@
 
             // ゲームスタートボタンのイベントハンドラ
             document.getElementById('gameStartBtn').addEventListener('click', () => {
+                // 通常モード
+                gameState.isThreeMinuteMode = false;
+
+                // 選択状態をリセット
+                gameState.selectedMode = null;
+                document.getElementById('modeConfirmBtn').disabled = true;
+
+                // プレビューを非表示
+                hideProblemPreview();
+
+                // 前回遊んだモードのページを検索して開く
+                const lastMode = localStorage.getItem('lastSelectedMode');
+                if (lastMode) {
+                    const pageIndex = findModePageIndex(lastMode);
+                    if (pageIndex !== -1) {
+                        gameState.currentModePage = pageIndex + 1;
+                    } else {
+                        gameState.currentModePage = 1;
+                    }
+                } else {
+                    gameState.currentModePage = 1;
+                }
+
+                document.getElementById('modeScreen').classList.add('hidden');
+                document.getElementById('titleCopyright').style.display = 'none';
+                document.getElementById('modeSelectionScreen').classList.remove('hidden');
+                updateModePage();
+                resumeBgMusic();
+            });
+
+            // ３分集中モードボタンのイベントハンドラ
+            document.getElementById('threeMinuteBtn').addEventListener('click', () => {
+                // 3分集中モード
+                gameState.isThreeMinuteMode = true;
+
                 // 選択状態をリセット
                 gameState.selectedMode = null;
                 document.getElementById('modeConfirmBtn').disabled = true;
