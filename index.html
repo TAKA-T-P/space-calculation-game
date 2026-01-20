@@ -568,6 +568,45 @@
             animation: ufo-hit 0.3s ease-out forwards;
         }
 
+        /* 流れ星 */
+        .shooting-star {
+            position: fixed;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            transform: rotate(-45deg);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            animation: shooting-star-animation 1s ease-out forwards;
+        }
+
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -1px;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 6px 2px white, 0 0 12px 4px rgba(100, 200, 255, 0.5);
+        }
+
+        @keyframes shooting-star-animation {
+            0% {
+                opacity: 1;
+                transform: rotate(-45deg) translate(0, 0);
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: rotate(-45deg) translate(-280px, 0);
+            }
+        }
+
         .home-btn {
             position: fixed;
             top: 20px;
@@ -1204,25 +1243,39 @@
             transform: scale(1.01);
         }
 
-        .record-row.has-score {
+        /* 50000点未満 */
+        .record-row.score-low {
             border-color: #ffaa00;
             background: rgba(255, 170, 0, 0.1);
             color: #ffaa00;
             text-shadow: 0 0 8px #ffaa00;
         }
 
-        .record-row.has-score:hover {
+        .record-row.score-low:hover {
             background: rgba(255, 170, 0, 0.2);
         }
 
-        .record-row.game-clear {
+        /* 50000点以上100000点未満 */
+        .record-row.score-medium {
+            border-color: #aaff00;
+            background: rgba(170, 255, 0, 0.1);
+            color: #aaff00;
+            text-shadow: 0 0 8px #aaff00;
+        }
+
+        .record-row.score-medium:hover {
+            background: rgba(170, 255, 0, 0.2);
+        }
+
+        /* 100000点以上 */
+        .record-row.score-high {
             border-color: #00ff00;
             background: rgba(0, 255, 0, 0.1);
             color: #00ff00;
             text-shadow: 0 0 8px #00ff00;
         }
 
-        .record-row.game-clear:hover {
+        .record-row.score-high:hover {
             background: rgba(0, 255, 0, 0.2);
         }
 
@@ -2085,7 +2138,7 @@
         <button class="instructions-btn" data-mode="instructions">説明</button>
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1 class="game-title">スペース計算ラリー</h1>
-        <p style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
+        <p id="titleSubtext" style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
         <div class="mode-buttons">
             <button class="game-start-btn" id="threeMinuteBtn">３分集中</button>
             <button class="game-start-btn" id="gameStartBtn">UFOバトル</button>
@@ -2324,7 +2377,7 @@
     <div id="recordsScreen" class="screen hidden">
         <button class="clear-records-btn" id="clearRecordsBtn">消去</button>
         <div class="records-header">
-            <button class="records-toggle-btn" id="difficultyToggleBtn" data-difficulty="normal">ノーマル</button>
+            <button class="records-toggle-btn" id="recordsDifficultyToggleBtn" data-difficulty="normal">ノーマル</button>
             <div class="total-score-display">
                 <span class="total-score-label">TOTAL SCORE</span>
                 <span class="total-score-value" id="totalScoreValue">0</span>
@@ -3291,10 +3344,13 @@
                 const recordRow = document.createElement('div');
                 let rowClass = 'record-row';
                 if (record.score) {
-                    if (record.isGameClear) {
-                        rowClass += ' game-clear';
+                    const scoreNum = typeof record.score === 'number' ? record.score : parseInt(String(record.score).replace(/,/g, ''), 10);
+                    if (scoreNum >= 100000) {
+                        rowClass += ' score-high';
+                    } else if (scoreNum >= 50000) {
+                        rowClass += ' score-medium';
                     } else {
-                        rowClass += ' has-score';
+                        rowClass += ' score-low';
                     }
                 }
                 recordRow.className = rowClass;
@@ -3360,6 +3416,7 @@
             document.getElementById('titleCopyright').style.display = 'none';
             document.getElementById('storyLibraryScreen').classList.remove('hidden');
             updateStoryLibrary();
+            stopShootingStars();
 
             // ストーリーBGMボタンの表示を更新
             updateStoryBGMButton();
@@ -6996,6 +7053,7 @@
                 // タイトル画面以外ではコピーライトを非表示
                 document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('storyScreen').classList.remove('hidden');
+                stopShootingStars();
                 return;
             }
             if (mode === 'records') {
@@ -7005,6 +7063,7 @@
                 document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('recordsScreen').classList.remove('hidden');
                 updateRecordsDisplay();
+                stopShootingStars();
                 return;
             }
             if (mode === 'instructions') {
@@ -7012,6 +7071,7 @@
                 // タイトル画面以外ではコピーライトを非表示
                 document.getElementById('titleCopyright').style.display = 'none';
                 document.getElementById('instructionsScreen').classList.remove('hidden');
+                stopShootingStars();
                 return;
             }
 
@@ -7139,6 +7199,7 @@
             document.getElementById('titleCopyright').style.display = 'none';
             document.getElementById('modeSelectionScreen').classList.remove('hidden');
             updateModePage(); // モードページを更新
+            stopShootingStars();
         }
 
         // 速度選択
@@ -7248,6 +7309,12 @@
             // タイトル画面表示時にコピーライトを表示
             document.getElementById('titleCopyright').style.display = 'block';
 
+            // 流れ星を再開
+            startShootingStars();
+
+            // サブテキストをランダムに更新
+            updateTitleSubtext();
+
             // ゲームエリアをクリア
             document.getElementById('gameArea').innerHTML = '';
             document.getElementById('choices').innerHTML = '';
@@ -7299,7 +7366,7 @@
         // 選択された難易度の記録を表示
         function showRecordsForDifficulty(difficulty) {
             // トグルボタンの状態を更新
-            const toggleBtn = document.getElementById('difficultyToggleBtn');
+            const toggleBtn = document.getElementById('recordsDifficultyToggleBtn');
             if (toggleBtn) {
                 toggleBtn.dataset.difficulty = difficulty;
                 toggleBtn.textContent = difficulty === 'normal' ? 'ノーマル' : 'ハイパー';
@@ -7325,7 +7392,7 @@
         }
 
         function toggleDifficulty() {
-            const toggleBtn = document.getElementById('difficultyToggleBtn');
+            const toggleBtn = document.getElementById('recordsDifficultyToggleBtn');
             const currentDifficulty = toggleBtn.dataset.difficulty;
             const newDifficulty = currentDifficulty === 'normal' ? 'hyper' : 'normal';
             showRecordsForDifficulty(newDifficulty);
@@ -7363,6 +7430,91 @@
                 bgMusic.play().catch(error => {
                     console.log('音楽の再生に失敗しました:', error);
                 });
+            }
+        }
+
+        // 流れ星の制御
+        let shootingStarInterval = null;
+
+        function createShootingStar() {
+            const modeScreen = document.getElementById('modeScreen');
+            if (!modeScreen || modeScreen.classList.contains('hidden')) {
+                return;
+            }
+
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+
+            // ランダムな開始位置（画面上部〜右側）
+            const startX = Math.random() * window.innerWidth * 0.7 + window.innerWidth * 0.3;
+            const startY = Math.random() * window.innerHeight * 0.5;
+
+            star.style.left = startX + 'px';
+            star.style.top = startY + 'px';
+
+            document.body.appendChild(star);
+
+            // アニメーション終了後に要素を削除
+            setTimeout(() => {
+                if (star.parentNode) {
+                    star.parentNode.removeChild(star);
+                }
+            }, 1000);
+        }
+
+        function startShootingStars() {
+            if (shootingStarInterval) {
+                clearInterval(shootingStarInterval);
+            }
+            // 2〜5秒のランダムな間隔で流れ星を生成
+            function scheduleNextStar() {
+                const delay = 2000 + Math.random() * 3000;
+                shootingStarInterval = setTimeout(() => {
+                    createShootingStar();
+                    scheduleNextStar();
+                }, delay);
+            }
+            scheduleNextStar();
+        }
+
+        function stopShootingStars() {
+            if (shootingStarInterval) {
+                clearTimeout(shootingStarInterval);
+                shootingStarInterval = null;
+            }
+            // 既存の流れ星を削除
+            document.querySelectorAll('.shooting-star').forEach(star => star.remove());
+        }
+
+        // タイトル画面のサブテキストをランダムに変更
+        const titleSubtexts = [
+            '計算の力で地球を守れ！',
+            '答えをつないで宇宙をかけろ！',
+            '計算エネルギー、フルチャージ！',
+            '最速の計算パイロットを目指せ！',
+            'ミスするな！地球のピンチだ！',
+            '君の答えが未来をひらく！',
+            '君の計算が地球を守る！',
+            '計算力は最強の武器だ！',
+            'つぎつぎ解いて、銀河を進め！',
+            '計算バトル、開幕！',
+            '宇宙の運命は君の答えしだい！',
+            'スピードと正確さで勝ちぬけ！',
+            '計算マスターへの道はここから！',
+            '正しい答えで敵をたおせ！',
+            '計算ミッション、スタート！',
+            '今日の君は宇宙ヒーロー！',
+            '計算で戦う、新感覚バトル！',
+            '目指せ！伝説の計算マスター！',
+            '計算でピンチをのりこえろ！',
+            '君のひらめきが銀河を救う！'
+        ];
+
+        function updateTitleSubtext() {
+            const subtextElement = document.getElementById('titleSubtext');
+            if (subtextElement) {
+                const randomIndex = Math.floor(Math.random() * titleSubtexts.length);
+                subtextElement.textContent = titleSubtexts[randomIndex];
             }
         }
 
@@ -7421,6 +7573,12 @@
                 bgmButton.textContent = 'BGM OFF';
                 bgmButton.classList.add('off');
             }
+
+            // タイトル画面の流れ星を開始
+            startShootingStars();
+
+            // サブテキストをランダムに設定
+            updateTitleSubtext();
 
             // ユーザーがページをクリックしたら音楽を開始（自動再生制限対策）
             document.addEventListener('click', function initAudio() {
@@ -7525,6 +7683,7 @@
                 document.getElementById('modeSelectionScreen').classList.remove('hidden');
                 updateModePage();
                 resumeBgMusic();
+                stopShootingStars();
             });
 
             // ３分集中モードボタンのイベントハンドラ
@@ -7557,6 +7716,7 @@
                 document.getElementById('modeSelectionScreen').classList.remove('hidden');
                 updateModePage();
                 resumeBgMusic();
+                stopShootingStars();
             });
 
             // 難易度切り替えボタンのイベントハンドラ
