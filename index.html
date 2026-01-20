@@ -230,7 +230,7 @@
             text-shadow: 0 0 20px #ff6600, 0 0 40px #ff3300;
             z-index: 2000;
             pointer-events: none;
-            animation: timeNoticeAppear 0.3s ease-out, timeNoticeFade 0.7s ease-in 0.3s forwards;
+            animation: timeNoticeAppear 0.3s ease-out, timeNoticeFade 0.7s ease-in 1.3s forwards;
         }
 
         @keyframes timeNoticeAppear {
@@ -1813,7 +1813,7 @@
 
             /* スマホ縦画面用：残り時間通知を小さく（改行防止） */
             .time-remaining-notice {
-                font-size: 1.3rem;
+                font-size: 1.75rem;
                 white-space: nowrap;
             }
         }
@@ -3899,12 +3899,12 @@
             notice.textContent = message;
             document.getElementById('gameScreen').appendChild(notice);
 
-            // 1秒後に要素を削除
+            // 2秒後に要素を削除
             setTimeout(() => {
                 if (notice.parentNode) {
                     notice.parentNode.removeChild(notice);
                 }
-            }, 1000);
+            }, 2000);
         }
 
         // フローティングスコアを表示
