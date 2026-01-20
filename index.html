@@ -192,6 +192,11 @@
             text-shadow: 0 0 10px #00ffff;
         }
 
+        /* 計算の種類選択ボタンの縦幅を狭く */
+        #modeButtonsContainer .mode-btn {
+            padding: 8px 30px;
+        }
+
         .mode-btn:hover,
         .game-start-btn:hover,
         .difficulty-switch-btn:hover {
@@ -1743,6 +1748,11 @@
                 font-size: 1.1rem;
             }
 
+            /* 計算の種類選択ボタンの縦幅を狭く */
+            #modeButtonsContainer .mode-btn {
+                padding: 5px 25px;
+            }
+
             .ui-item {
                 font-size: 0.8rem;
                 padding: 5px 10px;
@@ -2091,7 +2101,19 @@
             padding: 0.5rem 1rem;
             z-index: 50;
         ">ノーマル</button>
-        <h1 style="margin-top: 2rem; margin-bottom: 1rem;">計算の種類を選ぼう</h1>
+        <h1 style="margin-top: 2rem; margin-bottom: 0.5rem;">計算の種類を選ぼう</h1>
+        <button class="confirm-btn" id="modeConfirmBtn" disabled style="
+            padding: 10px 30px;
+            font-size: 1.1rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 100, 200, 0.95);
+            color: #ffffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 10px #00ffff;
+            margin-bottom: 0.5rem;
+        ">決定</button>
         <div class="mode-scroll-container">
             <div class="mode-buttons" id="modeButtonsContainer">
                 <!-- ボタンは JavaScript で動的に生成 -->
@@ -2118,21 +2140,6 @@
             </div>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
-        <button class="confirm-btn" id="modeConfirmBtn" disabled style="
-            position: fixed;
-            bottom: 20px;
-            right: 30px;
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            border: 2px solid #00ffff;
-            background: rgba(0, 100, 200, 0.95);
-            color: #ffffff;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-shadow: 0 0 10px #00ffff;
-            z-index: 100;
-        ">決定</button>
     </div>
 
     <div id="speedScreen" class="screen hidden">
