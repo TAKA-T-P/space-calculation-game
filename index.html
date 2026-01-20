@@ -200,6 +200,59 @@
             box-shadow: 0 0 30px #00ffff;
         }
 
+        /* タイトル画面の「３分集中」「UFOバトル」ボタンを大きくする */
+        #modeScreen .game-start-btn {
+            padding: 20px 40px;
+            font-size: 1.5rem;
+        }
+
+        /* UFO速度設定画面の「ふつう」以外のボタンを少し狭くする */
+        #speedScreen .speed-btn:not([data-speed="1.0"]) {
+            padding: 12px 18px;
+            font-size: 1.0rem;
+        }
+
+        /* UFO速度設定画面の「ふつう」ボタンを大きくする */
+        #speedScreen .speed-btn[data-speed="1.0"] {
+            padding: 18px 35px;
+            font-size: 1.35rem;
+        }
+
+        /* 残り時間通知のスタイル */
+        .time-remaining-notice {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6600;
+            text-shadow: 0 0 20px #ff6600, 0 0 40px #ff3300;
+            z-index: 2000;
+            pointer-events: none;
+            animation: timeNoticeAppear 0.3s ease-out, timeNoticeFade 0.7s ease-in 0.3s forwards;
+        }
+
+        @keyframes timeNoticeAppear {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        @keyframes timeNoticeFade {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
         #gameScreen {
             justify-content: flex-start;
             padding: 20px;
@@ -2454,57 +2507,61 @@
         }
 
         // 計算の種類ごとの設定を取得する関数
+        // baseSpeed = 13000 ÷ scoreMultiplier で計算
         function getModeSettings(mode) {
-            const settings = {
+            const scoreMultipliers = {
                 // 基本的な四則演算
-                'addition': { baseSpeed: 10000, scoreMultiplier: 1.00 },
-                'subtraction': { baseSpeed: 10000, scoreMultiplier: 1.05 },
-                'multiplication': { baseSpeed: 10000, scoreMultiplier: 1.00 },
-                'division': { baseSpeed: 10000, scoreMultiplier: 1.05 },
-                'all': { baseSpeed: 10000, scoreMultiplier: 1.05 },
+                'addition': 1.00,
+                'subtraction': 1.05,
+                'multiplication': 1.00,
+                'division': 1.05,
+                'all': 1.05,
 
                 // 単位変換系
-                'weight': { baseSpeed: 16000, scoreMultiplier: 1.10 },
-                'length': { baseSpeed: 16000, scoreMultiplier: 1.00 },
-                'area': { baseSpeed: 16000, scoreMultiplier: 1.50 },
-                'volume': { baseSpeed: 16000, scoreMultiplier: 1.50 },
-                'unitMix': { baseSpeed: 16000, scoreMultiplier: 1.50 },
+                'weight': 1.10,
+                'length': 1.00,
+                'area': 1.50,
+                'volume': 1.50,
+                'unitMix': 1.50,
 
                 // その他の計算
-                'reverse': { baseSpeed: 13000, scoreMultiplier: 1.15 },
-                'improperMixed': { baseSpeed: 13000, scoreMultiplier: 1.20 },
-                'lcm': { baseSpeed: 16000, scoreMultiplier: 1.20 },
-                'gcd': { baseSpeed: 16000, scoreMultiplier: 1.20 },
-                'fraction': { baseSpeed: 13000, scoreMultiplier: 1.05 },
+                'reverse': 1.15,
+                'improperMixed': 1.20,
+                'lcm': 1.20,
+                'gcd': 1.20,
+                'fraction': 1.05,
 
                 // 小数の計算
-                'decimalAddition': { baseSpeed: 13000, scoreMultiplier: 1.20 },
-                'decimalSubtraction': { baseSpeed: 13000, scoreMultiplier: 1.20 },
-                'decimalMultiplication': { baseSpeed: 16000, scoreMultiplier: 1.30 },
-                'decimalDivision': { baseSpeed: 16000, scoreMultiplier: 1.40 },
-                'decimalMix': { baseSpeed: 16000, scoreMultiplier: 1.40 },
+                'decimalAddition': 1.20,
+                'decimalSubtraction': 1.20,
+                'decimalMultiplication': 1.30,
+                'decimalDivision': 1.40,
+                'decimalMix': 1.40,
 
                 // 分数の計算
-                'fractionAddition': { baseSpeed: 20000, scoreMultiplier: 1.80 },
-                'fractionSubtraction': { baseSpeed: 20000, scoreMultiplier: 1.80 },
-                'fractionMultiplication': { baseSpeed: 20000, scoreMultiplier: 1.80 },
-                'fractionDivision': { baseSpeed: 20000, scoreMultiplier: 1.80 },
-                'fractionAll': { baseSpeed: 20000, scoreMultiplier: 1.80 },
+                'fractionAddition': 1.80,
+                'fractionSubtraction': 1.80,
+                'fractionMultiplication': 1.80,
+                'fractionDivision': 1.80,
+                'fractionAll': 1.80,
 
                 // 割合の計算
-                'percentageMoney': { baseSpeed: 16000, scoreMultiplier: 1.40 },
-                'percentageThreeWays': { baseSpeed: 20000, scoreMultiplier: 2.00 },
-                'speedThreeWays': { baseSpeed: 20000, scoreMultiplier: 2.00 },
-                'ratioSimplify': { baseSpeed: 13000, scoreMultiplier: 1.20 },
-                'proportionalEquation': { baseSpeed: 13000, scoreMultiplier: 1.30 },
-                'positiveNegativeAddition': { baseSpeed: 10000, scoreMultiplier: 1.05 },
-                'positiveNegativeSubtraction': { baseSpeed: 10000, scoreMultiplier: 1.10 },
-                'positiveNegativeMultiplication': { baseSpeed: 10000, scoreMultiplier: 1.05 },
-                'positiveNegativeDivision': { baseSpeed: 10000, scoreMultiplier: 1.10 },
-                'positiveNegativeMix': { baseSpeed: 10000, scoreMultiplier: 1.10 }
+                'percentageMoney': 1.40,
+                'percentageThreeWays': 2.00,
+                'speedThreeWays': 2.00,
+                'ratioSimplify': 1.20,
+                'proportionalEquation': 1.30,
+                'positiveNegativeAddition': 1.05,
+                'positiveNegativeSubtraction': 1.10,
+                'positiveNegativeMultiplication': 1.05,
+                'positiveNegativeDivision': 1.10,
+                'positiveNegativeMix': 1.10
             };
 
-            return settings[mode] || { baseSpeed: 10000, scoreMultiplier: 1.0 };
+            const scoreMultiplier = scoreMultipliers[mode] || 1.0;
+            const baseSpeed = Math.round(13000 * scoreMultiplier);
+
+            return { baseSpeed: baseSpeed, scoreMultiplier: scoreMultiplier };
         }
 
         // ハイパーモード用の得点倍率を取得
@@ -3823,6 +3880,21 @@
             }
         }
 
+        // 残り時間通知を表示（3分集中モード用）
+        function showTimeRemainingNotice(message) {
+            const notice = document.createElement('div');
+            notice.className = 'time-remaining-notice';
+            notice.textContent = message;
+            document.getElementById('gameScreen').appendChild(notice);
+
+            // 1秒後に要素を削除
+            setTimeout(() => {
+                if (notice.parentNode) {
+                    notice.parentNode.removeChild(notice);
+                }
+            }, 1000);
+        }
+
         // フローティングスコアを表示
         function showFloatingScore(points, x, y, combo = 0) {
             const floatingScore = document.createElement('div');
@@ -3831,9 +3903,19 @@
             // 得点テキスト（負の値の場合は「+」を付けない）
             let scoreText = points >= 0 ? '+' + points : points;
 
-            // コンボがある場合はコンボ表示を追加
+            // コンボがある場合はコンボ表示を追加（コンボ数に応じて文字サイズを変更）
             if (combo > 0) {
-                floatingScore.innerHTML = `${scoreText}<br><span style="font-size: 0.8em; color: #ffff00;">${combo} Combo!</span>`;
+                let comboFontSize;
+                if (combo >= 30) {
+                    comboFontSize = '1.3em'; // 30Combo以上：最大サイズ
+                } else if (combo >= 20) {
+                    comboFontSize = '1.1em'; // 20Combo以上
+                } else if (combo >= 10) {
+                    comboFontSize = '0.9em'; // 10Combo以上
+                } else {
+                    comboFontSize = '0.7em'; // 9Combo以下：小さめ
+                }
+                floatingScore.innerHTML = `${scoreText}<br><span style="font-size: ${comboFontSize}; color: #ffff00;">${combo} Combo!</span>`;
             } else {
                 floatingScore.textContent = scoreText;
             }
@@ -6506,9 +6588,16 @@
                 gameState.speedMultiplier = speed;
             }
 
-            // モードに応じた基本速度を設定
-            const modeSettings = getModeSettings(mode);
-            gameState.baseSpeed = modeSettings.baseSpeed;
+            // モードと難易度に応じた基本速度を設定
+            // baseSpeed = 13000 × scoreMultiplier（ハイパーモードはハイパー用倍率を使用）
+            let scoreMultiplier;
+            if (difficulty === 'hyper') {
+                scoreMultiplier = getHyperModeMultiplier(mode);
+            } else {
+                const modeSettings = getModeSettings(mode);
+                scoreMultiplier = modeSettings.scoreMultiplier;
+            }
+            gameState.baseSpeed = Math.round(13000 * scoreMultiplier);
 
             // 3分集中モードではUFOは動かないのでproblemSpeedは使わない
             if (!gameState.isThreeMinuteMode) {
@@ -6550,6 +6639,15 @@
                 gameTimer = setInterval(() => {
                     gameState.timeLeft--;
                     updateTimeGauge();
+
+                    // 3分集中モードで残り60秒、30秒の通知を表示
+                    if (gameState.isThreeMinuteMode) {
+                        if (gameState.timeLeft === 60) {
+                            showTimeRemainingNotice('残り１分！');
+                        } else if (gameState.timeLeft === 30) {
+                            showTimeRemainingNotice('残り３０秒！');
+                        }
+                    }
 
                     if (gameState.timeLeft <= 0) {
                         gameState.timeUp = true;
