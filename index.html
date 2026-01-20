@@ -2842,20 +2842,20 @@
             let fromUnit, toUnit, value, answer;
 
             if (difficulty === 'normal') {
-                // ノーマル：整数のみ（cm²はm²との変換のみ）
+                // ノーマル：整数のみ（cm²はm²との変換のみ）、1から10の自然数×10のべき乗
                 const patterns = [
-                    { from: 'm²', to: 'cm²', multiplier: 10000, minValue: 1, maxValue: 99 },
-                    { from: 'cm²', to: 'm²', multiplier: 0.0001, minValue: 10000, maxValue: 990000 },
-                    { from: 'a', to: 'm²', multiplier: 100, minValue: 1, maxValue: 99 },
-                    { from: 'm²', to: 'a', multiplier: 0.01, minValue: 100, maxValue: 9900 },
-                    { from: 'ha', to: 'a', multiplier: 100, minValue: 1, maxValue: 99 },
-                    { from: 'a', to: 'ha', multiplier: 0.01, minValue: 100, maxValue: 9900 },
-                    { from: 'ha', to: 'm²', multiplier: 10000, minValue: 1, maxValue: 99 },
-                    { from: 'm²', to: 'ha', multiplier: 0.0001, minValue: 10000, maxValue: 990000 },
-                    { from: 'km²', to: 'ha', multiplier: 100, minValue: 1, maxValue: 99 },
-                    { from: 'ha', to: 'km²', multiplier: 0.01, minValue: 100, maxValue: 9900 },
-                    { from: 'km²', to: 'm²', multiplier: 1000000, minValue: 1, maxValue: 99 },
-                    { from: 'm²', to: 'km²', multiplier: 0.000001, minValue: 1000000, maxValue: 50000000 }
+                    { from: 'm²', to: 'cm²', multiplier: 10000, minValue: 1, maxValue: 10 },
+                    { from: 'cm²', to: 'm²', multiplier: 0.0001, minValue: 10000, maxValue: 100000 },
+                    { from: 'a', to: 'm²', multiplier: 100, minValue: 1, maxValue: 10 },
+                    { from: 'm²', to: 'a', multiplier: 0.01, minValue: 100, maxValue: 1000 },
+                    { from: 'ha', to: 'a', multiplier: 100, minValue: 1, maxValue: 10 },
+                    { from: 'a', to: 'ha', multiplier: 0.01, minValue: 100, maxValue: 1000 },
+                    { from: 'ha', to: 'm²', multiplier: 10000, minValue: 1, maxValue: 10 },
+                    { from: 'm²', to: 'ha', multiplier: 0.0001, minValue: 10000, maxValue: 100000 },
+                    { from: 'km²', to: 'ha', multiplier: 100, minValue: 1, maxValue: 10 },
+                    { from: 'ha', to: 'km²', multiplier: 0.01, minValue: 100, maxValue: 1000 },
+                    { from: 'km²', to: 'm²', multiplier: 1000000, minValue: 1, maxValue: 10 },
+                    { from: 'm²', to: 'km²', multiplier: 0.000001, minValue: 1000000, maxValue: 10000000 }
                 ];
 
                 const pattern = patterns[Math.floor(Math.random() * patterns.length)];
@@ -2950,22 +2950,22 @@
             let fromUnit, toUnit, value, answer;
 
             if (difficulty === 'normal') {
-                // ノーマル：整数のみ（除外組み合わせ：dL↔cm³, dL↔m³, mL↔m³）
+                // ノーマル：整数のみ（除外組み合わせ：dL↔cm³, dL↔m³, mL↔m³）、1から10の自然数×10のべき乗
                 const patterns = [
-                    { from: 'cm³', to: 'mL', multiplier: 1, minValue: 1, maxValue: 99 },
-                    { from: 'mL', to: 'cm³', multiplier: 1, minValue: 1, maxValue: 99 },
-                    { from: 'mL', to: 'dL', multiplier: 0.01, minValue: 100, maxValue: 9900 },
-                    { from: 'dL', to: 'mL', multiplier: 100, minValue: 1, maxValue: 99 },
-                    { from: 'dL', to: 'L', multiplier: 0.1, minValue: 10, maxValue: 99 },
-                    { from: 'L', to: 'dL', multiplier: 10, minValue: 1, maxValue: 99 },
-                    { from: 'mL', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
-                    { from: 'L', to: 'mL', multiplier: 1000, minValue: 1, maxValue: 99 },
-                    { from: 'cm³', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
-                    { from: 'L', to: 'cm³', multiplier: 1000, minValue: 1, maxValue: 99 },
-                    { from: 'L', to: 'm³', multiplier: 0.001, minValue: 1000, maxValue: 50000 },
-                    { from: 'm³', to: 'L', multiplier: 1000, minValue: 1, maxValue: 99 },
-                    { from: 'cm³', to: 'm³', multiplier: 0.000001, minValue: 1000000, maxValue: 50000000 },
-                    { from: 'm³', to: 'cm³', multiplier: 1000000, minValue: 1, maxValue: 99 }
+                    { from: 'cm³', to: 'mL', multiplier: 1, minValue: 1, maxValue: 10 },
+                    { from: 'mL', to: 'cm³', multiplier: 1, minValue: 1, maxValue: 10 },
+                    { from: 'mL', to: 'dL', multiplier: 0.01, minValue: 100, maxValue: 1000 },
+                    { from: 'dL', to: 'mL', multiplier: 100, minValue: 1, maxValue: 10 },
+                    { from: 'dL', to: 'L', multiplier: 0.1, minValue: 10, maxValue: 100 },
+                    { from: 'L', to: 'dL', multiplier: 10, minValue: 1, maxValue: 10 },
+                    { from: 'mL', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 10000 },
+                    { from: 'L', to: 'mL', multiplier: 1000, minValue: 1, maxValue: 10 },
+                    { from: 'cm³', to: 'L', multiplier: 0.001, minValue: 1000, maxValue: 10000 },
+                    { from: 'L', to: 'cm³', multiplier: 1000, minValue: 1, maxValue: 10 },
+                    { from: 'L', to: 'm³', multiplier: 0.001, minValue: 1000, maxValue: 10000 },
+                    { from: 'm³', to: 'L', multiplier: 1000, minValue: 1, maxValue: 10 },
+                    { from: 'cm³', to: 'm³', multiplier: 0.000001, minValue: 1000000, maxValue: 10000000 },
+                    { from: 'm³', to: 'cm³', multiplier: 1000000, minValue: 1, maxValue: 10 }
                 ];
 
                 const pattern = patterns[Math.floor(Math.random() * patterns.length)];
@@ -4512,17 +4512,14 @@
 
             } else {
                 // ハイパー：ひき算の基本ルール（引く数と答えが2桁、引かれる数は100以下）を1/10または1/100に
-                let baseAnswer = Math.floor(Math.random() * 90) + 10;
-                const baseNum2 = Math.floor(Math.random() * 90) + 10;
-                let baseNum1 = Math.min(100, baseAnswer + baseNum2);
+                let baseAnswer, baseNum1, baseNum2;
 
-                // baseNum1が100になった場合、baseAnswerを再調整
-                if (baseNum1 === 100) {
-                    const adjustedBaseAnswer = baseNum1 - baseNum2;
-                    if (adjustedBaseAnswer >= 10) {
-                        baseAnswer = adjustedBaseAnswer;
-                    }
-                }
+                // 答えが2桁（10〜99）になる組み合わせを生成
+                do {
+                    baseNum2 = Math.floor(Math.random() * 90) + 10;  // 引く数: 10〜99
+                    baseNum1 = Math.floor(Math.random() * 91) + 10;  // 引かれる数: 10〜100
+                    baseAnswer = baseNum1 - baseNum2;
+                } while (baseAnswer < 10 || baseAnswer > 99 || baseNum1 > 100);
 
                 // 1/10または1/100をランダムに選択
                 const divisor = Math.random() < 0.5 ? 10 : 100;
@@ -7064,8 +7061,11 @@
             previewArea.style.display = 'block';
 
             // アニメーションを開始（スクロール）
+            // スマホ縦画面のときは速度を3倍に（30s → 10s）
             setTimeout(() => {
-                scroller.style.animation = 'scroll-left 30s linear infinite';
+                const isPortraitMobile = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
+                const scrollDuration = isPortraitMobile ? '10s' : '30s';
+                scroller.style.animation = `scroll-left ${scrollDuration} linear infinite`;
             }, 100);
         }
 
