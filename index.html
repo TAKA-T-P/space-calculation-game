@@ -1217,6 +1217,32 @@
             width: 100%;
         }
 
+        /* メダル表示スタイル */
+        .record-medal {
+            flex: 0 0 28px;
+            font-size: 1.2rem;
+            text-align: center;
+            min-width: 28px;
+        }
+
+        .medal-bronze {
+            filter: drop-shadow(0 0 3px #cd7f32);
+        }
+
+        .medal-silver {
+            filter: drop-shadow(0 0 3px #c0c0c0);
+        }
+
+        .medal-gold {
+            filter: drop-shadow(0 0 5px #ffd700);
+            animation: medal-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes medal-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px #ffd700); }
+            50% { filter: drop-shadow(0 0 10px #ffd700) drop-shadow(0 0 15px #ffaa00); }
+        }
+
         .record-title {
             text-align: center;
             font-size: 0.9rem;
@@ -1400,8 +1426,6 @@
                 font-size: 1.5rem;
                 padding: 5px 0;
             }
-                height: 200px;
-            }
 
             .time-gauge-label {
                 font-size: 0.7rem;
@@ -1511,6 +1535,12 @@
                 flex: none;
                 font-size: 0.8rem;
                 margin-top: 2px;
+            }
+
+            .record-medal {
+                flex: 0 0 22px;
+                font-size: 1rem;
+                min-width: 22px;
             }
 
             .record-category {
@@ -3363,6 +3393,7 @@
             allModes.forEach(mode => {
                 const record = getRecord(mode, difficulty);
                 const categoryLabel = getModeLabel(mode);
+                const medalLevel = getMedalLevel(mode, difficulty);
 
                 const recordRow = document.createElement('div');
                 let rowClass = 'record-row';
@@ -3378,8 +3409,19 @@
                 }
                 recordRow.className = rowClass;
 
+                // メダルアイコンを生成
+                let medalHtml = '<div class="record-medal"></div>';
+                if (medalLevel === 1) {
+                    medalHtml = '<div class="record-medal medal-bronze">🥉</div>';
+                } else if (medalLevel === 2) {
+                    medalHtml = '<div class="record-medal medal-silver">🥈</div>';
+                } else if (medalLevel === 3) {
+                    medalHtml = '<div class="record-medal medal-gold">🥇</div>';
+                }
+
                 recordRow.innerHTML = `
                     <div class="record-row-top">
+                        ${medalHtml}
                         <div class="record-category">${categoryLabel}</div>
                         <div class="record-score">${record.score || '-'}</div>
                     </div>
@@ -3575,6 +3617,36 @@
             return JSON.parse(localStorage.getItem(recordKey) || '{}');
         }
 
+        // メダル情報を保存する関数
+        // speed: 1.0=ふつう(銅), 2.0=はやい(銀), 3.0=超高速(金)
+        function saveMedalInfo(mode, difficulty, speed) {
+            // メダル対象の速度のみ処理（数値比較で判定）
+            let newMedalLevel = 0;
+            if (speed === 1.0 || speed === 1) {
+                newMedalLevel = 1; // 銅メダル
+            } else if (speed === 2.0 || speed === 2) {
+                newMedalLevel = 2; // 銀メダル
+            } else if (speed === 3.0 || speed === 3) {
+                newMedalLevel = 3; // 金メダル
+            }
+
+            if (newMedalLevel === 0) return; // メダル対象外の速度
+
+            const medalKey = `medal_${mode}_${difficulty}`;
+            const currentMedalLevel = parseInt(localStorage.getItem(medalKey) || '0');
+
+            // より高いメダルレベルの場合のみ更新
+            if (newMedalLevel > currentMedalLevel) {
+                localStorage.setItem(medalKey, newMedalLevel.toString());
+            }
+        }
+
+        // メダルレベルを取得する関数
+        function getMedalLevel(mode, difficulty) {
+            const medalKey = `medal_${mode}_${difficulty}`;
+            return parseInt(localStorage.getItem(medalKey) || '0');
+        }
+
         function clearAllRecords() {
             // 全ての記録キーを取得して削除
             const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction', 'decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix', 'fractionAddition', 'fractionSubtraction', 'fractionMultiplication'];
@@ -3584,6 +3656,9 @@
                 difficulties.forEach(difficulty => {
                     const recordKey = `record_${mode}_${difficulty}`;
                     localStorage.removeItem(recordKey);
+                    // メダル情報も削除
+                    const medalKey = `medal_${mode}_${difficulty}`;
+                    localStorage.removeItem(medalKey);
                 });
             });
 
@@ -6901,6 +6976,8 @@
 
             // スコアを保存
             saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier, true);
+            // メダル情報を保存（ふつう・はやい・超高速でクリア時のみ）
+            saveMedalInfo(gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
 
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
