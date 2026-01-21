@@ -10769,24 +10769,49 @@
         background: linear-gradient(135deg, #1a1a3a 0%, #0a0a2a 100%);
         border: 2px solid #00ffff;
         border-radius: 15px;
-        padding: 25px 30px;
         max-width: 500px;
         width: 90%;
         max-height: 80vh;
-        overflow-y: auto;
         box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        display: flex;
+        flex-direction: column;
     ">
-        <h2 style="
-            color: #00ffff;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #00ffff;
-            font-size: 1.4rem;
-        ">単位の確認</h2>
+        <!-- ヘッダー部分（固定） -->
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px 10px 20px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        ">
+            <h2 style="
+                color: #00ffff;
+                margin: 0;
+                text-shadow: 0 0 10px #00ffff;
+                font-size: 1.4rem;
+            ">単位の確認</h2>
+            <button id="closeUnitReferenceBtn" style="
+                padding: 5px 12px;
+                font-size: 0.9rem;
+                border: 2px solid #00ffff;
+                background: rgba(0, 100, 200, 0.8);
+                color: #ffffff;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-shadow: 0 0 5px #00ffff;
+            ">閉じる</button>
+        </div>
 
-        <div style="color: #ffffff; font-size: 1rem; line-height: 1.8;">
-            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px;">● 長さの単位</p>
+        <!-- コンテンツ部分（スクロール可能） -->
+        <div style="
+            padding: 15px 25px 25px 25px;
+            overflow-y: auto;
+            color: #ffffff;
+            font-size: 1rem;
+            line-height: 1.8;
+        ">
+            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 0;">● 長さの単位</p>
             <p style="margin-left: 1rem; margin-top: 0;">1km＝1000m，1m=100cm，1cm＝10mm</p>
 
             <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 重さの単位</p>
@@ -10796,22 +10821,8 @@
             <p style="margin-left: 1rem; margin-top: 0;">1km²=100ha＝100万m²，1ha=100a＝10000m²，<br>1a＝100m²，1m²=10000cm²</p>
 
             <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 体積の単位</p>
-            <p style="margin-left: 1rem; margin-top: 0;">1m³=1000L＝100万cm³，<br>1L=10dL＝1000cm³＝1000mL，<br>1dL＝100mL，1cm³＝1mL</p>
+            <p style="margin-left: 1rem; margin-top: 0; margin-bottom: 0;">1m³=1000L＝100万cm³，<br>1L=10dL＝1000cm³＝1000mL，<br>1dL＝100mL，1cm³＝1mL</p>
         </div>
-
-        <button id="closeUnitReferenceBtn" style="
-            display: block;
-            margin: 25px auto 0;
-            padding: 12px 40px;
-            font-size: 1.1rem;
-            border: 2px solid #00ffff;
-            background: rgba(0, 100, 200, 0.8);
-            color: #ffffff;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-shadow: 0 0 5px #00ffff;
-        ">閉じる</button>
     </div>
 </div>
 
