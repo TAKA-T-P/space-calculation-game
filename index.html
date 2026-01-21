@@ -2163,18 +2163,31 @@
             z-index: 50;
         ">ノーマル</button>
         <h1 style="margin-top: 2rem; margin-bottom: 0;">計算の種類を選ぼう</h1>
-        <button class="confirm-btn" id="modeConfirmBtn" disabled style="
-            padding: 10px 30px;
-            font-size: 1.1rem;
-            border: 2px solid #00ffff;
-            background: rgba(0, 100, 200, 0.95);
-            color: #ffffff;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-shadow: 0 0 10px #00ffff;
-            margin-bottom: 1rem;
-        ">決定</button>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 1rem;">
+            <button class="confirm-btn" id="modeConfirmBtn" disabled style="
+                padding: 10px 30px;
+                font-size: 1.1rem;
+                border: 2px solid #00ffff;
+                background: rgba(0, 100, 200, 0.95);
+                color: #ffffff;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-shadow: 0 0 10px #00ffff;
+            ">決定</button>
+            <button id="unitReferenceBtn" style="
+                display: none;
+                padding: 10px 20px;
+                font-size: 0.95rem;
+                border: 2px solid #ffaa00;
+                background: rgba(255, 170, 0, 0.2);
+                color: #ffaa00;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s;
+                text-shadow: 0 0 5px #ffaa00;
+            ">単位の確認</button>
+        </div>
         <div class="mode-scroll-container">
             <div class="mode-buttons" id="modeButtonsContainer">
                 <!-- ボタンは JavaScript で動的に生成 -->
@@ -7106,6 +7119,15 @@
             const confirmBtn = document.getElementById('modeConfirmBtn');
             confirmBtn.disabled = false;
 
+            // 単位系モードの場合は「単位の確認」ボタンを表示
+            const unitReferenceBtn = document.getElementById('unitReferenceBtn');
+            const unitModes = ['weight', 'length', 'area', 'volume', 'unitMix'];
+            if (unitModes.includes(mode)) {
+                unitReferenceBtn.style.display = 'inline-block';
+            } else {
+                unitReferenceBtn.style.display = 'none';
+            }
+
             // プレビューを表示
             showProblemPreview(mode, gameState.difficulty);
         }
@@ -7157,7 +7179,7 @@
                 const halfWidth = totalWidth / 2; // 最初のセットの幅
 
                 const isPortraitMobile = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-                const scrollDuration = isPortraitMobile ? 30000 : 30000; // ミリ秒（スマホ縦画面も30秒）
+                const scrollDuration = isPortraitMobile ? 60000 : 30000; // ミリ秒（スマホ縦画面60秒、PC30秒）
 
                 let startTime = null;
 
@@ -7714,6 +7736,7 @@
                 // 選択状態をリセット
                 gameState.selectedMode = null;
                 document.getElementById('modeConfirmBtn').disabled = true;
+                document.getElementById('unitReferenceBtn').style.display = 'none';
 
                 // プレビューを非表示
                 hideProblemPreview();
@@ -7747,6 +7770,7 @@
                 // 選択状態をリセット
                 gameState.selectedMode = null;
                 document.getElementById('modeConfirmBtn').disabled = true;
+                document.getElementById('unitReferenceBtn').style.display = 'none';
 
                 // プレビューを非表示
                 hideProblemPreview();
@@ -7807,6 +7831,25 @@
 
             // 決定ボタンのイベントハンドラ
             document.getElementById('modeConfirmBtn').addEventListener('click', confirmModeSelection);
+
+            // 単位の確認ボタンのイベントハンドラ
+            document.getElementById('unitReferenceBtn').addEventListener('click', function() {
+                const modal = document.getElementById('unitReferenceModal');
+                modal.style.display = 'flex';
+            });
+
+            // 単位の確認モーダルの閉じるボタン
+            document.getElementById('closeUnitReferenceBtn').addEventListener('click', function() {
+                const modal = document.getElementById('unitReferenceModal');
+                modal.style.display = 'none';
+            });
+
+            // モーダル背景クリックで閉じる
+            document.getElementById('unitReferenceModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
         });
 
         // 最大公約数を計算する関数
@@ -10708,6 +10751,69 @@
         -moz-user-select: none;
         -ms-user-select: none;
     " onclick="handleCopyrightClick()">© 2025 T.TAKEMOTO</div>
+
+<!-- 単位の確認モーダル -->
+<div id="unitReferenceModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: linear-gradient(135deg, #1a1a3a 0%, #0a0a2a 100%);
+        border: 2px solid #00ffff;
+        border-radius: 15px;
+        padding: 25px 30px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    ">
+        <h2 style="
+            color: #00ffff;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffff;
+            font-size: 1.4rem;
+        ">単位の確認</h2>
+
+        <div style="color: #ffffff; font-size: 1rem; line-height: 1.8;">
+            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px;">● 長さの単位</p>
+            <p style="margin-left: 1rem; margin-top: 0;">1km＝1000m，1m=100cm，1cm＝10mm</p>
+
+            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 重さの単位</p>
+            <p style="margin-left: 1rem; margin-top: 0;">1t＝1000kg，1kg=1000g</p>
+
+            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 面積の単位</p>
+            <p style="margin-left: 1rem; margin-top: 0;">1km²=100ha＝100万m²，1ha=100a＝10000m²，<br>1a＝100m²，1m²=10000cm²</p>
+
+            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 体積の単位</p>
+            <p style="margin-left: 1rem; margin-top: 0;">1m³=1000L＝100万cm³，<br>1L=10dL＝1000cm³＝1000mL，<br>1dL＝100mL，1cm³＝1mL</p>
+        </div>
+
+        <button id="closeUnitReferenceBtn" style="
+            display: block;
+            margin: 25px auto 0;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 100, 200, 0.8);
+            color: #ffffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ffff;
+        ">閉じる</button>
+    </div>
+</div>
 
 </body>
 </html>
