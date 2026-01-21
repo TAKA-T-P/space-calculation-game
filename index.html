@@ -2586,60 +2586,62 @@
             return fractionToHTML(numerator, denominator, isMixed);
         }
 
-        // 計算の種類ごとの設定を取得する関数
-        // baseSpeed = 13000 ÷ scoreMultiplier で計算
+        // 計算の種類ごとの設定を取得する関数（ノーマルモード用）
+        // baseSpeed = 15000 × scoreMultiplier で計算
         function getModeSettings(mode) {
             const scoreMultipliers = {
                 // 基本的な四則演算
-                'addition': 1.00,
-                'subtraction': 1.05,
-                'multiplication': 1.00,
-                'division': 1.05,
-                'all': 1.05,
+                'addition': 0.80,
+                'subtraction': 0.80,
+                'multiplication': 0.80,
+                'division': 0.85,
+                'all': 0.85,
 
                 // 単位変換系
-                'weight': 1.10,
-                'length': 1.00,
-                'area': 1.50,
-                'volume': 1.50,
-                'unitMix': 1.50,
+                'weight': 1.00,
+                'length': 1.15,
+                'area': 1.80,
+                'volume': 1.60,
+                'unitMix': 1.80,
 
                 // その他の計算
-                'reverse': 1.15,
-                'improperMixed': 1.20,
-                'lcm': 1.20,
-                'gcd': 1.20,
-                'fraction': 1.05,
+                'reverse': 1.00,
+                'improperMixed': 1.50,
+                'lcm': 0.95,
+                'gcd': 1.15,
+                'fraction': 1.00,
 
                 // 小数の計算
-                'decimalAddition': 1.20,
-                'decimalSubtraction': 1.20,
-                'decimalMultiplication': 1.30,
-                'decimalDivision': 1.40,
-                'decimalMix': 1.40,
+                'decimalAddition': 0.95,
+                'decimalSubtraction': 1.00,
+                'decimalMultiplication': 1.40,
+                'decimalDivision': 1.50,
+                'decimalMix': 1.25,
 
                 // 分数の計算
-                'fractionAddition': 1.80,
-                'fractionSubtraction': 1.80,
+                'fractionAddition': 2.00,
+                'fractionSubtraction': 2.00,
                 'fractionMultiplication': 1.80,
-                'fractionDivision': 1.80,
-                'fractionAll': 1.80,
+                'fractionDivision': 2.15,
+                'fractionAll': 2.15,
 
                 // 割合の計算
                 'percentageMoney': 1.40,
-                'percentageThreeWays': 2.00,
-                'speedThreeWays': 2.00,
-                'ratioSimplify': 1.20,
-                'proportionalEquation': 1.30,
-                'positiveNegativeAddition': 1.05,
+                'percentageThreeWays': 1.90,
+                'speedThreeWays': 1.90,
+                'ratioSimplify': 1.70,
+                'proportionalEquation': 1.40,
+
+                // 正負の数
+                'positiveNegativeAddition': 0.95,
                 'positiveNegativeSubtraction': 1.10,
-                'positiveNegativeMultiplication': 1.05,
-                'positiveNegativeDivision': 1.10,
+                'positiveNegativeMultiplication': 1.00,
+                'positiveNegativeDivision': 1.00,
                 'positiveNegativeMix': 1.10
             };
 
             const scoreMultiplier = scoreMultipliers[mode] || 1.0;
-            const baseSpeed = Math.round(13000 * scoreMultiplier);
+            const baseSpeed = Math.round(15000 * scoreMultiplier);
 
             return { baseSpeed: baseSpeed, scoreMultiplier: scoreMultiplier };
         }
@@ -2648,56 +2650,56 @@
         function getHyperModeMultiplier(mode) {
             const multipliers = {
                 // 基本的な四則演算
-                'addition': 1.3,
-                'subtraction': 1.4,
-                'multiplication': 1.3,
-                'division': 1.4,
-                'all': 1.4,
+                'addition': 1.15,
+                'subtraction': 1.20,
+                'multiplication': 1.00,
+                'division': 1.00,
+                'all': 1.05,
 
                 // 単位変換系
-                'weight': 1.5,
-                'length': 1.3,
-                'area': 2.0,
-                'volume': 2.0,
-                'unitMix': 2.0,
+                'weight': 1.25,
+                'length': 1.30,
+                'area': 1.80,
+                'volume': 1.60,
+                'unitMix': 1.80,
 
                 // その他の計算
-                'reverse': 1.5,
-                'improperMixed': 1.5,
-                'lcm': 1.4,
-                'gcd': 1.4,
-                'fraction': 1.3,
+                'reverse': 1.15,
+                'improperMixed': 2.00,
+                'lcm': 1.45,
+                'gcd': 2.00,
+                'fraction': 1.25,
 
                 // 小数の計算
-                'decimalAddition': 1.6,
-                'decimalSubtraction': 1.6,
-                'decimalMultiplication': 1.7,
-                'decimalDivision': 2.0,
-                'decimalMix': 2.0,
+                'decimalAddition': 1.40,
+                'decimalSubtraction': 1.40,
+                'decimalMultiplication': 1.60,
+                'decimalDivision': 1.70,
+                'decimalMix': 1.60,
 
                 // 分数の計算
-                'fractionAddition': 2.4,
-                'fractionSubtraction': 2.4,
-                'fractionMultiplication': 2.4,
-                'fractionDivision': 2.6,
-                'fractionAll': 2.6,
+                'fractionAddition': 2.75,
+                'fractionSubtraction': 3.00,
+                'fractionMultiplication': 2.50,
+                'fractionDivision': 3.00,
+                'fractionAll': 3.00,
 
                 // 割合の計算
-                'percentageMoney': 1.8,
-                'percentageThreeWays': 2.6,
-                'speedThreeWays': 2.6,
-                'ratioSimplify': 1.6,
-                'proportionalEquation': 1.7,
+                'percentageMoney': 2.00,
+                'percentageThreeWays': 2.50,
+                'speedThreeWays': 2.50,
+                'ratioSimplify': 2.50,
+                'proportionalEquation': 2.35,
 
                 // 正負の数
-                'positiveNegativeAddition': 1.35,
-                'positiveNegativeSubtraction': 1.4,
-                'positiveNegativeMultiplication': 1.35,
-                'positiveNegativeDivision': 1.4,
-                'positiveNegativeMix': 1.4
+                'positiveNegativeAddition': 1.40,
+                'positiveNegativeSubtraction': 1.70,
+                'positiveNegativeMultiplication': 1.15,
+                'positiveNegativeDivision': 1.15,
+                'positiveNegativeMix': 1.45
             };
 
-            return multipliers[mode] || 1.3;
+            return multipliers[mode] || 1.0;
         }
 
         // 速度設定ごとの基本点を取得
@@ -6482,17 +6484,17 @@
 
                 // 3分集中モードでは速度加速なし
                 if (!gameState.isThreeMinuteMode) {
-                    // 正解するたびに速度を0.1倍ずつ加算（各モードで上限設定）
+                    // 正解するたびに速度を0.05倍ずつ加算（各モードで上限設定）
                     // 超低速モードでは速度を固定
                     if (!gameState.timeUp && gameState.initialSpeedMultiplier !== 0.25) {
-                        gameState.speedMultiplier += 0.1;
+                        gameState.speedMultiplier += 0.05;
                         let maxMultiplier;
                         if (gameState.initialSpeedMultiplier === 0.5) {
-                            maxMultiplier = 1.5;
+                            maxMultiplier = 1.2;  // おそい: 上限1.2
                         } else if (gameState.initialSpeedMultiplier === 1.0) {
-                            maxMultiplier = 2.5;
+                            maxMultiplier = 2.0;  // ふつう: 上限2.0
                         } else if (gameState.initialSpeedMultiplier === 2.0) {
-                            maxMultiplier = 3.5;
+                            maxMultiplier = 3.0;  // はやい: 上限3.0
                         } else {
                             maxMultiplier = gameState.initialSpeedMultiplier * 4.0;
                         }
@@ -6670,15 +6672,19 @@
             }
 
             // モードと難易度に応じた基本速度を設定
-            // baseSpeed = 13000 × scoreMultiplier（ハイパーモードはハイパー用倍率を使用）
+            // ノーマル: baseSpeed = 15000 × scoreMultiplier
+            // ハイパー: baseSpeed = 12500 × scoreMultiplier
             let scoreMultiplier;
+            let baseSpeedMultiplier;
             if (difficulty === 'hyper') {
                 scoreMultiplier = getHyperModeMultiplier(mode);
+                baseSpeedMultiplier = 12500;
             } else {
                 const modeSettings = getModeSettings(mode);
                 scoreMultiplier = modeSettings.scoreMultiplier;
+                baseSpeedMultiplier = 15000;
             }
-            gameState.baseSpeed = Math.round(13000 * scoreMultiplier);
+            gameState.baseSpeed = Math.round(baseSpeedMultiplier * scoreMultiplier);
 
             // 3分集中モードではUFOは動かないのでproblemSpeedは使わない
             if (!gameState.isThreeMinuteMode) {
@@ -7151,7 +7157,7 @@
                 const halfWidth = totalWidth / 2; // 最初のセットの幅
 
                 const isPortraitMobile = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-                const scrollDuration = isPortraitMobile ? 10000 : 30000; // ミリ秒
+                const scrollDuration = isPortraitMobile ? 30000 : 30000; // ミリ秒（スマホ縦画面も30秒）
 
                 let startTime = null;
 
