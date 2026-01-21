@@ -217,10 +217,18 @@
             font-size: 1.0rem;
         }
 
-        /* UFO速度設定画面の「ふつう」ボタンを大きくする */
+        /* UFO速度設定画面の「ふつう」ボタンを大きくして目立たせる */
         #speedScreen .speed-btn[data-speed="1.0"] {
             padding: 18px 35px;
             font-size: 1.35rem;
+            background: rgba(100, 150, 255, 0.45);
+            border-color: #6699ff;
+            box-shadow: 0 0 15px rgba(100, 150, 255, 0.4);
+        }
+
+        #speedScreen .speed-btn[data-speed="1.0"]:hover {
+            background: rgba(100, 150, 255, 0.6);
+            box-shadow: 0 0 25px rgba(100, 150, 255, 0.6);
         }
 
         /* 残り時間通知のスタイル */
@@ -7096,14 +7104,24 @@
             showProblemPreview(mode, gameState.difficulty);
         }
 
+        // プレビューアニメーション用の変数
+        let previewAnimationId = null;
+
         // 問題プレビューを表示
         function showProblemPreview(mode, difficulty) {
             const previewArea = document.getElementById('problemPreviewArea');
             const scroller = document.getElementById('problemPreviewScroller');
 
+            // 既存のアニメーションを停止
+            if (previewAnimationId) {
+                cancelAnimationFrame(previewAnimationId);
+                previewAnimationId = null;
+            }
+
             // 既存のプレビューをクリア
             scroller.innerHTML = '';
             scroller.style.animation = 'none';
+            scroller.style.transform = 'translateX(0)';
 
             // 10個の問題を生成
             const problems = [];
@@ -7127,12 +7145,29 @@
             // プレビューエリアを表示
             previewArea.style.display = 'block';
 
-            // アニメーションを開始（スクロール）
-            // スマホ縦画面のときは速度を3倍に（30s → 10s）
+            // JavaScriptでシームレスな無限ループアニメーションを実装
             setTimeout(() => {
+                const totalWidth = scroller.scrollWidth;
+                const halfWidth = totalWidth / 2; // 最初のセットの幅
+
                 const isPortraitMobile = window.innerWidth <= 768 && window.innerHeight > window.innerWidth;
-                const scrollDuration = isPortraitMobile ? '10s' : '30s';
-                scroller.style.animation = `scroll-left ${scrollDuration} linear infinite`;
+                const scrollDuration = isPortraitMobile ? 10000 : 30000; // ミリ秒
+
+                let startTime = null;
+
+                function animate(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const elapsed = currentTime - startTime;
+                    // elapsed % scrollDuration でループ
+                    const progress = (elapsed % scrollDuration) / scrollDuration;
+                    const currentX = -progress * halfWidth;
+
+                    scroller.style.transform = `translateX(${currentX}px)`;
+
+                    previewAnimationId = requestAnimationFrame(animate);
+                }
+
+                previewAnimationId = requestAnimationFrame(animate);
             }, 100);
         }
 
@@ -7140,6 +7175,18 @@
         function hideProblemPreview() {
             const previewArea = document.getElementById('problemPreviewArea');
             previewArea.style.display = 'none';
+
+            // アニメーションを停止
+            if (previewAnimationId) {
+                cancelAnimationFrame(previewAnimationId);
+                previewAnimationId = null;
+            }
+
+            // スクローラーをリセット
+            const scroller = document.getElementById('problemPreviewScroller');
+            if (scroller) {
+                scroller.style.transform = 'translateX(0)';
+            }
         }
 
         // モード選択の確定
@@ -10322,23 +10369,22 @@
         }
 
         function generatePositiveNegativeMultiplicationProblem(difficulty) {
-            console.log('🔥🔥🔥 正負の数 乗法問題生成開始 v1.0 - difficulty:', difficulty, '🔥🔥🔥');
+            console.log('🔥🔥🔥 正負の数 乗法問題生成開始 v1.1 - difficulty:', difficulty, '🔥🔥🔥');
 
             try {
                 let num1, num2, sign1, sign2;
 
                 // 基本のかけ算のロジックに準拠して数字を生成
                 if (difficulty === 'normal') {
+                    // ノーマル：1桁×1桁
                     num1 = Math.floor(Math.random() * 9) + 1; // 1～9
                     num2 = Math.floor(Math.random() * 9) + 1; // 1～9
                 } else {
-                    if (Math.random() < 0.5) {
-                        num1 = Math.floor(Math.random() * 9) + 1;
-                        num2 = Math.floor(Math.random() * 9) + 1;
-                    } else {
-                        num1 = Math.floor(Math.random() * 12) + 1; // 1～12
-                        num2 = Math.floor(Math.random() * 12) + 1; // 1～12
-                    }
+                    // ハイパー：かけ算ハイパーと同じロジック（答えが100以下になるよう調整）
+                    do {
+                        num1 = Math.floor(Math.random() * 10) + 11; // 11-20の範囲
+                        num2 = Math.floor(Math.random() * 9) + 1;   // 1-9の範囲
+                    } while (num1 * num2 > 100);
                 }
 
                 sign1 = Math.random() < 0.5 ? '+' : '-';
@@ -10374,20 +10420,31 @@
         }
 
         function generatePositiveNegativeDivisionProblem(difficulty) {
-            console.log('🔥🔥🔥 正負の数 除法問題生成開始 v1.0 - difficulty:', difficulty, '🔥🔥🔥');
+            console.log('🔥🔥🔥 正負の数 除法問題生成開始 v1.1 - difficulty:', difficulty, '🔥🔥🔥');
 
             try {
-                let num1, num2, sign1, sign2;
+                let num1, num2, quotient, sign1, sign2;
 
                 // 基本のわり算のロジックに準拠して数字を生成（割り切れる数）
                 if (difficulty === 'normal') {
+                    // ノーマル：1桁÷1桁で割り切れる
                     num2 = Math.floor(Math.random() * 8) + 2; // 2～9（除数）
-                    const quotient = Math.floor(Math.random() * 9) + 1; // 1～9（商）
+                    quotient = Math.floor(Math.random() * 9) + 1; // 1～9（商）
                     num1 = num2 * quotient; // 割り切れる被除数
                 } else {
-                    num2 = Math.floor(Math.random() * 10) + 2; // 2～11（除数）
-                    const quotient = Math.floor(Math.random() * 12) + 1; // 1～12（商）
-                    num1 = num2 * quotient; // 割り切れる被除数
+                    // ハイパー：わり算ハイパーと同じロジック（わられる数が100以下）
+                    do {
+                        if (Math.random() < 0.5) {
+                            // わる数11～20＆答えが1桁
+                            quotient = Math.floor(Math.random() * 9) + 1;     // 1-9（商）
+                            num2 = Math.floor(Math.random() * 10) + 11;       // 11-20（除数）
+                        } else {
+                            // わる数1桁＆答えが11～20
+                            quotient = Math.floor(Math.random() * 10) + 11;   // 11-20（商）
+                            num2 = Math.floor(Math.random() * 9) + 1;         // 1-9（除数）
+                        }
+                        num1 = quotient * num2; // 割り切れる被除数
+                    } while (num1 > 100);
                 }
 
                 sign1 = Math.random() < 0.5 ? '+' : '-';
