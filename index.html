@@ -1216,6 +1216,7 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
+            overflow: hidden;
         }
 
         /* メダル表示スタイル */
@@ -1322,17 +1323,18 @@
         }
 
         .record-category {
-            flex: 0 0 100px;
+            flex: 1 1 auto;
             font-size: 0.95rem;
             font-weight: bold;
+            text-align: center;
         }
 
         .record-score {
-            flex: 0 0 80px;
+            flex: 0 0 auto;
             font-size: 1.05rem;
             font-weight: bold;
-            text-align: center;
-            margin-left: 10px;
+            text-align: right;
+            min-width: 70px;
         }
 
         .record-title {
