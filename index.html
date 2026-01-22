@@ -6772,12 +6772,12 @@
 
             // モードと難易度に応じた基本速度を設定
             // ノーマル: baseSpeed = 15000 × scoreMultiplier
-            // ハイパー: baseSpeed = 12500 × scoreMultiplier
+            // ハイパー: baseSpeed = 12000 × scoreMultiplier
             let scoreMultiplier;
             let baseSpeedMultiplier;
             if (difficulty === 'hyper') {
                 scoreMultiplier = getHyperModeMultiplier(mode);
-                baseSpeedMultiplier = 12500;
+                baseSpeedMultiplier = 12000;
             } else {
                 const modeSettings = getModeSettings(mode);
                 scoreMultiplier = modeSettings.scoreMultiplier;
