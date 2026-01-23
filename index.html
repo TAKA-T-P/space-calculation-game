@@ -98,7 +98,7 @@
         }
 
         .mode-scroll-container {
-            height: 45vh;
+            height: 50vh;
             overflow-y: auto;
             padding: 20px;
             padding-bottom: 20px;
@@ -803,8 +803,8 @@
         .story-btn {
             display: inline-block;
             margin: 0;
-            padding: 8px 14px;
-            font-size: 0.85rem;
+            padding: 10px 20px;
+            font-size: 1rem;
             border: 2px solid #ffaa00;
             background: rgba(255, 170, 0, 0.1);
             color: #ffaa00;
@@ -812,7 +812,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-shadow: 0 0 5px #ffaa00;
-            white-space: nowrap;
         }
 
         .story-btn:hover {
@@ -1216,40 +1215,6 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            overflow: hidden;
-        }
-
-        /* メダル表示スタイル */
-        .record-medal {
-            flex: 0 0 28px;
-            font-size: 1.2rem;
-            text-align: center;
-            min-width: 28px;
-        }
-
-        .medal-bronze {
-            filter: drop-shadow(0 0 3px #cd7f32);
-        }
-
-        .medal-silver {
-            filter: drop-shadow(0 0 3px #c0c0c0);
-        }
-
-        .medal-gold {
-            filter: drop-shadow(0 0 5px #ffd700);
-            animation: medal-glow 2s ease-in-out infinite;
-        }
-
-        @keyframes medal-glow {
-            0%, 100% { filter: drop-shadow(0 0 5px #ffd700); }
-            50% { filter: drop-shadow(0 0 10px #ffd700) drop-shadow(0 0 15px #ffaa00); }
-        }
-
-        /* クリア画面用メダル */
-        .clear-medal {
-            font-size: 1.8rem;
-            margin-left: 0.5rem;
-            vertical-align: middle;
         }
 
         .record-title {
@@ -1323,18 +1288,17 @@
         }
 
         .record-category {
-            flex: 1 1 auto;
+            flex: 0 0 100px;
             font-size: 0.95rem;
             font-weight: bold;
-            text-align: center;
         }
 
         .record-score {
-            flex: 0 0 auto;
+            flex: 0 0 80px;
             font-size: 1.05rem;
             font-weight: bold;
-            text-align: right;
-            min-width: 70px;
+            text-align: center;
+            margin-left: 10px;
         }
 
         .record-title {
@@ -1435,6 +1399,8 @@
                 top: 15px;
                 font-size: 1.5rem;
                 padding: 5px 0;
+            }
+                height: 200px;
             }
 
             .time-gauge-label {
@@ -1545,12 +1511,6 @@
                 flex: none;
                 font-size: 0.8rem;
                 margin-top: 2px;
-            }
-
-            .record-medal {
-                flex: 0 0 22px;
-                font-size: 1rem;
-                min-width: 22px;
             }
 
             .record-category {
@@ -2183,7 +2143,7 @@
     </audio>
 
     <div id="modeScreen" class="screen">
-        <button class="instructions-btn" data-mode="instructions">記録</button>
+        <button class="instructions-btn" data-mode="instructions">説明</button>
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1 class="game-title">スペース計算ラリー</h1>
         <p id="titleSubtext" style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
@@ -2202,8 +2162,7 @@
             padding: 0.5rem 1rem;
             z-index: 50;
         ">ノーマル</button>
-        <h1 style="margin-top: 2rem; margin-bottom: 0; padding-bottom: 0;">計算の種類を選ぼう</h1>
-        <p id="scoreMultiplierDisplay" style="color: #aaaaaa; font-size: 0.65rem; margin: 0 0 0.5rem 0; padding-top: 0; line-height: 1; visibility: hidden;">得点倍率：-</p>
+        <h1 style="margin-top: 2rem; margin-bottom: 0;">計算の種類を選ぼう</h1>
         <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 1rem;">
             <button class="confirm-btn" id="modeConfirmBtn" disabled style="
                 padding: 10px 30px;
@@ -2264,8 +2223,8 @@
         </div>
         <h1 style="margin-bottom: 0.5rem;">UFOの速さを選ぼう</h1>
         <div class="mode-buttons">
-            <button class="mode-btn speed-btn" data-speed="0.4">超低速</button>
-            <button class="mode-btn speed-btn" data-speed="0.7">おそい</button>
+            <button class="mode-btn speed-btn" data-speed="0.25">超低速</button>
+            <button class="mode-btn speed-btn" data-speed="0.5">おそい</button>
             <button class="mode-btn speed-btn" data-speed="1.0">ふつう</button>
             <button class="mode-btn speed-btn" data-speed="2.0">はやい</button>
             <button class="mode-btn speed-btn" data-speed="3.0">超高速</button>
@@ -2500,7 +2459,7 @@
         <div style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0;">
             <button class="story-btn" onclick="showStory()">プロローグ</button>
             <button class="story-btn" onclick="showStoryLibrary()">ストーリー</button>
-            <button class="story-btn" onclick="selectMode('records')">ハイスコア</button>
+            <button class="story-btn" onclick="selectMode('records')">レコード</button>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
@@ -2677,7 +2636,7 @@
                 'fractionSubtraction': 2.00,
                 'fractionMultiplication': 1.80,
                 'fractionDivision': 2.15,
-                'fractionMix': 2.15,
+                'fractionAll': 2.15,
 
                 // 割合の計算
                 'percentageMoney': 1.40,
@@ -2736,7 +2695,7 @@
                 'fractionSubtraction': 3.00,
                 'fractionMultiplication': 2.50,
                 'fractionDivision': 3.00,
-                'fractionMix': 3.00,
+                'fractionAll': 3.00,
 
                 // 割合の計算
                 'percentageMoney': 2.00,
@@ -2760,8 +2719,8 @@
         function getBasePointsBySpeed(speed) {
             switch(speed) {
                 case -1: return 1000;   // 3分集中モード
-                case 0.4: return 2800; // 超低速
-                case 0.7: return 2900;  // おそい
+                case 0.25: return 2800; // 超低速
+                case 0.5: return 2900;  // おそい
                 case 1.0: return 3000;  // ふつう
                 case 2.0: return 3100;  // はやい
                 case 3.0: return 3200;  // 超高速
@@ -2772,8 +2731,8 @@
         // 速度設定ごとの残機ボーナスを取得
         function getLifeBonusBySpeed(speed) {
             switch(speed) {
-                case 0.4: return 1000; // 超低速
-                case 0.7: return 2000;  // おそい
+                case 0.25: return 1000; // 超低速
+                case 0.5: return 2000;  // おそい
                 case 1.0: return 3000;  // ふつう
                 case 2.0: return 4000;  // はやい
                 case 3.0: return 5000;  // 超高速
@@ -3404,7 +3363,6 @@
             allModes.forEach(mode => {
                 const record = getRecord(mode, difficulty);
                 const categoryLabel = getModeLabel(mode);
-                const medalLevel = getMedalLevel(mode, difficulty);
 
                 const recordRow = document.createElement('div');
                 let rowClass = 'record-row';
@@ -3420,19 +3378,8 @@
                 }
                 recordRow.className = rowClass;
 
-                // メダルアイコンを生成
-                let medalHtml = '<div class="record-medal"></div>';
-                if (medalLevel === 1) {
-                    medalHtml = '<div class="record-medal medal-bronze">🥉</div>';
-                } else if (medalLevel === 2) {
-                    medalHtml = '<div class="record-medal medal-silver">🥈</div>';
-                } else if (medalLevel === 3) {
-                    medalHtml = '<div class="record-medal medal-gold">🥇</div>';
-                }
-
                 recordRow.innerHTML = `
                     <div class="record-row-top">
-                        ${medalHtml}
                         <div class="record-category">${categoryLabel}</div>
                         <div class="record-score">${record.score || '-'}</div>
                     </div>
@@ -3578,7 +3525,17 @@
                 7: '第7話：銀河連合からの呼びかけ<br><br>進む君の元に、銀河の仲間たちから通信が届く。<br>「我々の星もUFO軍団に狙われている！助けてくれ！」<br>地球だけでなく、他の星々の未来も君の肩にかかっていた。<br>宇宙全体を守る使命感が、君の胸を熱くする。',
                 8: '第8話：黒きボス、ダークコメット<br><br>やがて現れたのは、恐ろしい闇の彗星「ダークコメット」。<br>その一撃は惑星をもくだく破壊力！<br>だが、君の正確な計算が放つ光線が、何度もその攻撃を防ぐ。<br>勝負の時は近い。心臓が高鳴る──。',
                 9: '第9話：最後の決戦！銀河の渦へ<br><br>宇宙の中心、巨大な銀河の渦にダークコメットは逃げ込んだ。<br>重力が狂い、時間さえ歪む中での計算勝負。<br>一瞬のミスも許されない！<br>だが、君は恐れず挑み、答えの光で銀河を揺るがす！',
-                10: '第10話：伝説の宇宙計算マスター<br><br>ついに君は、恐ろしいダークコメットを打ち破った！<br>銀河はまぶしい光に包まれ、暗闇は姿を消した。<br>星々は喜びの歌をひびかせ、仲間たちは君の名をほめたたえる。<br>君はもう、ただの"計算パイロット"ではない。<br>宇宙を救った英雄、伝説の「宇宙計算マスター」だ！<br>君の前には、まだまだ知らない宇宙が待っている。<br>次の冒険は、きっと今日よりもっとワクワクするだろう。'
+                10: '第10話：伝説の宇宙計算マスター<br><br>ついに君は、恐ろしいダークコメットを打ち破った！<br>銀河はまぶしい光に包まれ、暗闇は姿を消した。<br>星々は喜びの歌をひびかせ、仲間たちは君の名をほめたたえる。<br>君はもう、ただの"計算パイロット"ではない。<br>宇宙を救った英雄、伝説の「宇宙計算マスター」だ！<br>君の前には、まだまだ知らない宇宙が待っている。<br>次の冒険は、きっと今日よりもっとワクワクするだろう。',
+                11: '第11話：遠い惑星からのSOS<br><br>宇宙に平和がもどった、その時だった。<br>オリオン号の通信機が、けたたましく光り出す。<br>「こちら、惑星ルミナス……たすけてください……」<br>とぎれとぎれの声。地球からは何万光年も離れた星だ。<br>君はハンドルをにぎりしめ、うなずいた。<br>「行こう。今度は、あの星を守る番だ！」',
+                12: '第12話：未知の航路へ<br><br>ルミナスへ向かう道は、地図にもない危険な宇宙。<br>星の動きはバラバラ、計算なしでは進めない。<br>君は正確な計算で進路を割り出し、オリオン号は光のレールの上を走り出す。<br>失敗すれば、宇宙のはざまへ消える。<br>だが君はもう迷わない。計算は、君の力だ。',
+                13: '第13話：奪われた光の星<br><br>ルミナスに近づいたとき、異変が見えた。星が……暗い。<br>本来、まぶしく光るはずの惑星が、まるでエネルギーを吸い取られたようだった。<br>原因はすぐに分かった。<br>新たな敵――「エナジードレイン軍」の仕業だ。',
+                14: '第14話：新たな強敵の影<br><br>闇の中から、巨大な影が現れる。<br>これまでの敵とは、まるでちがう圧力。<br>「計算マスターだと？　ここから先は通さない。」<br>敵は、君の力を知っていた。そして――さらに強くなっている。<br>本当の試練が、ここから始まる。',
+                15: '第15話：計算封じの罠<br><br>突然、計算エネルギーが乱れだす。<br>答えを出しても、ビームが弱い！<br>敵は「計算をくるわせる装置」を使っていた。<br>いつも通りでは勝てない。君は考える。<br>「じゃあ、もっと正確に、もっと速く！」',
+                16: '第16話：仲間たちの力<br><br>通信が入る。かつて助けた星々からだ。<br>「君に恩がある！」<br>「一緒に戦おう！」<br>計算データ、エネルギー、情報――<br>仲間たちの力が集まり、オリオン号は再び輝きを取りもどす。<br>一人じゃない。それが、今の君だ。',
+                17: '第17話：ルミナス防衛戦<br><br>敵の大軍が、惑星ルミナスへなだれこむ。<br>失敗すれば、この星は二度と光らない。<br>君は連続計算でエネルギーを高め、次々と敵を撃退していく。<br>汗をかき、集中し、それでも手は止まらない。<br>守りたいものが、ここにある。',
+                18: '第18話：真の黒幕<br><br>戦いの奥で、すべてを操る存在が姿を現す。<br>それは、宇宙の計算そのものを支配しようとする存在――ゼロ・オーバーロード<br>「答えなど無意味だ。　宇宙は、私のものになる。」<br>君は、静かに答える。<br>「答えは、希望だ。」',
+                19: '第19話：最後の計算<br><br>時間はわずか。<br>間違えれば、すべてが終わる。<br>君は深く息を吸い、これまでの経験すべてを使って計算する。<br>速さ、正確さ、あきらめない心。<br>すべてが一つになった、その瞬間――光が宇宙をつらぬいた！',
+                20: '第20話：広がる新たな宇宙<br><br>ゼロ・オーバーロードは消えた。暗く沈んでいた惑星ルミナスは、少しずつ光を取りもどし、やがて星全体がまぶしく輝き始めた。それは、計算の力が未来を取りもどした証だった。<br>「ありがとう……本当にありがとう。」<br>君は気づく。自分の答えが、たくさんの命をつないできたことに。考え、守り、あきらめずに答えを出せる本物の"計算マスター"になったのだ。<br>だが、通信機はまた光り始めている。助けを待つ星は、まだまだある。<br>冒険は終わらない。スペース計算ラリーは、ここからさらに広がっていく――。'
             };
 
             // 新しいストーリーテキストを使って表示 V2
@@ -3628,36 +3585,6 @@
             return JSON.parse(localStorage.getItem(recordKey) || '{}');
         }
 
-        // メダル情報を保存する関数
-        // speed: 1.0=ふつう(銅), 2.0=はやい(銀), 3.0=超高速(金)
-        function saveMedalInfo(mode, difficulty, speed) {
-            // メダル対象の速度のみ処理（数値比較で判定）
-            let newMedalLevel = 0;
-            if (speed === 1.0 || speed === 1) {
-                newMedalLevel = 1; // 銅メダル
-            } else if (speed === 2.0 || speed === 2) {
-                newMedalLevel = 2; // 銀メダル
-            } else if (speed === 3.0 || speed === 3) {
-                newMedalLevel = 3; // 金メダル
-            }
-
-            if (newMedalLevel === 0) return; // メダル対象外の速度
-
-            const medalKey = `medal_${mode}_${difficulty}`;
-            const currentMedalLevel = parseInt(localStorage.getItem(medalKey) || '0');
-
-            // より高いメダルレベルの場合のみ更新
-            if (newMedalLevel > currentMedalLevel) {
-                localStorage.setItem(medalKey, newMedalLevel.toString());
-            }
-        }
-
-        // メダルレベルを取得する関数
-        function getMedalLevel(mode, difficulty) {
-            const medalKey = `medal_${mode}_${difficulty}`;
-            return parseInt(localStorage.getItem(medalKey) || '0');
-        }
-
         function clearAllRecords() {
             // 全ての記録キーを取得して削除
             const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction', 'decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix', 'fractionAddition', 'fractionSubtraction', 'fractionMultiplication'];
@@ -3667,9 +3594,6 @@
                 difficulties.forEach(difficulty => {
                     const recordKey = `record_${mode}_${difficulty}`;
                     localStorage.removeItem(recordKey);
-                    // メダル情報も削除
-                    const medalKey = `medal_${mode}_${difficulty}`;
-                    localStorage.removeItem(medalKey);
                 });
             });
 
@@ -3705,8 +3629,8 @@
         function getSpeedLabel(speed) {
             switch(speed) {
                 case -1: return '3分集中';
-                case 0.4: return '超低速';
-                case 0.7: return 'おそい';
+                case 0.25: return '超低速';
+                case 0.5: return 'おそい';
                 case 1.0: return 'ふつう';
                 case 2.0: return 'はやい';
                 case 3.0: return '超高速';
@@ -3867,7 +3791,7 @@
         // ストーリー解放レベルを取得する関数
         function getUnlockedStoryLevel() {
             const totalCorrect = getTotalCorrectCount();
-            for (let n = 10; n >= 1; n--) {
+            for (let n = 20; n >= 1; n--) {
                 const required = n * n * 5;
                 if (totalCorrect >= required) {
                     return n;
@@ -3879,7 +3803,7 @@
         // 次のレベルまでの必要数を取得する関数
         function getNextLevelRequirement() {
             const currentLevel = getUnlockedStoryLevel();
-            if (currentLevel >= 10) return 0; // 最大レベル
+            if (currentLevel >= 20) return 0; // 最大レベル
 
             const nextLevel = currentLevel + 1;
             const nextRequired = nextLevel * nextLevel * 5;
@@ -6585,10 +6509,10 @@
                 if (!gameState.isThreeMinuteMode) {
                     // 正解するたびに速度を0.05倍ずつ加算（各モードで上限設定）
                     // 超低速モードでは速度を固定
-                    if (!gameState.timeUp && gameState.initialSpeedMultiplier !== 0.4) {
+                    if (!gameState.timeUp && gameState.initialSpeedMultiplier !== 0.25) {
                         gameState.speedMultiplier += 0.05;
                         let maxMultiplier;
-                        if (gameState.initialSpeedMultiplier === 0.7) {
+                        if (gameState.initialSpeedMultiplier === 0.5) {
                             maxMultiplier = 1.2;  // おそい: 上限1.2
                         } else if (gameState.initialSpeedMultiplier === 1.0) {
                             maxMultiplier = 2.0;  // ふつう: 上限2.0
@@ -6772,12 +6696,12 @@
 
             // モードと難易度に応じた基本速度を設定
             // ノーマル: baseSpeed = 15000 × scoreMultiplier
-            // ハイパー: baseSpeed = 12000 × scoreMultiplier
+            // ハイパー: baseSpeed = 12500 × scoreMultiplier
             let scoreMultiplier;
             let baseSpeedMultiplier;
             if (difficulty === 'hyper') {
                 scoreMultiplier = getHyperModeMultiplier(mode);
-                baseSpeedMultiplier = 12000;
+                baseSpeedMultiplier = 12500;
             } else {
                 const modeSettings = getModeSettings(mode);
                 scoreMultiplier = modeSettings.scoreMultiplier;
@@ -6955,18 +6879,8 @@
             const gameClearScreen = document.getElementById('gameClearScreen');
             gameClearScreen.classList.remove('hidden');
 
-            // 通常モード用のメッセージに戻す（メダル付き）
-            const clearMessageEl = document.getElementById('clearMessage');
-            const speed = gameState.initialSpeedMultiplier;
-            let clearMedal = '';
-            if (speed === 1.0 || speed === 1) {
-                clearMedal = '<span class="clear-medal medal-bronze">🥉</span>';
-            } else if (speed === 2.0 || speed === 2) {
-                clearMedal = '<span class="clear-medal medal-silver">🥈</span>';
-            } else if (speed === 3.0 || speed === 3) {
-                clearMedal = '<span class="clear-medal medal-gold">🥇</span>';
-            }
-            clearMessageEl.innerHTML = '地球を守った！' + clearMedal;
+            // 通常モード用のメッセージに戻す
+            document.getElementById('clearMessage').textContent = '地球を守った！';
 
             // 設定情報を表示
             const existingSettingsInfo = gameClearScreen.querySelector('.game-settings-info');
@@ -6997,8 +6911,6 @@
 
             // スコアを保存
             saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier, true);
-            // メダル情報を保存（ふつう・はやい・超高速でクリア時のみ）
-            saveMedalInfo(gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
 
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
@@ -7238,20 +7150,6 @@
             const previewArea = document.getElementById('problemPreviewArea');
             const scroller = document.getElementById('problemPreviewScroller');
 
-            // 得点倍率を表示
-            const multiplierDisplay = document.getElementById('scoreMultiplierDisplay');
-            if (multiplierDisplay) {
-                let scoreMultiplier;
-                if (difficulty === 'hyper') {
-                    scoreMultiplier = getHyperModeMultiplier(mode);
-                } else {
-                    const modeSettings = getModeSettings(mode);
-                    scoreMultiplier = modeSettings.scoreMultiplier;
-                }
-                multiplierDisplay.textContent = `得点倍率：${scoreMultiplier.toFixed(2)}倍`;
-                multiplierDisplay.style.visibility = 'visible';
-            }
-
             // 既存のアニメーションを停止
             if (previewAnimationId) {
                 cancelAnimationFrame(previewAnimationId);
@@ -7315,12 +7213,6 @@
         function hideProblemPreview() {
             const previewArea = document.getElementById('problemPreviewArea');
             previewArea.style.display = 'none';
-
-            // 得点倍率表示を隠す
-            const multiplierDisplay = document.getElementById('scoreMultiplierDisplay');
-            if (multiplierDisplay) {
-                multiplierDisplay.style.visibility = 'hidden';
-            }
 
             // アニメーションを停止
             if (previewAnimationId) {
@@ -10887,49 +10779,24 @@
         background: linear-gradient(135deg, #1a1a3a 0%, #0a0a2a 100%);
         border: 2px solid #00ffff;
         border-radius: 15px;
+        padding: 25px 30px;
         max-width: 500px;
         width: 90%;
         max-height: 80vh;
+        overflow-y: auto;
         box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-        display: flex;
-        flex-direction: column;
     ">
-        <!-- ヘッダー部分（固定） -->
-        <div style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px 10px 20px;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-        ">
-            <h2 style="
-                color: #00ffff;
-                margin: 0;
-                text-shadow: 0 0 10px #00ffff;
-                font-size: 1.4rem;
-            ">単位の確認</h2>
-            <button id="closeUnitReferenceBtn" style="
-                padding: 5px 12px;
-                font-size: 0.9rem;
-                border: 2px solid #00ffff;
-                background: rgba(0, 100, 200, 0.8);
-                color: #ffffff;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: all 0.3s;
-                text-shadow: 0 0 5px #00ffff;
-            ">閉じる</button>
-        </div>
+        <h2 style="
+            color: #00ffff;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffff;
+            font-size: 1.4rem;
+        ">単位の確認</h2>
 
-        <!-- コンテンツ部分（スクロール可能） -->
-        <div style="
-            padding: 15px 25px 25px 25px;
-            overflow-y: auto;
-            color: #ffffff;
-            font-size: 1rem;
-            line-height: 1.8;
-        ">
-            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 0;">● 長さの単位</p>
+        <div style="color: #ffffff; font-size: 1rem; line-height: 1.8;">
+            <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px;">● 長さの単位</p>
             <p style="margin-left: 1rem; margin-top: 0;">1km＝1000m<br>1m＝100cm<br>1cm＝10mm</p>
 
             <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 重さの単位</p>
@@ -10939,8 +10806,22 @@
             <p style="margin-left: 1rem; margin-top: 0;">1km²＝100ha＝100万m²<br>1ha＝100a＝10000m²<br>1a＝100m²<br>1m²＝10000cm²</p>
 
             <p style="color: #ffaa00; font-weight: bold; margin-bottom: 5px; margin-top: 15px;">● 体積の単位</p>
-            <p style="margin-left: 1rem; margin-top: 0; margin-bottom: 0;">1m³＝1000L＝100万cm³<br>1L＝10dL＝1000cm³＝1000mL<br>1dL＝100mL<br>1cm³＝1mL</p>
+            <p style="margin-left: 1rem; margin-top: 0;">1m³＝1000L＝100万cm³<br>1L＝10dL＝1000cm³＝1000mL<br>1dL＝100mL<br>1cm³＝1mL</p>
         </div>
+
+        <button id="closeUnitReferenceBtn" style="
+            display: block;
+            margin: 25px auto 0;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            border: 2px solid #00ffff;
+            background: rgba(0, 100, 200, 0.8);
+            color: #ffffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00ffff;
+        ">閉じる</button>
     </div>
 </div>
 
