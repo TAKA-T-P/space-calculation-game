@@ -488,7 +488,7 @@
 
 
         .lives {
-            color: #ff0000;
+            color: #ffffff;
         }
 
 
@@ -695,6 +695,28 @@
 
         .retry-btn:hover {
             background: rgba(255, 170, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .speed-change-btn {
+            position: fixed;
+            top: 20px;
+            left: 110px;
+            width: 80px;
+            height: 30px;
+            font-size: 0.8rem;
+            border: 1px solid #00aaff;
+            background: rgba(0, 170, 255, 0.1);
+            color: #00aaff;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 30;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px #00aaff;
+        }
+
+        .speed-change-btn:hover {
+            background: rgba(0, 170, 255, 0.3);
             transform: scale(1.05);
         }
 
@@ -1497,7 +1519,16 @@
                 left: 15px;
                 white-space: nowrap;
             }
-            
+
+            .speed-change-btn {
+                width: 100px;
+                height: 30px;
+                font-size: 0.8rem;
+                top: 15px;
+                left: 125px;
+                white-space: nowrap;
+            }
+
             .top-buttons {
                 flex-direction: column;
                 gap: 10px;
@@ -2221,7 +2252,7 @@
             z-index: 50;
         ">ノーマル</button>
         <h1 style="margin-top: 2rem; margin-bottom: 0;">計算の種類を選ぼう</h1>
-        <div id="scoreMultiplierDisplay" style="font-size: 1.0rem; color: #ffaa00; text-align: center; height: 1.5em; line-height: 1.5em; visibility: hidden;">得点倍率：-</div>
+        <div id="scoreMultiplierDisplay" style="font-size: 0.85rem; color: #cccccc; text-align: center; height: 1.5em; line-height: 1.5em; visibility: hidden;">得点倍率：-</div>
         <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 1rem;">
             <button class="confirm-btn" id="modeConfirmBtn" disabled style="
                 padding: 10px 30px;
@@ -2349,10 +2380,11 @@
 
     <div id="gameOverScreen" class="screen hidden">
         <button class="retry-btn" onclick="retryGame()">リトライ</button>
+        <button class="speed-change-btn" onclick="changeSpeed()">速度変更</button>
         <h1>GAME OVER</h1>
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #ff6666;">地球を守れなかった・・・</p>
         <div class="score-display">最終スコア: <span id="finalScore">0</span></div>
-        <div class="score-display">正解数: <span id="finalCorrectCount">0</span></div>
+        <div class="score-display">正解: <span id="finalCorrectCount">0</span>　不正解: <span id="finalWrongCount">0</span></div>
         <div id="lastProblemDisplay" style="
             font-size: 0.8rem;
             color: #aaaaaa;
@@ -2365,10 +2397,11 @@
 
     <div id="gameClearScreen" class="screen hidden">
         <button class="retry-btn" onclick="retryGame()">リトライ</button>
+        <button class="speed-change-btn" onclick="changeSpeed()">速度変更</button>
         <h1>GAME CLEAR!</h1>
         <p id="clearMessage" style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
         <div class="score-display">最終スコア: <span id="clearScore">0</span></div>
-        <div class="score-display">正解数: <span id="clearCorrectCount">0</span></div>
+        <div class="score-display">正解: <span id="clearCorrectCount">0</span>　不正解: <span id="clearWrongCount">0</span></div>
         <button class="home-btn" onclick="restartGame()">ホーム</button>
     </div>
 
@@ -6920,8 +6953,16 @@
             document.getElementById('gameScreen').classList.add('hidden');
             const gameOverScreen = document.getElementById('gameOverScreen');
             gameOverScreen.classList.remove('hidden');
+
+            // 3分集中モードの場合は「速度変更」ボタンを非表示
+            const speedChangeBtn = gameOverScreen.querySelector('.speed-change-btn');
+            if (speedChangeBtn) {
+                speedChangeBtn.style.display = gameState.isThreeMinuteMode ? 'none' : 'block';
+            }
+
             document.getElementById('finalScore').textContent = gameState.score;
             document.getElementById('finalCorrectCount').textContent = gameState.correctCount;
+            document.getElementById('finalWrongCount').textContent = gameState.wrongAnswerCount;
 
             // 最後の問題を表示
             const lastProblemDisplay = document.getElementById('lastProblemDisplay');
@@ -7002,6 +7043,12 @@
             const gameClearScreen = document.getElementById('gameClearScreen');
             gameClearScreen.classList.remove('hidden');
 
+            // 3分集中モードの場合は「速度変更」ボタンを非表示
+            const speedChangeBtn = gameClearScreen.querySelector('.speed-change-btn');
+            if (speedChangeBtn) {
+                speedChangeBtn.style.display = gameState.isThreeMinuteMode ? 'none' : 'block';
+            }
+
             // 通常モード用のメッセージに戻す（メダル付き・光るエフェクト）
             const clearMedalType = getMedalForSpeed(gameState.initialSpeedMultiplier);
             const clearMedalHTML = getMedalHTML(clearMedalType, '1.8rem', true);
@@ -7042,6 +7089,7 @@
 
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
+            document.getElementById('clearWrongCount').textContent = gameState.wrongAnswerCount;
 
             // 称号を表示
             const existingTitle = gameClearScreen.querySelector('.title-display');
@@ -7086,6 +7134,12 @@
             const gameClearScreen = document.getElementById('gameClearScreen');
             gameClearScreen.classList.remove('hidden');
 
+            // 3分集中モードでは「速度変更」ボタンを非表示
+            const speedChangeBtn = gameClearScreen.querySelector('.speed-change-btn');
+            if (speedChangeBtn) {
+                speedChangeBtn.style.display = 'none';
+            }
+
             // 3分集中モード用のメッセージに変更
             document.getElementById('clearMessage').textContent = '3分間終了！';
 
@@ -7113,6 +7167,7 @@
 
             document.getElementById('clearScore').textContent = gameState.score;
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
+            document.getElementById('clearWrongCount').textContent = gameState.wrongAnswerCount;
 
             // 称号を表示
             const existingTitle = gameClearScreen.querySelector('.title-display');
@@ -7209,6 +7264,38 @@
 
             // 同じ設定でゲームを再開
             startGame(currentMode, currentDifficulty, currentSpeed);
+        }
+
+        // 速度変更機能：計算設定を保持したまま速度選択画面へ移行
+        function changeSpeed() {
+            // ゲームクリア音楽を停止
+            stopGameClearMusic();
+
+            // ゲーム画面を非表示
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('gameClearScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.add('hidden');
+
+            // 勝利間近演出をクリア
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.classList.remove('time-warning');
+            gameScreen.style.boxShadow = '';
+            gameScreen.style.borderColor = '';
+
+            // ゲームエリアをクリア
+            document.getElementById('gameArea').innerHTML = '';
+            document.getElementById('choices').innerHTML = '';
+
+            // 速度選択画面を表示
+            const speedScreen = document.getElementById('speedScreen');
+            speedScreen.classList.remove('hidden');
+
+            // ハイパー難易度の場合は特別な背景を適用
+            if (isHyperMode(gameState.difficulty)) {
+                speedScreen.classList.add('speed-screen-advanced');
+            } else {
+                speedScreen.classList.remove('speed-screen-advanced');
+            }
         }
 
         // モード選択
