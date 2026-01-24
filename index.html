@@ -2232,7 +2232,7 @@
     </audio>
 
     <div id="modeScreen" class="screen">
-        <button class="instructions-btn" data-mode="instructions">説明</button>
+        <button class="instructions-btn" data-mode="instructions">記録</button>
         <button class="bgm-toggle-btn" id="bgmToggle" onclick="toggleBgm()">BGM ON</button>
         <h1 class="game-title">スペース計算ラリー</h1>
         <p id="titleSubtext" style="font-size: 1.3rem; margin: 0.5rem 0; color: #ffaa00; text-shadow: 0 0 8px #ffaa00; font-weight: bold;">計算の力で地球を守れ！</p>
@@ -3458,7 +3458,7 @@
                 const record = getRecord(mode, difficulty);
                 const categoryLabel = getModeLabel(mode);
                 const medalType = getMedalForMode(mode, difficulty);
-                const medalHTML = getMedalHTML(medalType, '1.5rem');
+                const medalHTML = getMedalHTML(medalType, '1.5rem', true);
 
                 const recordRow = document.createElement('div');
                 let rowClass = 'record-row';
@@ -3927,7 +3927,11 @@
                     scoreMultiplier = modeSettings.scoreMultiplier.toFixed(2);
                 }
 
-                displayElement.innerHTML = `${difficultyText}　${modeText}<br>得点倍率：${scoreMultiplier}`;
+                // 現在獲得しているメダルを取得
+                const medal = getMedalForMode(gameState.mode, gameState.difficulty);
+                const medalHTML = getMedalHTML(medal, '1.4rem', true);
+
+                displayElement.innerHTML = `${difficultyText}　${modeText}${medalHTML ? '　' + medalHTML : ''}<br>得点倍率：${scoreMultiplier}`;
             }
         }
 
