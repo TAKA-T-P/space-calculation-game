@@ -211,6 +211,28 @@
             font-size: 1.5rem;
         }
 
+        .portal-link-btn {
+            position: fixed;
+            left: 50%;
+            bottom: 44px;
+            transform: translateX(-50%);
+            padding: 6px 16px;
+            border: 1px solid #00ffff;
+            border-radius: 6px;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-shadow: 0 0 6px #00ffff;
+            transition: background 0.2s, box-shadow 0.2s;
+            z-index: 1000;
+        }
+
+        .portal-link-btn:hover {
+            background: rgba(0, 255, 255, 0.25);
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+        }
+
         /* UFO速度設定画面の「ふつう」以外のボタンを少し狭くする */
         #speedScreen .speed-btn:not([data-speed="1.0"]) {
             padding: 12px 18px;
@@ -2240,6 +2262,7 @@
             <button class="game-start-btn" id="threeMinuteBtn">３分集中</button>
             <button class="game-start-btn" id="gameStartBtn">UFOバトル</button>
         </div>
+        <a class="portal-link-btn" href="https://taka-t-p.github.io/math-app-portal/">KEC数学科ラボへ</a>
     </div>
 
     <div id="modeSelectionScreen" class="screen hidden">
