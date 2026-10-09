@@ -3790,13 +3790,17 @@
         }
 
         function calculateTotalScore(difficulty) {
-            const modes = ['addition', 'subtraction', 'multiplication', 'division', 'all', 'length', 'weight', 'area', 'volume', 'unitMix', 'reverse', 'lcm', 'gcd', 'fraction', 'decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix', 'fractionAddition', 'fractionSubtraction', 'fractionMultiplication'];
+            // 記録画面に表示される全モード（modePages）を対象に合計する
+            const modes = modePages.flat();
             let totalScore = 0;
 
             modes.forEach(mode => {
                 const record = getRecord(mode, difficulty);
                 if (record && record.score) {
-                    totalScore += record.score;
+                    const scoreNum = typeof record.score === 'number' ? record.score : parseInt(String(record.score).replace(/,/g, ''), 10);
+                    if (!isNaN(scoreNum)) {
+                        totalScore += scoreNum;
+                    }
                 }
             });
 
