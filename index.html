@@ -62,6 +62,16 @@
             display: none !important;
         }
 
+        /* タイトル画面はスクロールさせず固定する */
+        #modeScreen {
+            position: fixed;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            touch-action: none;
+            overscroll-behavior: none;
+        }
+
         #modeScreen h1 {
             font-size: 3rem;
             margin-bottom: 2rem;
@@ -2407,6 +2417,7 @@
         <h1>GAME OVER</h1>
         <p style="font-size: 1.5rem; margin: 1rem 0; color: #ff6666;">地球を守れなかった・・・</p>
         <div class="score-display">最終スコア: <span id="finalScore">0</span></div>
+        <div class="score-display">ハイスコア: <span id="finalHighScore">0</span></div>
         <div class="score-display">正解: <span id="finalCorrectCount">0</span>　不正解: <span id="finalWrongCount">0</span></div>
         <div id="lastProblemDisplay" style="
             font-size: 0.8rem;
@@ -2424,6 +2435,7 @@
         <h1>GAME CLEAR!</h1>
         <p id="clearMessage" style="font-size: 1.5rem; margin: 1rem 0; color: #66ff66;">地球を守った！</p>
         <div class="score-display">最終スコア: <span id="clearScore">0</span></div>
+        <div class="score-display">ハイスコア: <span id="clearHighScore">0</span></div>
         <div class="score-display">正解: <span id="clearCorrectCount">0</span>　不正解: <span id="clearWrongCount">0</span></div>
         <button class="home-btn" onclick="restartGame()">ホーム</button>
     </div>
@@ -3703,6 +3715,27 @@
         function getRecord(mode, difficulty) {
             const recordKey = `record_${mode}_${difficulty}`;
             return JSON.parse(localStorage.getItem(recordKey) || '{}');
+        }
+
+        // ハイスコアを取得（未挑戦の場合は '-'）
+        function getHighScore(mode, difficulty) {
+            const record = getRecord(mode, difficulty);
+            return record.score || '-';
+        }
+
+        // 「計算の種類を選ぼう」画面の得点倍率・ハイスコア表示を更新
+        function updateScoreMultiplierDisplay(mode) {
+            const scoreMultiplierDisplay = document.getElementById('scoreMultiplierDisplay');
+            let scoreMultiplier;
+            if (gameState.difficulty === 'hyper') {
+                scoreMultiplier = getHyperModeMultiplier(mode).toFixed(2);
+            } else {
+                const modeSettings = getModeSettings(mode);
+                scoreMultiplier = modeSettings.scoreMultiplier.toFixed(2);
+            }
+            const highScore = getHighScore(mode, gameState.difficulty);
+            scoreMultiplierDisplay.textContent = `得点倍率：${scoreMultiplier}　ハイスコア：${highScore}`;
+            scoreMultiplierDisplay.style.visibility = 'visible';
         }
 
         // クリア情報を保存（ふつう、はやい、超高速のみ）
@@ -6992,6 +7025,7 @@
             }
 
             document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalHighScore').textContent = getHighScore(gameState.mode, gameState.difficulty);
             document.getElementById('finalCorrectCount').textContent = gameState.correctCount;
             document.getElementById('finalWrongCount').textContent = gameState.wrongAnswerCount;
 
@@ -7119,6 +7153,7 @@
             saveClearInfo(gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier);
 
             document.getElementById('clearScore').textContent = gameState.score;
+            document.getElementById('clearHighScore').textContent = getHighScore(gameState.mode, gameState.difficulty);
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
             document.getElementById('clearWrongCount').textContent = gameState.wrongAnswerCount;
 
@@ -7197,6 +7232,7 @@
             saveScore(gameState.score, gameState.mode, gameState.difficulty, gameState.initialSpeedMultiplier, true);
 
             document.getElementById('clearScore').textContent = gameState.score;
+            document.getElementById('clearHighScore').textContent = getHighScore(gameState.mode, gameState.difficulty);
             document.getElementById('clearCorrectCount').textContent = gameState.correctCount;
             document.getElementById('clearWrongCount').textContent = gameState.wrongAnswerCount;
 
@@ -7387,17 +7423,8 @@
             // プレビューを表示
             showProblemPreview(mode, gameState.difficulty);
 
-            // 得点倍率を表示
-            const scoreMultiplierDisplay = document.getElementById('scoreMultiplierDisplay');
-            let scoreMultiplier;
-            if (gameState.difficulty === 'hyper') {
-                scoreMultiplier = getHyperModeMultiplier(mode).toFixed(2);
-            } else {
-                const modeSettings = getModeSettings(mode);
-                scoreMultiplier = modeSettings.scoreMultiplier.toFixed(2);
-            }
-            scoreMultiplierDisplay.textContent = `得点倍率：${scoreMultiplier}`;
-            scoreMultiplierDisplay.style.visibility = 'visible';
+            // 得点倍率・ハイスコアを表示
+            updateScoreMultiplierDisplay(mode);
         }
 
         // プレビューアニメーション用の変数
@@ -7910,6 +7937,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             createStars();
 
+            // タイトル画面ではタッチによるスクロール（iOSのバウンス含む）を無効化
+            document.getElementById('modeScreen').addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            }, { passive: false });
+
             // 初期難易度を設定
             gameState.difficulty = 'normal';
 
@@ -8101,17 +8133,8 @@
                     // プレビューを新しい難易度で更新
                     showProblemPreview(previousSelectedMode, gameState.difficulty);
 
-                    // 得点倍率を新しい難易度で更新
-                    const scoreMultiplierDisplay = document.getElementById('scoreMultiplierDisplay');
-                    let scoreMultiplier;
-                    if (gameState.difficulty === 'hyper') {
-                        scoreMultiplier = getHyperModeMultiplier(previousSelectedMode).toFixed(2);
-                    } else {
-                        const modeSettings = getModeSettings(previousSelectedMode);
-                        scoreMultiplier = modeSettings.scoreMultiplier.toFixed(2);
-                    }
-                    scoreMultiplierDisplay.textContent = `得点倍率：${scoreMultiplier}`;
-                    scoreMultiplierDisplay.style.visibility = 'visible';
+                    // 得点倍率・ハイスコアを新しい難易度で更新
+                    updateScoreMultiplierDisplay(previousSelectedMode);
                 }
             });
 
