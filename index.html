@@ -3129,6 +3129,43 @@
             text-shadow: 0 0 15px #00ffff;
         }
 
+        /* TOP3の称号 */
+        .ranking-title {
+            margin-top: 0.4vh;
+            font-size: clamp(0.85rem, 2.8vh, 1.5rem);
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .ranking-row .ranking-title {
+            font-size: clamp(0.75rem, 2.2vh, 1.1rem);
+        }
+
+        .ranking-title.delayed {
+            opacity: 0;
+            animation: ranking-title-in 0.6s ease-out 1.4s forwards;
+        }
+
+        @keyframes ranking-title-in {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .champion-title-rank {
+            padding: 0.6vh 2vw;
+            border: 2px solid #00ff88;
+            border-radius: 14px;
+            background: rgba(0, 255, 136, 0.12);
+            font-size: clamp(1.2rem, 5vh, 2.8rem);
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 18px #00ff88;
+            word-break: break-all;
+            opacity: 0;
+            animation: ranking-title-in 0.8s ease-out 1.9s forwards;
+        }
+
         .ranking-card.rank-2 { border-color: #d8e4ff; box-shadow: 0 0 30px rgba(216, 228, 255, 0.5); }
         .ranking-card.rank-3 { border-color: #ffb36b; box-shadow: 0 0 30px rgba(255, 179, 107, 0.5); }
         .ranking-card.rank-1 { border-color: #ffdd55; box-shadow: 0 0 45px rgba(255, 221, 85, 0.8); }
@@ -3751,17 +3788,18 @@
                 <span class="challenge-code-label">参加番号</span>
                 <span class="challenge-code-value" id="challengeQrCode"></span>
             </div>
+            <button class="challenge-main-btn hidden" id="challengeQrManageBtn" onclick="openOnlineAdminDetailFromQr()">この大会を管理する（結果・ランキング発表）</button>
+            <p class="challenge-toast hidden" id="challengeQrToast"></p>
             <p class="challenge-error-text hidden" id="challengeQrLocalWarning">※ このページはパソコン内のファイルとして開かれているため、生徒の端末からは参加できません。GitHub Pages など公開URLのページで発行してください。</p>
             <div class="challenge-url" id="challengeQrUrl"></div>
             <div class="challenge-btn-grid">
-                <button class="challenge-small-btn" onclick="copyChallengeUrl()">URLをコピー</button>
-                <button class="challenge-small-btn" onclick="saveChallengeQrImage()">QRコードを画像保存</button>
+                <!-- 「URLをコピー」「QRコードを画像保存」は使わないため非表示 -->
+                <button class="challenge-small-btn hidden" onclick="copyChallengeUrl()">URLをコピー</button>
+                <button class="challenge-small-btn hidden" onclick="saveChallengeQrImage()">QRコードを画像保存</button>
                 <button class="challenge-small-btn" onclick="showChallengeQrFullscreen()">QRコードを全画面表示</button>
                 <button class="challenge-small-btn" onclick="backToChallengeSettings()">設定に戻る</button>
                 <button class="challenge-small-btn" onclick="showChallengeCreate(true)">新しいチャレンジを作成</button>
             </div>
-            <button class="challenge-main-btn hidden" id="challengeQrManageBtn" onclick="openOnlineAdminDetailFromQr()">この大会を管理する（結果・ランキング発表）</button>
-            <p class="challenge-toast hidden" id="challengeQrToast"></p>
             <button class="challenge-link-btn" onclick="toggleChallengeUnlockCode()">先生用：再挑戦許可コードを表示</button>
             <p class="challenge-note hidden" id="challengeUnlockCodeText"></p>
         </div>
@@ -14775,12 +14813,29 @@
             const who = document.createElement('div');
             who.className = 'who';
             who.textContent = entry.nickname;
+            // TOP3は称号も表示（スコアのカウントアップが終わってから表示）
+            if (entry.rank <= 3) {
+                who.appendChild(createRankingTitle(entry, animate ? 'ranking-title delayed' : 'ranking-title'));
+            }
             const score = document.createElement('div');
             score.className = 'score';
             score.textContent = animate ? '0' : entry.score.toLocaleString();
             card.append(rank, who, score);
             if (animate) countUpRankingScore(score, entry.score);
             return card;
+        }
+
+        // 称号：結果画面と同じく、制限時間に応じた倍率をかけたスコアで決める
+        function getRankingTitle(entry) {
+            const duration = onlineAdminCurrent && onlineAdminCurrent.data ? onlineAdminCurrent.data.duration : 180;
+            return getTitleByScore(getChallengeTitleScore(entry.score, duration));
+        }
+
+        function createRankingTitle(entry, className) {
+            const title = document.createElement('div');
+            title.className = className;
+            title.textContent = getRankingTitle(entry);
+            return title;
         }
 
         function createRankingRow(entry) {
@@ -14792,6 +14847,9 @@
             const who = document.createElement('span');
             who.className = 'who';
             who.textContent = entry.nickname;
+            if (entry.rank <= 3) {
+                who.appendChild(createRankingTitle(entry, 'ranking-title'));
+            }
             const score = document.createElement('span');
             score.className = 'score';
             score.textContent = entry.score.toLocaleString();
@@ -14882,7 +14940,7 @@
                     const score = document.createElement('div');
                     score.className = 'champion-score';
                     score.textContent = '0';
-                    overlay.append(name, score);
+                    overlay.append(name, score, createRankingTitle(entry, 'champion-title-rank'));
                     countUpRankingScore(score, entry.score, 1800);
                 });
                 playChampionMusic();
