@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>スペース計算ラリー v2.0</title>
+    <title>スペース計算ラリー v2.1</title>
     <!-- 完全新実装：ストーリーシステム V2.0.0 - 2025-01-19 - 関数名/変数名完全変更 -->
     <style>
         * {
@@ -2250,6 +2250,523 @@
             background: rgba(0, 170, 255, 0.3);
             transform: scale(1.05);
         }
+
+        /* ===== 授業チャレンジ ===== */
+        /* タイトル画面の「授業チャレンジ」ボタン */
+        #modeScreen .challenge-entry-btn {
+            margin-top: 0.6rem;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-color: #ffcc33;
+            color: #ffdd55;
+            background: rgba(255, 204, 51, 0.12);
+            text-shadow: 0 0 10px #ffcc33;
+        }
+
+        #modeScreen .challenge-entry-btn:hover {
+            background: rgba(255, 204, 51, 0.3);
+            box-shadow: 0 0 30px #ffcc33;
+        }
+
+        /* 内容が多い画面はスクロール可能にする */
+        .challenge-screen {
+            justify-content: flex-start;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 64px 16px 40px;
+        }
+
+        .challenge-panel {
+            margin: auto;
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.8rem;
+            text-align: center;
+        }
+
+        .challenge-panel-wide {
+            max-width: 640px;
+        }
+
+        .challenge-heading {
+            font-size: 2rem;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+            word-break: break-all;
+        }
+
+        .challenge-subheading {
+            font-size: 1.2rem;
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff;
+            margin-top: 1rem;
+        }
+
+        .challenge-lead {
+            color: #ffaa00;
+            text-shadow: 0 0 8px #ffaa00;
+            font-weight: bold;
+        }
+
+        .challenge-tag {
+            color: #ffdd55;
+            text-shadow: 0 0 8px #ffcc33;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .challenge-note {
+            font-size: 0.85rem;
+            color: #aaccdd;
+            line-height: 1.5;
+        }
+
+        .challenge-error-text {
+            font-size: 0.9rem;
+            color: #ff7777;
+            line-height: 1.5;
+        }
+
+        .challenge-menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .challenge-main-btn,
+        .challenge-start-btn {
+            padding: 16px 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.15);
+            color: #00ffff;
+            border-radius: 12px;
+            cursor: pointer;
+            text-shadow: 0 0 10px #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            transition: all 0.2s;
+        }
+
+        .challenge-main-btn small {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: normal;
+            margin-top: 2px;
+        }
+
+        .challenge-main-btn:hover,
+        .challenge-start-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        .challenge-sub-btn {
+            border-color: #ffcc33;
+            color: #ffdd55;
+            background: rgba(255, 204, 51, 0.12);
+            text-shadow: 0 0 10px #ffcc33;
+            box-shadow: 0 0 15px rgba(255, 204, 51, 0.3);
+        }
+
+        .challenge-small-btn {
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            border: 1px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-radius: 8px;
+            cursor: pointer;
+            text-shadow: 0 0 5px #00ffff;
+            transition: all 0.2s;
+        }
+
+        .challenge-small-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 255, 0.3);
+        }
+
+        .challenge-small-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .challenge-link-btn {
+            background: none;
+            border: none;
+            color: #88aacc;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .challenge-join-input,
+        .challenge-resume-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 12px;
+            background: rgba(0, 30, 60, 0.6);
+        }
+
+        .challenge-resume-card {
+            border-color: #ffcc33;
+            color: #ffdd55;
+            font-weight: bold;
+        }
+
+        .challenge-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            text-align: left;
+            padding: 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 12px;
+            background: rgba(0, 20, 50, 0.7);
+        }
+
+        .challenge-label {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #88ddff;
+            margin-top: 0.6rem;
+        }
+
+        .challenge-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px; /* iPhoneで入力時に拡大されないよう16px以上 */
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            background: rgba(0, 10, 30, 0.9);
+            color: #ffffff;
+        }
+
+        .challenge-input option,
+        .challenge-input optgroup {
+            background: #001a33;
+            color: #ffffff;
+        }
+
+        .challenge-seg {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 1fr;
+            gap: 6px;
+        }
+
+        .challenge-seg-btn {
+            padding: 12px 4px;
+            font-size: 1rem;
+            border: 1px solid #00aacc;
+            border-radius: 8px;
+            background: rgba(0, 255, 255, 0.05);
+            color: #88ccdd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-seg-btn.selected {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.25);
+            color: #00ff88;
+            font-weight: bold;
+            text-shadow: 0 0 8px #00ff88;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+        }
+
+        .challenge-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 4px 12px;
+            text-align: left;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.35);
+            border-radius: 10px;
+            background: rgba(0, 20, 50, 0.6);
+            font-size: 1rem;
+        }
+
+        .challenge-info dt {
+            color: #88ccff;
+        }
+
+        .challenge-info dd {
+            color: #ffffff;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .challenge-qr-box {
+            align-self: center;
+            padding: 12px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+            line-height: 0;
+        }
+
+        .challenge-url {
+            font-size: 0.75rem;
+            color: #aaccdd;
+            word-break: break-all;
+            user-select: all;
+            -webkit-user-select: all;
+            padding: 8px;
+            border: 1px dashed rgba(0, 255, 255, 0.35);
+            border-radius: 8px;
+        }
+
+        .challenge-btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .challenge-btn-grid .challenge-small-btn:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .challenge-toast {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        /* 全画面QR（プロジェクター・電子黒板向け） */
+        .challenge-qr-fullscreen {
+            position: fixed;
+            inset: 0;
+            z-index: 20000;
+            background: #ffffff;
+            color: #001133;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1vh;
+            padding: 2vh 2vw;
+        }
+
+        .challenge-qr-full-name {
+            font-size: clamp(1.2rem, 4vh, 2.6rem);
+            font-weight: bold;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .challenge-qr-full-box {
+            line-height: 0;
+        }
+
+        .challenge-qr-full-msg {
+            font-size: clamp(1.1rem, 4.5vh, 3rem);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .challenge-qr-full-msg-sub {
+            font-size: clamp(1rem, 3.5vh, 2.2rem);
+            color: #cc3300;
+        }
+
+        .challenge-qr-full-close {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            padding: 8px 14px;
+            font-size: 1rem;
+            border: 1px solid #001133;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #001133;
+            cursor: pointer;
+        }
+
+        .challenge-done-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffdd55;
+            text-shadow: 0 0 8px #ffcc33;
+            margin: 0.5rem 0;
+        }
+
+        #challengeJoinForm,
+        #challengeJoinDone,
+        #challengeJoinResume,
+        #challengeUnlockBox {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        #challengeJoinForm .challenge-label {
+            text-align: left;
+        }
+
+        .challenge-ready-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            line-height: 1.4;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            margin: 2rem 0 1rem;
+        }
+
+        .challenge-start-btn {
+            margin-top: 1.5rem;
+            padding: 26px 20px;
+            font-size: 1.8rem;
+            border-color: #00ff88;
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.15);
+            text-shadow: 0 0 12px #00ff88;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.45);
+            animation: challenge-pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes challenge-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.8); }
+        }
+
+        /* ゲーム画面上部の授業チャレンジ表示 */
+        .challenge-game-banner {
+            position: fixed;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: calc(100vw - 180px);
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ffdd55;
+            text-shadow: 0 0 6px #ffcc33;
+            border: 1px solid rgba(255, 204, 51, 0.6);
+            border-radius: 999px;
+            background: rgba(40, 30, 0, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* 結果画面（先生が離れた場所からでも読めるよう数値を大きく） */
+        .challenge-result-title {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 2.4rem;
+            letter-spacing: 0.06em;
+            color: #66ff66;
+            text-shadow: 0 0 20px #66ff66;
+        }
+
+        .challenge-result-nickname {
+            font-size: 1.6rem;
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .challenge-result-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .challenge-result-big {
+            display: flex;
+            flex-direction: column;
+            padding: 0.8rem 0.4rem;
+            border: 2px solid #00ffff;
+            border-radius: 14px;
+            background: rgba(0, 40, 80, 0.7);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.35);
+        }
+
+        .challenge-result-label {
+            font-size: 1rem;
+            color: #88ccff;
+        }
+
+        .challenge-result-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 15px #00ffff;
+            line-height: 1.2;
+            word-break: break-all;
+        }
+
+        .challenge-report-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffdd55;
+            text-shadow: 0 0 10px #ffcc33;
+        }
+
+        /* 履歴カード */
+        .challenge-history-card {
+            text-align: left;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.6rem;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 10px;
+            background: rgba(0, 20, 50, 0.7);
+        }
+
+        .challenge-history-card .challenge-history-title {
+            font-weight: bold;
+            color: #00ffff;
+            word-break: break-all;
+        }
+
+        .challenge-history-card .challenge-history-meta {
+            font-size: 0.85rem;
+            color: #aaccdd;
+            margin-top: 2px;
+        }
+
+        .challenge-history-card .challenge-history-score {
+            margin-top: 4px;
+            font-size: 1rem;
+        }
+
+        .challenge-history-card .challenge-small-btn {
+            margin-top: 6px;
+        }
+
+        @media (max-width: 480px) {
+            #modeScreen .challenge-entry-btn {
+                padding: 9px 25px;
+                font-size: 1.05rem;
+            }
+
+            .challenge-heading {
+                font-size: 1.5rem;
+            }
+
+            .challenge-ready-text {
+                font-size: 1.7rem;
+            }
+
+            .challenge-result-value {
+                font-size: 2.4rem;
+            }
+
+            .challenge-result-title {
+                font-size: 1.9rem;
+            }
+
+            .challenge-seg-btn {
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2271,6 +2788,7 @@
         <div class="mode-buttons">
             <button class="game-start-btn" id="threeMinuteBtn">３分集中</button>
             <button class="game-start-btn" id="gameStartBtn">UFOバトル</button>
+            <button class="game-start-btn challenge-entry-btn" id="classChallengeBtn" onclick="showChallengeMenu()">授業チャレンジ</button>
         </div>
         <a class="portal-link-btn" href="https://taka-t-p.github.io/math-app-portal/">KEC数学科ラボへ</a>
     </div>
@@ -2407,8 +2925,11 @@
         
         <div class="choices" id="choices">
         </div>
-        
-        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+
+        <!-- 授業チャレンジ中の表示 -->
+        <div class="challenge-game-banner hidden" id="challengeGameBanner"></div>
+
+        <button class="home-btn" onclick="returnToTitleFromGame()">ホーム</button>
     </div>
 
     <div id="gameOverScreen" class="screen hidden">
@@ -2583,10 +3104,214 @@
                 ゲームオーバーはないので、思いっきり計算練習できる！</p>
             </div>
         </div>
-        <div style="display: flex; gap: 1rem; justify-content: center; margin: 2rem 0;">
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin: 2rem 0;">
             <button class="story-btn" onclick="showStory()">プロローグ</button>
             <button class="story-btn" onclick="showStoryLibrary()">ストーリー</button>
             <button class="story-btn" onclick="selectMode('records')">ハイスコア</button>
+            <button class="story-btn" onclick="showChallengeHistory()">授業チャレンジ</button>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <!-- ===== 授業チャレンジ ===== -->
+    <!-- メニュー（先生用／生徒用の選択） -->
+    <div id="challengeMenuScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel">
+            <h1 class="challenge-heading">授業チャレンジ</h1>
+            <p class="challenge-lead">みんなで同じ問題・同じ時間で計算バトル！</p>
+
+            <div class="challenge-resume-card hidden" id="challengeMenuResumeCard">
+                <p>進行中のチャレンジがあります</p>
+                <button class="challenge-main-btn" onclick="showChallengeResume()">続きから再開する</button>
+            </div>
+
+            <div class="challenge-menu-buttons">
+                <button class="challenge-main-btn" onclick="showChallengeCreate(false)">チャレンジを作る<small>（先生用）</small></button>
+                <button class="challenge-main-btn challenge-sub-btn" onclick="toggleChallengeJoinInput()">チャレンジに参加する<small>（生徒用）</small></button>
+            </div>
+
+            <div class="challenge-join-input hidden" id="challengeJoinInputBox">
+                <p class="challenge-note">ふつうはQRコードを読み取って参加します。<br>先生から参加URLを教えてもらった場合は、ここに貼り付けてね。</p>
+                <input type="text" id="challengeJoinUrlInput" class="challenge-input" placeholder="参加URLを貼り付け" autocomplete="off">
+                <p class="challenge-error-text hidden" id="challengeJoinUrlError">URLが正しくないようです。もう一度確かめてね。</p>
+                <button class="challenge-main-btn" onclick="joinChallengeFromInput()">参加する</button>
+            </div>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <!-- 先生用：チャレンジ作成 -->
+    <div id="challengeCreateScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel challenge-panel-wide">
+            <h1 class="challenge-heading">チャレンジを作る</h1>
+
+            <button class="challenge-small-btn" id="challengeUseLastBtn" onclick="applyLastChallengeSettings()">前回と同じ設定で作成</button>
+
+            <div class="challenge-form">
+                <label class="challenge-label" for="challengeNameInput">チャレンジ名</label>
+                <input type="text" id="challengeNameInput" class="challenge-input" maxlength="30" value="計算ラリー大会">
+
+                <label class="challenge-label" for="challengeModeSelect">計算の種類</label>
+                <select id="challengeModeSelect" class="challenge-input"></select>
+
+                <span class="challenge-label">難しさ</span>
+                <div class="challenge-seg" data-field="d">
+                    <button type="button" class="challenge-seg-btn" data-value="normal">ノーマル</button>
+                    <button type="button" class="challenge-seg-btn" data-value="hyper">ハイパー</button>
+                </div>
+
+                <span class="challenge-label">制限時間</span>
+                <div class="challenge-seg" data-field="t">
+                    <button type="button" class="challenge-seg-btn" data-value="60">1分</button>
+                    <button type="button" class="challenge-seg-btn" data-value="120">2分</button>
+                    <button type="button" class="challenge-seg-btn" data-value="180">3分</button>
+                    <button type="button" class="challenge-seg-btn" data-value="300">5分</button>
+                </div>
+
+                <span class="challenge-label">出題方式</span>
+                <div class="challenge-seg" data-field="q">
+                    <button type="button" class="challenge-seg-btn" data-value="random">ランダム</button>
+                    <button type="button" class="challenge-seg-btn" data-value="common">全員共通問題</button>
+                </div>
+                <p class="challenge-note" id="challengeQuestionTypeNote"></p>
+
+                <span class="challenge-label">挑戦回数</span>
+                <div class="challenge-seg" data-field="a">
+                    <button type="button" class="challenge-seg-btn" data-value="once">1回</button>
+                    <button type="button" class="challenge-seg-btn" data-value="unlimited">何度でも</button>
+                </div>
+                <p class="challenge-note" id="challengeAttemptNote"></p>
+            </div>
+
+            <button class="challenge-main-btn" onclick="issueChallenge()">QRコードを発行</button>
+
+            <div class="challenge-history" id="challengeIssuedHistory">
+                <h2 class="challenge-subheading">発行済みチャレンジ</h2>
+                <p class="challenge-note">授業中に画面を閉じてしまっても、同じQRコードを再表示できます。</p>
+                <div id="challengeIssuedList"></div>
+            </div>
+        </div>
+        <button class="home-btn" onclick="showChallengeMenu()">戻る</button>
+    </div>
+
+    <!-- 先生用：QRコード表示 -->
+    <div id="challengeQrScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel">
+            <h1 class="challenge-heading" id="challengeQrName"></h1>
+            <dl class="challenge-info" id="challengeQrInfo"></dl>
+            <div class="challenge-qr-box">
+                <canvas id="challengeQrCanvas"></canvas>
+            </div>
+            <p class="challenge-error-text hidden" id="challengeQrLocalWarning">※ このページはパソコン内のファイルとして開かれているため、生徒の端末からは参加できません。GitHub Pages など公開URLのページで発行してください。</p>
+            <div class="challenge-url" id="challengeQrUrl"></div>
+            <div class="challenge-btn-grid">
+                <button class="challenge-small-btn" onclick="copyChallengeUrl()">URLをコピー</button>
+                <button class="challenge-small-btn" onclick="saveChallengeQrImage()">QRコードを画像保存</button>
+                <button class="challenge-small-btn" onclick="showChallengeQrFullscreen()">QRコードを全画面表示</button>
+                <button class="challenge-small-btn" onclick="backToChallengeSettings()">設定に戻る</button>
+                <button class="challenge-small-btn" onclick="showChallengeCreate(true)">新しいチャレンジを作成</button>
+            </div>
+            <p class="challenge-toast hidden" id="challengeQrToast"></p>
+            <button class="challenge-link-btn" onclick="toggleChallengeUnlockCode()">先生用：再挑戦許可コードを表示</button>
+            <p class="challenge-note hidden" id="challengeUnlockCodeText"></p>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <!-- 先生用：QRコード全画面表示 -->
+    <div id="challengeQrFullscreen" class="challenge-qr-fullscreen hidden" onclick="hideChallengeQrFullscreen()">
+        <div class="challenge-qr-full-name" id="challengeQrFullName"></div>
+        <div class="challenge-qr-full-box"><canvas id="challengeQrFullCanvas"></canvas></div>
+        <div class="challenge-qr-full-msg">QRコードを読み取って参加しよう！</div>
+        <div class="challenge-qr-full-msg challenge-qr-full-msg-sub">先生の合図があるまでスタートしないでね！</div>
+        <button class="challenge-qr-full-close" onclick="hideChallengeQrFullscreen()">✕ 閉じる</button>
+    </div>
+
+    <!-- 生徒用：チャレンジ参加 -->
+    <div id="challengeJoinScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel">
+            <p class="challenge-tag">授業チャレンジ</p>
+            <h1 class="challenge-heading" id="challengeJoinName"></h1>
+            <dl class="challenge-info" id="challengeJoinInfo"></dl>
+
+            <!-- 参加フォーム -->
+            <div id="challengeJoinForm">
+                <label class="challenge-label" for="challengeNicknameInput">ニックネーム（12文字まで）</label>
+                <input type="text" id="challengeNicknameInput" class="challenge-input" maxlength="12" placeholder="ニックネーム" autocomplete="off">
+                <button class="challenge-main-btn" onclick="challengeReady()">準備OK！</button>
+            </div>
+
+            <!-- 挑戦済み（1回限定） -->
+            <div id="challengeJoinDone" class="hidden">
+                <p class="challenge-done-text">このチャレンジはもう挑戦済みです。</p>
+                <button class="challenge-main-btn" onclick="showLastChallengeResult()">結果を見る</button>
+                <button class="challenge-link-btn" onclick="toggleChallengeUnlockInput()">先生に許可をもらって再挑戦する</button>
+                <div id="challengeUnlockBox" class="hidden">
+                    <input type="text" id="challengeUnlockInput" class="challenge-input" inputmode="numeric" maxlength="4" placeholder="先生の許可コード（4けた）" autocomplete="off">
+                    <p class="challenge-error-text hidden" id="challengeUnlockError">コードがちがいます。</p>
+                    <button class="challenge-small-btn" onclick="submitChallengeUnlock()">許可コードを入力</button>
+                </div>
+            </div>
+
+            <!-- 進行中のチャレンジ -->
+            <div id="challengeJoinResume" class="hidden">
+                <p class="challenge-done-text">チャレンジの途中です！</p>
+                <p class="challenge-note" id="challengeResumeInfo"></p>
+                <button class="challenge-main-btn" onclick="resumeChallenge()">続きから再開する</button>
+            </div>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <!-- 生徒用：スタート待機 -->
+    <div id="challengeReadyScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel">
+            <p class="challenge-tag" id="challengeReadyName"></p>
+            <p class="challenge-ready-text">準備完了！<br>先生の合図を待とう！</p>
+            <p class="challenge-note" id="challengeReadyInfo"></p>
+            <button class="challenge-start-btn" onclick="startChallengeFromReady()">チャレンジスタート！</button>
+        </div>
+        <button class="home-btn" onclick="backToChallengeJoin()">戻る</button>
+    </div>
+
+    <!-- 授業チャレンジ結果 -->
+    <div id="challengeResultScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel">
+            <h1 class="challenge-result-title">MISSION COMPLETE</h1>
+            <p class="challenge-tag" id="challengeResultName"></p>
+            <p class="challenge-result-nickname" id="challengeResultNickname"></p>
+            <div class="challenge-result-main">
+                <div class="challenge-result-big">
+                    <span class="challenge-result-label">スコア</span>
+                    <span class="challenge-result-value" id="challengeResultScore">0</span>
+                </div>
+                <div class="challenge-result-big">
+                    <span class="challenge-result-label">正解数</span>
+                    <span class="challenge-result-value" id="challengeResultCorrect">0</span>
+                </div>
+            </div>
+            <dl class="challenge-info" id="challengeResultInfo"></dl>
+            <p class="challenge-report-text">先生にスコアを報告しよう！</p>
+            <button class="challenge-main-btn hidden" id="challengeResultRetryBtn" onclick="retryChallenge()">リトライ</button>
+        </div>
+        <button class="home-btn" onclick="returnToTitle()">ホーム</button>
+    </div>
+
+    <!-- 授業チャレンジ履歴 -->
+    <div id="challengeHistoryScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel challenge-panel-wide">
+            <h1 class="challenge-heading">授業チャレンジの記録</h1>
+            <div id="challengeHistoryList"></div>
+        </div>
+        <button class="home-btn" onclick="returnToInstructions()">戻る</button>
+    </div>
+
+    <!-- 授業チャレンジのURLエラー -->
+    <div id="challengeErrorScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel">
+            <h1 class="challenge-heading">参加できません</h1>
+            <p class="challenge-done-text" id="challengeErrorText">QRコード（URL）が正しく読み取れませんでした。</p>
+            <p class="challenge-note">もう一度QRコードを読み取るか、先生に確認してね。</p>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
@@ -2615,7 +3340,9 @@
             currentModePage: 1,
             currentRecordsPage: 1,
             lastFailedProblem: null,
-            isThreeMinuteMode: false
+            isThreeMinuteMode: false,
+            maxCombo: 0,
+            challenge: null // 授業チャレンジ中のセッション（通常モードでは null）
         };
 
         let gameTimer;
@@ -2646,6 +3373,17 @@
                 console.log('Copyright shown on window load');
             }
         });
+
+        // 配列をシャッフルする関数（Fisher-Yates法）
+        // sort(() => Math.random() - 0.5) はブラウザごとに並び順が変わるため、
+        // 授業チャレンジの全員共通問題でも同じ結果になるようこちらを使う
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
         // 最大公約数を求める関数
         function gcd(a, b) {
@@ -3966,7 +4704,9 @@
             if (modeDisplayElement && gameState.mode && gameState.difficulty) {
                 const modeText = getModeLabel(gameState.mode);
                 const difficultyText = getDifficultyLabel(gameState.difficulty);
-                const speedText = getSpeedLabel(gameState.initialSpeedMultiplier);
+                const speedText = gameState.challenge
+                    ? `授業チャレンジ ${getChallengeTimeLabel(gameState.challenge.config.t)}`
+                    : getSpeedLabel(gameState.initialSpeedMultiplier);
                 modeDisplayElement.textContent = `${difficultyText}　${modeText}　${speedText}`;
             }
         }
@@ -5032,7 +5772,7 @@
                 }
             }
 
-            return Array.from(choices).sort(() => Math.random() - 0.5);
+            return shuffleArray(Array.from(choices));
         }
 
         // 小数のわり算専用の選択肢を生成する関数
@@ -5105,7 +5845,7 @@
                 }
             }
 
-            return Array.from(choices).sort(() => Math.random() - 0.5);
+            return shuffleArray(Array.from(choices));
         }
 
         // 小数計算専用の選択肢を生成する関数
@@ -5165,7 +5905,7 @@
                 }
             }
 
-            return Array.from(choices).sort(() => Math.random() - 0.5);
+            return shuffleArray(Array.from(choices));
         }
 
         // 小数のわり算問題を生成する関数
@@ -5665,7 +6405,7 @@
                 }
             }
 
-            return Array.from(choices).sort(() => Math.random() - 0.5);
+            return shuffleArray(Array.from(choices));
         }
 
         // 分数から選択肢を生成する関数
@@ -6002,7 +6742,7 @@
             );
 
             // ランダムに3つの誤答を選択
-            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            const shuffled = shuffleArray(validWrongChoices);
             for (let i = 0; i < Math.min(3, shuffled.length); i++) {
                 choices.push(shuffled[i]);
             }
@@ -6061,7 +6801,7 @@
             );
 
             // ランダムに3つの誤答を選択
-            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            const shuffled = shuffleArray(validWrongChoices);
             for (let i = 0; i < Math.min(3, shuffled.length); i++) {
                 choices.push(shuffled[i]);
             }
@@ -6119,7 +6859,7 @@
             );
 
             // ランダムに3つの誤答を選択
-            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            const shuffled = shuffleArray(validWrongChoices);
             for (let i = 0; i < Math.min(3, shuffled.length); i++) {
                 choices.push(shuffled[i]);
             }
@@ -6190,7 +6930,7 @@
             );
 
             // ランダムに3つの誤答を選択
-            const shuffled = validWrongChoices.sort(() => Math.random() - 0.5);
+            const shuffled = shuffleArray(validWrongChoices);
             for (let i = 0; i < Math.min(3, shuffled.length); i++) {
                 choices.push(shuffled[i]);
             }
@@ -6470,12 +7210,56 @@
             return { ufo, fallInterval };
         }
 
+        // 問題と選択肢をセットで生成する
+        function buildProblemAndChoices() {
+            const problem = generateProblem(gameState.mode, gameState.difficulty);
+            const choices = generateChoicesForProblem(problem);
+            return { problem, choices };
+        }
+
         // 新しい問題を出題
         function newProblem() {
             if (!gameState.gameRunning) return;
 
-            const problem = generateProblem(gameState.mode, gameState.difficulty);
+            // 授業チャレンジでは出題方式（ランダム／全員共通）に応じて問題を取得する
+            const { problem, choices } = gameState.challenge ? getChallengeProblem() : buildProblemAndChoices();
 
+            gameState.currentProblem = problem;
+
+            // UFOを作成
+            const ufoData = createUfo(problem);
+            gameState.currentFallInterval = ufoData.fallInterval;
+
+            // 選択肢を表示
+            const choicesContainer = document.getElementById('choices');
+            choicesContainer.innerHTML = '';
+
+            if (choices && Array.isArray(choices) && choices.length > 0) {
+                choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-btn';
+
+                    // 表示用のテキストを決定
+                    let displayText = choice;
+                    if (gameState.mode === 'area' || gameState.mode === 'volume' || gameState.mode === 'unitMix') {
+                        // 面積・体積・単位MIXモードでは大きな数値を万表記に変換
+                        displayText = formatLargeNumber(choice);
+                    }
+
+                    // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
+                    if (choice && typeof choice === 'string' && (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">'))) {
+                        button.innerHTML = choice;
+                    } else {
+                        button.textContent = displayText;
+                    }
+                    button.onclick = () => selectAnswer(choice, button);
+                    choicesContainer.appendChild(button);
+                });
+            }
+        }
+
+        // 問題に応じた選択肢を生成する
+        function generateChoicesForProblem(problem) {
             // 最小公倍数・最大公約数・小数⇔分数・長さの単位・重さの単位・面積の単位・体積の単位・単位MIXモードの場合は専用の選択肢生成を使用
             let choices;
             if (gameState.mode === 'lcm') {
@@ -6557,38 +7341,7 @@
                 choices = generateChoices(problem.answer);
             }
 
-            gameState.currentProblem = problem;
-            
-            // UFOを作成
-            const ufoData = createUfo(problem);
-            gameState.currentFallInterval = ufoData.fallInterval;
-            
-            // 選択肢を表示
-            const choicesContainer = document.getElementById('choices');
-            choicesContainer.innerHTML = '';
-
-            if (choices && Array.isArray(choices) && choices.length > 0) {
-                choices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.className = 'choice-btn';
-
-                    // 表示用のテキストを決定
-                    let displayText = choice;
-                    if (gameState.mode === 'area' || gameState.mode === 'volume' || gameState.mode === 'unitMix') {
-                        // 面積・体積・単位MIXモードでは大きな数値を万表記に変換
-                        displayText = formatLargeNumber(choice);
-                    }
-
-                    // 分数を含むHTMLの場合はinnerHTMLを使用、そうでなければtextContent
-                    if (choice && typeof choice === 'string' && (choice.includes('<span class="fraction">') || choice.includes('<span class="mixed-number">'))) {
-                        button.innerHTML = choice;
-                    } else {
-                        button.textContent = displayText;
-                    }
-                    button.onclick = () => selectAnswer(choice, button);
-                    choicesContainer.appendChild(button);
-                });
-            }
+            return choices;
         }
 
         // 分数の等価性をチェックする関数
@@ -6668,7 +7421,8 @@
 
         // 答えを選択
         function selectAnswer(selectedAnswer, button) {
-            if (!gameState.gameRunning) return;
+            // 正解後〜次の問題が出るまでの間（UFO撃破済み）は連打による二重得点を防ぐ
+            if (!gameState.gameRunning || !gameState.currentUfo) return;
 
             // 分数のかけ算・わり算・MIX・仮分数⇔帯分数では等価性チェックを使用（ノーマル・ハイパー共通）
             let isCorrect;
@@ -6683,6 +7437,7 @@
 
                 // コンボカウントを増やす
                 gameState.comboCount++;
+                gameState.maxCombo = Math.max(gameState.maxCombo || 0, gameState.comboCount);
 
                 // 新しいスコア計算: 基本点 × モード倍率 + コンボボーナス
                 const basePoints = getBasePointsBySpeed(gameState.initialSpeedMultiplier);
@@ -6722,6 +7477,11 @@
                 gameState.correctCount++;
                 updateTotalCorrectCount(); // 累積正解数を更新
                 document.getElementById('score').textContent = gameState.score;
+
+                // 授業チャレンジは途中経過を端末に記録（再読み込み時の復帰用）
+                if (gameState.challenge) {
+                    saveChallengeProgress(true);
+                }
 
                 // 3分集中モードでは速度加速なし
                 if (!gameState.isThreeMinuteMode) {
@@ -6814,6 +7574,10 @@
                     showFloatingScore(-penaltyPoints, ufoLeft + 60, ufoTop + 40);
 
                     gameState.wrongAnswerCount++;
+
+                    if (gameState.challenge) {
+                        saveChallengeProgress(false);
+                    }
                 } else {
                     // 通常モード
                     gameState.lives--;
@@ -6835,7 +7599,8 @@
         }
 
         // カウントダウン表示
-        function showCountdown(callback) {
+        // startCount: 0 にすると「START!」のみ表示（授業チャレンジは先生が口頭でカウントするため）
+        function showCountdown(callback, startCount = 3) {
             const countdownOverlay = document.createElement('div');
             countdownOverlay.className = 'countdown-overlay';
 
@@ -6848,7 +7613,7 @@
             countdownOverlay.appendChild(instructionDiv);
             document.body.appendChild(countdownOverlay);
 
-            let count = 3;
+            let count = startCount;
 
             function displayNumber() {
                 if (count > 0) {
@@ -6897,14 +7662,15 @@
             gameState.score = 0;
             gameState.correctCount = 0;
             gameState.comboCount = 0;
+            gameState.maxCombo = 0;
             gameState.wrongAnswerCount = 0;
             gameState.timeUp = false;
             gameState.gameRunning = false; // カウントダウン中は false
 
-            // 3分集中モードの場合の設定
+            // 3分集中モードの場合の設定（授業チャレンジも3分集中をベースに動作）
             if (gameState.isThreeMinuteMode) {
                 gameState.lives = 999; // 実質無限（表示は「∞」）
-                gameState.timeLeft = 180; // 3分間
+                gameState.timeLeft = getThreeMinuteModeTimeLimit(); // 3分間（授業チャレンジは先生の指定時間）
                 gameState.initialSpeedMultiplier = -1; // 3分集中モードの識別用
                 gameState.speedMultiplier = 1.0; // 速度倍率は1.0固定
             } else {
@@ -6961,9 +7727,20 @@
             // モード表示を更新
             updateModeDisplay();
 
+            // 授業チャレンジ中はプレイ中リトライを使わせない
+            document.getElementById('gameRetryBtn').style.display = gameState.challenge ? 'none' : '';
+            updateChallengeGameBanner();
+
             // カウントダウン後にゲーム開始
             showCountdown(() => {
                 gameState.gameRunning = true;
+
+                // 授業チャレンジは実時間基準のタイマーを使う
+                if (gameState.challenge) {
+                    startChallengeTimer();
+                    newProblem();
+                    return;
+                }
 
                 // ゲームタイマー開始
                 gameTimer = setInterval(() => {
@@ -6991,7 +7768,12 @@
                 }, 1000);
 
                 newProblem();
-            });
+            }, gameState.challenge ? 0 : 3);
+        }
+
+        // 3分集中モードの制限時間（秒）。授業チャレンジでは先生が指定した時間
+        function getThreeMinuteModeTimeLimit() {
+            return gameState.challenge ? gameState.challenge.config.t : 180;
         }
 
         // ゲームオーバー
@@ -7255,6 +8037,7 @@
 
             // 3分集中モードフラグをリセット
             gameState.isThreeMinuteMode = false;
+            gameState.challenge = null;
 
             document.getElementById('gameOverScreen').classList.add('hidden');
             document.getElementById('gameClearScreen').classList.add('hidden');
@@ -7613,8 +8396,8 @@
         function updateTimeGauge() {
             const timeGauge = document.getElementById('timeGauge');
             if (timeGauge) {
-                // 3分集中モードでは180秒、通常モードでは60秒が最大
-                const maxTime = gameState.isThreeMinuteMode ? 180 : 60;
+                // 3分集中モードでは180秒（授業チャレンジは指定時間）、通常モードでは60秒が最大
+                const maxTime = gameState.isThreeMinuteMode ? getThreeMinuteModeTimeLimit() : 60;
                 const percentage = (gameState.timeLeft / maxTime) * 100;
                 timeGauge.style.height = percentage + '%';
             }
@@ -7643,6 +8426,7 @@
             gameState.gameRunning = false;
             // 3分集中モードフラグをリセット
             gameState.isThreeMinuteMode = false;
+            gameState.challenge = null;
 
             if (gameTimer) {
                 clearInterval(gameTimer);
@@ -7681,6 +8465,7 @@
             document.getElementById('storyLibraryScreen').classList.add('hidden');
             document.getElementById('recordsScreen').classList.add('hidden');
             document.getElementById('instructionsScreen').classList.add('hidden');
+            hideChallengeScreens();
             document.getElementById('modeScreen').classList.remove('hidden');
             // タイトル画面表示時にコピーライトを表示
             document.getElementById('titleCopyright').style.display = 'block';
@@ -7715,6 +8500,7 @@
             document.getElementById('storyLibraryScreen').classList.add('hidden');
             document.getElementById('recordsScreen').classList.add('hidden');
             document.getElementById('modeScreen').classList.add('hidden');
+            hideChallengeScreens();
 
             // 説明画面を表示
             document.getElementById('instructionsScreen').classList.remove('hidden');
@@ -8303,7 +9089,7 @@
 
             // 選択肢を配列に変換してシャッフル（4つまでに制限）
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         // 分数を帯分数に変換する関数
@@ -8879,7 +9665,7 @@
 
             // 選択肢を配列に変換してシャッフル（4つまでに制限）
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generateFractionMixProblem(difficulty) {
@@ -9230,7 +10016,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generatePercentageMoneyProblem(difficulty) {
@@ -9444,7 +10230,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generatePercentageThreeWaysProblem(difficulty) {
@@ -9741,7 +10527,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generateRatioSimplifyProblem(difficulty) {
@@ -9940,7 +10726,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generateProportionalEquationProblem(difficulty) {
@@ -10164,7 +10950,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generateSpeedThreeWaysProblem(difficulty) {
@@ -10509,7 +11295,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generatePositiveNegativeAdditionProblem(difficulty) {
@@ -10668,7 +11454,7 @@
 
             // 選択肢を配列に変換してシャッフル
             const choicesArray = Array.from(choices);
-            return choicesArray.slice(0, 4).sort(() => Math.random() - 0.5);
+            return shuffleArray(choicesArray.slice(0, 4));
         }
 
         function generatePositiveNegativeSubtractionProblem(difficulty) {
@@ -11040,6 +11826,1038 @@
                 }
             }, 200);
         }
+    </script>
+
+    <!-- QRコード生成ライブラリ（qrcode-generator 1.4.4 / MIT License / プロジェクト内に同梱） -->
+    <script src="lib/qrcode.js"></script>
+
+    <script>
+        // ===== 授業チャレンジ（v2.1） =====
+        // 3分集中モードをベースに、先生が指定した条件（計算の種類・難しさ・制限時間など）で
+        // クラス全員が同じチャレンジに取り組むためのモード。
+        // サーバーは使わず、設定はURLパラメータ（QRコード）で共有し、記録は各端末のlocalStorageに保存する。
+
+        const CHALLENGE_FORMAT_VERSION = 1;
+        const CHALLENGE_TIME_OPTIONS = [60, 120, 180, 300];
+        const CHALLENGE_DIFFICULTIES = ['normal', 'hyper'];
+        const CHALLENGE_QUESTION_TYPES = ['random', 'common'];
+        const CHALLENGE_ATTEMPT_TYPES = ['once', 'unlimited'];
+        // modePages の各行に対応するカテゴリ名
+        const CHALLENGE_CATEGORY_NAMES = ['基本の四則演算', '単位変換', 'その他', '小数', '分数', '割合・比・速さ', '正負の数'];
+        const CHALLENGE_DEFAULTS = { n: '計算ラリー大会', m: 'addition', d: 'normal', t: 180, q: 'random', a: 'once' };
+        const CHALLENGE_DEFAULT_NICKNAME = 'ななしの隊員';
+        const CHALLENGE_START_DELAY_MS = 1000; // 「START!」表示の時間
+        const CHALLENGE_TEACHER_HISTORY_MAX = 20;
+        const CHALLENGE_RESULTS_MAX = 200;
+
+        // localStorageのキー（通常モードの記録とは別に管理）
+        const CHALLENGE_STORAGE = {
+            teacherLast: 'classChallenge_teacherLast',
+            teacherHistory: 'classChallenge_teacherHistory',
+            results: 'classChallenge_results',
+            active: 'classChallenge_active',
+            nickname: 'classChallenge_nickname',
+            extraAttempts: 'classChallenge_extraAttempts'
+        };
+
+        const CHALLENGE_SCREEN_IDS = [
+            'challengeMenuScreen', 'challengeCreateScreen', 'challengeQrScreen', 'challengeJoinScreen',
+            'challengeReadyScreen', 'challengeResultScreen', 'challengeHistoryScreen', 'challengeErrorScreen'
+        ];
+
+        let challengeCurrentConfig = null; // 参加画面・QR画面で扱っているチャレンジ設定
+        let challengeFormState = { ...CHALLENGE_DEFAULTS }; // 先生用設定画面の入力内容
+        let challengeNickname = '';
+        let challengeQrToastTimer = null;
+
+        // ---------- 保存・読み込み ----------
+        function challengeLoad(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (e) {
+                return fallback;
+            }
+        }
+
+        function challengeSave(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.warn('授業チャレンジのデータを保存できませんでした', e);
+            }
+        }
+
+        // ---------- 乱数・ID ----------
+        function challengeRandomId() {
+            const chars = 'abcdefghijkmnpqrstuvwxyz23456789'; // 32文字（紛らわしい文字を除外）
+            const bytes = new Uint8Array(10);
+            crypto.getRandomValues(bytes);
+            return Array.from(bytes, b => chars[b % chars.length]).join('');
+        }
+
+        function challengeRandomSeed() {
+            return crypto.getRandomValues(new Uint32Array(1))[0];
+        }
+
+        // 文字列から32bitのハッシュ値を求める（FNV-1a）
+        function challengeHash(str) {
+            let h = 2166136261;
+            for (let i = 0; i < str.length; i++) {
+                h ^= str.charCodeAt(i);
+                h = Math.imul(h, 16777619);
+            }
+            return h >>> 0;
+        }
+
+        // シード付き疑似乱数生成器（mulberry32）
+        function createSeededRandom(seed) {
+            let a = seed >>> 0;
+            return function() {
+                a = (a + 0x6D2B79F5) >>> 0;
+                let t = a;
+                t = Math.imul(t ^ (t >>> 15), t | 1);
+                t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+                return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+            };
+        }
+
+        // ---------- 設定のURL化・検証 ----------
+        function sanitizeChallengeText(value, maxLength) {
+            if (typeof value !== 'string') return '';
+            // 制御文字を除去し、文字数（絵文字なども1文字として）で切り詰める
+            return Array.from(value.replace(/[\u0000-\u001F\u007F]/g, '').trim()).slice(0, maxLength).join('');
+        }
+
+        function validateChallengeConfig(raw) {
+            if (!raw || typeof raw !== 'object') return null;
+            if (raw.v !== CHALLENGE_FORMAT_VERSION) return null;
+            if (typeof raw.id !== 'string' || !/^[a-z0-9]{6,16}$/.test(raw.id)) return null;
+            const name = sanitizeChallengeText(raw.n, 30);
+            if (!name) return null;
+            if (!modePages.flat().includes(raw.m)) return null;
+            if (!CHALLENGE_DIFFICULTIES.includes(raw.d)) return null;
+            if (!CHALLENGE_TIME_OPTIONS.includes(raw.t)) return null;
+            if (!CHALLENGE_QUESTION_TYPES.includes(raw.q)) return null;
+            if (!CHALLENGE_ATTEMPT_TYPES.includes(raw.a)) return null;
+
+            const config = { v: raw.v, id: raw.id, n: name, m: raw.m, d: raw.d, t: raw.t, q: raw.q, a: raw.a };
+            if (raw.q === 'common') {
+                if (!Number.isInteger(raw.s) || raw.s < 0 || raw.s > 0xFFFFFFFF) return null;
+                config.s = raw.s;
+            }
+            return config;
+        }
+
+        // 設定をURLに載せられる文字列（UTF-8 JSON → base64url）に変換
+        function encodeChallengeConfig(config) {
+            const bytes = new TextEncoder().encode(JSON.stringify(config));
+            let binary = '';
+            bytes.forEach(b => { binary += String.fromCharCode(b); });
+            return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        }
+
+        function decodeChallengeParam(param) {
+            if (typeof param !== 'string' || !/^[A-Za-z0-9_-]{10,2000}$/.test(param)) return null;
+            try {
+                let base64 = param.replace(/-/g, '+').replace(/_/g, '/');
+                while (base64.length % 4) base64 += '=';
+                const binary = atob(base64);
+                const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+                const json = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+                return validateChallengeConfig(JSON.parse(json));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function buildChallengeUrl(config) {
+            const base = location.href.split(/[?#]/)[0];
+            return `${base}?challenge=${encodeChallengeConfig(config)}`;
+        }
+
+        // ---------- 表示用ラベル ----------
+        function getChallengeTimeLabel(seconds) {
+            return `${seconds / 60}分`;
+        }
+
+        function getChallengeQuestionTypeLabel(questionType) {
+            return questionType === 'common' ? '全員共通問題' : 'ランダム';
+        }
+
+        function getChallengeAttemptLabel(attemptType) {
+            return attemptType === 'once' ? '1回' : '何度でも';
+        }
+
+        function getChallengeConfigRows(config) {
+            return [
+                ['計算の種類', getModeLabel(config.m)],
+                ['難しさ', getDifficultyLabel(config.d)],
+                ['制限時間', getChallengeTimeLabel(config.t)],
+                ['出題方式', getChallengeQuestionTypeLabel(config.q)],
+                ['挑戦回数', getChallengeAttemptLabel(config.a)]
+            ];
+        }
+
+        // 定義リスト（dl）に項目を表示（ユーザー入力はtextContentで表示しHTMLとして解釈しない）
+        function fillChallengeInfo(element, rows) {
+            element.innerHTML = '';
+            rows.forEach(([label, value]) => {
+                const dt = document.createElement('dt');
+                dt.textContent = label;
+                const dd = document.createElement('dd');
+                dd.textContent = value;
+                element.appendChild(dt);
+                element.appendChild(dd);
+            });
+        }
+
+        function formatChallengeDate(timestamp) {
+            const date = new Date(timestamp);
+            const pad = n => String(n).padStart(2, '0');
+            return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+        }
+
+        // ---------- 画面切り替え ----------
+        function hideChallengeScreens() {
+            CHALLENGE_SCREEN_IDS.forEach(id => document.getElementById(id).classList.add('hidden'));
+            hideChallengeQrFullscreen();
+        }
+
+        function showChallengeScreen(screenId) {
+            ['modeScreen', 'instructionsScreen', 'recordsScreen', 'modeSelectionScreen', 'speedScreen',
+             'gameScreen', 'gameOverScreen', 'gameClearScreen', 'storyScreen', 'storyLibraryScreen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            hideChallengeScreens();
+            document.getElementById('titleCopyright').style.display = 'none';
+            stopShootingStars();
+            const screen = document.getElementById(screenId);
+            screen.classList.remove('hidden');
+            screen.scrollTop = 0;
+        }
+
+        // ---------- メニュー ----------
+        function showChallengeMenu() {
+            showChallengeScreen('challengeMenuScreen');
+            document.getElementById('challengeJoinInputBox').classList.add('hidden');
+            document.getElementById('challengeJoinUrlError').classList.add('hidden');
+            document.getElementById('challengeMenuResumeCard').classList.toggle('hidden', !loadActiveChallengeSession());
+        }
+
+        function toggleChallengeJoinInput() {
+            const box = document.getElementById('challengeJoinInputBox');
+            box.classList.toggle('hidden');
+            if (!box.classList.contains('hidden')) {
+                document.getElementById('challengeJoinUrlInput').focus();
+            }
+        }
+
+        function joinChallengeFromInput() {
+            const text = document.getElementById('challengeJoinUrlInput').value.trim();
+            const match = text.match(/[?&]challenge=([A-Za-z0-9_-]+)/) || text.match(/^([A-Za-z0-9_-]+)$/);
+            const config = match ? decodeChallengeParam(match[1]) : null;
+            if (!config) {
+                document.getElementById('challengeJoinUrlError').classList.remove('hidden');
+                return;
+            }
+            // 再読み込みしても同じチャレンジが開くようにURLを書き換える
+            try {
+                history.replaceState(null, '', buildChallengeUrl(config));
+            } catch (e) {
+                // file:// などで書き換えできない場合はそのまま続行
+            }
+            openChallengeJoin(config);
+        }
+
+        // ---------- 先生用：チャレンジ作成 ----------
+        function showChallengeCreate(resetToDefaults) {
+            if (resetToDefaults) {
+                challengeFormState = { ...CHALLENGE_DEFAULTS };
+            }
+            showChallengeScreen('challengeCreateScreen');
+            renderChallengeForm();
+            renderIssuedChallengeList();
+            document.getElementById('challengeUseLastBtn').disabled = !loadLastChallengeSettings();
+        }
+
+        function populateChallengeModeSelect() {
+            const select = document.getElementById('challengeModeSelect');
+            select.innerHTML = '';
+            modePages.forEach((modes, index) => {
+                const group = document.createElement('optgroup');
+                group.label = CHALLENGE_CATEGORY_NAMES[index] || 'その他';
+                modes.forEach(mode => {
+                    const option = document.createElement('option');
+                    option.value = mode;
+                    const grade = getRecommendedGrade(mode, challengeFormState.d);
+                    option.textContent = grade ? `${getModeLabel(mode)}（${grade}）` : getModeLabel(mode);
+                    group.appendChild(option);
+                });
+                select.appendChild(group);
+            });
+            select.value = challengeFormState.m;
+        }
+
+        function renderChallengeForm() {
+            document.getElementById('challengeNameInput').value = challengeFormState.n;
+            populateChallengeModeSelect();
+            document.querySelectorAll('#challengeCreateScreen .challenge-seg').forEach(group => {
+                const value = String(challengeFormState[group.dataset.field]);
+                group.querySelectorAll('.challenge-seg-btn').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.value === value);
+                });
+            });
+            document.getElementById('challengeQuestionTypeNote').textContent = challengeFormState.q === 'common'
+                ? '同じQRコードから参加した全員に、同じ問題が同じ順番で出ます。ランキング大会向けです。'
+                : 'ひとりひとり違う問題が出ます。普段の練習や自己ベスト更新向けです。';
+            document.getElementById('challengeAttemptNote').textContent = challengeFormState.a === 'once'
+                ? '同じ端末では1回だけ挑戦できます。※サーバーを使わないため、別の端末を使ったりブラウザのデータを消したりした場合の再挑戦までは防げません。'
+                : '何度でも挑戦できます。ランキングに「最初の記録」「最高記録」のどちらを使うかは先生が指示してください。';
+        }
+
+        function loadLastChallengeSettings() {
+            const last = challengeLoad(CHALLENGE_STORAGE.teacherLast, null);
+            if (!last || typeof last !== 'object') return null;
+            // 保存データが壊れていても初期値で補う
+            return {
+                n: sanitizeChallengeText(last.n, 30) || CHALLENGE_DEFAULTS.n,
+                m: modePages.flat().includes(last.m) ? last.m : CHALLENGE_DEFAULTS.m,
+                d: CHALLENGE_DIFFICULTIES.includes(last.d) ? last.d : CHALLENGE_DEFAULTS.d,
+                t: CHALLENGE_TIME_OPTIONS.includes(last.t) ? last.t : CHALLENGE_DEFAULTS.t,
+                q: CHALLENGE_QUESTION_TYPES.includes(last.q) ? last.q : CHALLENGE_DEFAULTS.q,
+                a: CHALLENGE_ATTEMPT_TYPES.includes(last.a) ? last.a : CHALLENGE_DEFAULTS.a
+            };
+        }
+
+        function applyLastChallengeSettings() {
+            const last = loadLastChallengeSettings();
+            if (!last) return;
+            challengeFormState = last;
+            renderChallengeForm();
+        }
+
+        function getIssuedChallenges() {
+            const list = challengeLoad(CHALLENGE_STORAGE.teacherHistory, []);
+            if (!Array.isArray(list)) return [];
+            return list
+                .map(item => ({ config: validateChallengeConfig(item && item.config), createdAt: item && item.createdAt }))
+                .filter(item => item.config);
+        }
+
+        function renderIssuedChallengeList() {
+            const container = document.getElementById('challengeIssuedList');
+            container.innerHTML = '';
+            const issued = getIssuedChallenges().slice(0, 10);
+            document.getElementById('challengeIssuedHistory').classList.toggle('hidden', issued.length === 0);
+            issued.forEach(({ config, createdAt }) => {
+                const card = document.createElement('div');
+                card.className = 'challenge-history-card';
+
+                const title = document.createElement('div');
+                title.className = 'challenge-history-title';
+                title.textContent = config.n;
+
+                const meta = document.createElement('div');
+                meta.className = 'challenge-history-meta';
+                meta.textContent = `${createdAt ? formatChallengeDate(createdAt) + ' 発行' : ''}　${getModeLabel(config.m)}（${getDifficultyLabel(config.d)}）・${getChallengeTimeLabel(config.t)}・${getChallengeQuestionTypeLabel(config.q)}・${getChallengeAttemptLabel(config.a)}`;
+
+                const button = document.createElement('button');
+                button.className = 'challenge-small-btn';
+                button.textContent = 'QRコードを再表示';
+                button.addEventListener('click', () => showChallengeQr(config));
+
+                card.append(title, meta, button);
+                container.appendChild(card);
+            });
+        }
+
+        function issueChallenge() {
+            const name = sanitizeChallengeText(document.getElementById('challengeNameInput').value, 30) || CHALLENGE_DEFAULTS.n;
+            challengeFormState.n = name;
+
+            // 新しいチャレンジとして毎回新しいIDを発行する
+            const config = {
+                v: CHALLENGE_FORMAT_VERSION,
+                id: challengeRandomId(),
+                n: name,
+                m: challengeFormState.m,
+                d: challengeFormState.d,
+                t: challengeFormState.t,
+                q: challengeFormState.q,
+                a: challengeFormState.a
+            };
+            if (config.q === 'common') {
+                config.s = challengeRandomSeed();
+            }
+            const validConfig = validateChallengeConfig(config);
+            if (!validConfig) return;
+
+            challengeSave(CHALLENGE_STORAGE.teacherLast, { ...challengeFormState });
+            const issued = challengeLoad(CHALLENGE_STORAGE.teacherHistory, []);
+            const list = Array.isArray(issued) ? issued : [];
+            list.unshift({ config: validConfig, createdAt: Date.now() });
+            challengeSave(CHALLENGE_STORAGE.teacherHistory, list.slice(0, CHALLENGE_TEACHER_HISTORY_MAX));
+
+            showChallengeQr(validConfig);
+        }
+
+        function backToChallengeSettings() {
+            if (challengeCurrentConfig) {
+                const { n, m, d, t, q, a } = challengeCurrentConfig;
+                challengeFormState = { n, m, d, t, q, a };
+            }
+            showChallengeCreate(false);
+        }
+
+        // ---------- 先生用：QRコード ----------
+        function createChallengeQr(text) {
+            const qr = qrcode(0, 'M'); // 型番は自動、誤り訂正レベルM
+            qr.addData(text);
+            qr.make();
+            return qr;
+        }
+
+        // QRコードをcanvasに描画（cssSize: 表示サイズ、marginModules: 周囲の余白セル数）
+        function drawChallengeQr(canvas, text, cssSize, marginModules) {
+            const qr = createChallengeQr(text);
+            const count = qr.getModuleCount();
+            const total = count + marginModules * 2;
+            const dpr = window.devicePixelRatio || 1;
+            const cell = Math.max(1, Math.floor((cssSize * dpr) / total));
+            const size = cell * total;
+
+            canvas.width = size;
+            canvas.height = size;
+            canvas.style.width = `${size / dpr}px`;
+            canvas.style.height = `${size / dpr}px`;
+
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+            ctx.fillStyle = '#000000';
+            for (let row = 0; row < count; row++) {
+                for (let col = 0; col < count; col++) {
+                    if (qr.isDark(row, col)) {
+                        ctx.fillRect((col + marginModules) * cell, (row + marginModules) * cell, cell, cell);
+                    }
+                }
+            }
+        }
+
+        function showChallengeQr(config) {
+            challengeCurrentConfig = config;
+            showChallengeScreen('challengeQrScreen');
+
+            document.getElementById('challengeQrName').textContent = config.n;
+            fillChallengeInfo(document.getElementById('challengeQrInfo'), getChallengeConfigRows(config));
+
+            const url = buildChallengeUrl(config);
+            document.getElementById('challengeQrUrl').textContent = url;
+            drawChallengeQr(document.getElementById('challengeQrCanvas'), url, Math.min(300, window.innerWidth - 80), 2);
+
+            document.getElementById('challengeQrLocalWarning').classList.toggle('hidden', location.protocol !== 'file:');
+            document.getElementById('challengeQrToast').classList.add('hidden');
+            document.getElementById('challengeUnlockCodeText').classList.add('hidden');
+        }
+
+        function showChallengeQrToast(message) {
+            const toast = document.getElementById('challengeQrToast');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            clearTimeout(challengeQrToastTimer);
+            challengeQrToastTimer = setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        async function copyChallengeUrl() {
+            if (!challengeCurrentConfig) return;
+            const url = buildChallengeUrl(challengeCurrentConfig);
+            let copied = false;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(url);
+                    copied = true;
+                }
+            } catch (e) {
+                copied = false;
+            }
+            if (!copied) {
+                // 古いブラウザ向けの代替手段
+                const textarea = document.createElement('textarea');
+                textarea.value = url;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    copied = document.execCommand('copy');
+                } catch (e) {
+                    copied = false;
+                }
+                textarea.remove();
+            }
+            showChallengeQrToast(copied ? 'URLをコピーしました' : 'コピーできませんでした。URLを長押ししてコピーしてください');
+        }
+
+        // 印刷・配布用に、チャレンジ名入りのQRコード画像を保存
+        function saveChallengeQrImage() {
+            const config = challengeCurrentConfig;
+            if (!config) return;
+            const qr = createChallengeQr(buildChallengeUrl(config));
+            const count = qr.getModuleCount();
+            const margin = 4;
+            const cell = Math.max(4, Math.floor(800 / (count + margin * 2)));
+            const qrSize = cell * (count + margin * 2);
+            const textHeight = 150;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = qrSize;
+            canvas.height = qrSize + textHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000000';
+            for (let row = 0; row < count; row++) {
+                for (let col = 0; col < count; col++) {
+                    if (qr.isDark(row, col)) {
+                        ctx.fillRect((col + margin) * cell, (row + margin) * cell, cell, cell);
+                    }
+                }
+            }
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#001133';
+            ctx.font = 'bold 40px sans-serif';
+            ctx.fillText(config.n, qrSize / 2, qrSize + 30, qrSize - 40);
+            ctx.font = '26px sans-serif';
+            ctx.fillText(`${getModeLabel(config.m)}（${getDifficultyLabel(config.d)}）／ ${getChallengeTimeLabel(config.t)} ／ ${getChallengeQuestionTypeLabel(config.q)}`, qrSize / 2, qrSize + 80, qrSize - 40);
+            ctx.fillText('QRコードを読み取って参加しよう！', qrSize / 2, qrSize + 122, qrSize - 40);
+
+            canvas.toBlob(blob => {
+                if (!blob) {
+                    showChallengeQrToast('画像を作成できませんでした');
+                    return;
+                }
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `space-challenge-${config.id}.png`;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+                showChallengeQrToast('QRコードの画像を保存しました');
+            }, 'image/png');
+        }
+
+        function renderChallengeQrFullscreen() {
+            const overlay = document.getElementById('challengeQrFullscreen');
+            if (overlay.classList.contains('hidden') || !challengeCurrentConfig) return;
+            // 教室の後ろからでも読み取れるよう、画面に収まる最大サイズで表示
+            const size = Math.min(window.innerWidth * 0.92, window.innerHeight * 0.68);
+            drawChallengeQr(document.getElementById('challengeQrFullCanvas'), buildChallengeUrl(challengeCurrentConfig), size, 4);
+        }
+
+        function showChallengeQrFullscreen() {
+            if (!challengeCurrentConfig) return;
+            document.getElementById('challengeQrFullName').textContent = challengeCurrentConfig.n;
+            document.getElementById('challengeQrFullscreen').classList.remove('hidden');
+            renderChallengeQrFullscreen();
+            window.addEventListener('resize', renderChallengeQrFullscreen);
+        }
+
+        function hideChallengeQrFullscreen() {
+            document.getElementById('challengeQrFullscreen').classList.add('hidden');
+            window.removeEventListener('resize', renderChallengeQrFullscreen);
+        }
+
+        // 再挑戦許可コード（「1回」設定で、先生の判断により再挑戦させる場合に使用）
+        function getChallengeUnlockCode(challengeId) {
+            return String(challengeHash(`unlock:${challengeId}`) % 10000).padStart(4, '0');
+        }
+
+        function toggleChallengeUnlockCode() {
+            const text = document.getElementById('challengeUnlockCodeText');
+            if (!challengeCurrentConfig) return;
+            text.textContent = `再挑戦許可コード：${getChallengeUnlockCode(challengeCurrentConfig.id)}（再読み込みなどで挑戦できなくなった生徒にだけ伝えてください）`;
+            text.classList.toggle('hidden');
+        }
+
+        // ---------- 記録・挑戦回数 ----------
+        function getChallengeResults() {
+            const list = challengeLoad(CHALLENGE_STORAGE.results, []);
+            return Array.isArray(list) ? list.filter(r => r && typeof r === 'object') : [];
+        }
+
+        function getChallengeAttemptCount(challengeId) {
+            return getChallengeResults().filter(r => r.challengeId === challengeId).length;
+        }
+
+        function getChallengeExtraAttempts(challengeId) {
+            const map = challengeLoad(CHALLENGE_STORAGE.extraAttempts, {});
+            return map && Number.isInteger(map[challengeId]) ? map[challengeId] : 0;
+        }
+
+        function canStartChallenge(config) {
+            if (config.a === 'unlimited') return true;
+            return getChallengeAttemptCount(config.id) < 1 + getChallengeExtraAttempts(config.id);
+        }
+
+        function loadActiveChallengeSession() {
+            const session = challengeLoad(CHALLENGE_STORAGE.active, null);
+            if (!session) return null;
+            const config = validateChallengeConfig(session.config);
+            if (!config || !session.progress || !Number.isFinite(session.endTime)) {
+                localStorage.removeItem(CHALLENGE_STORAGE.active);
+                return null;
+            }
+            session.config = config;
+            return session;
+        }
+
+        function isChallengeSessionExpired(session) {
+            return Date.now() >= session.endTime;
+        }
+
+        function getChallengeTimeLeft(session) {
+            const seconds = Math.ceil((session.endTime - Date.now()) / 1000);
+            return Math.max(0, Math.min(session.config.t, seconds));
+        }
+
+        // 結果を記録し、進行中のチャレンジを終了する
+        // （将来の結果QRコード出力に使えるよう、1件ごとに完結したフラットな構造にしている）
+        function recordChallengeResult(session, finishedWhileAway) {
+            const p = session.progress;
+            const answered = p.correct + p.wrong;
+            const result = {
+                v: CHALLENGE_FORMAT_VERSION,
+                challengeId: session.config.id,
+                challengeName: session.config.n,
+                nickname: session.nickname,
+                mode: session.config.m,
+                difficulty: session.config.d,
+                timeLimit: session.config.t,
+                questionType: session.config.q,
+                attemptLimit: session.config.a,
+                score: p.score,
+                correct: p.correct,
+                answered: answered,
+                accuracy: answered > 0 ? Math.round((p.correct / answered) * 100) : 0,
+                maxCombo: p.maxCombo,
+                playedAt: session.startedAt,
+                finishedAt: Date.now(),
+                attempt: session.attempt,
+                completed: true,
+                finishedWhileAway: !!finishedWhileAway
+            };
+            const results = getChallengeResults();
+            results.push(result);
+            challengeSave(CHALLENGE_STORAGE.results, results.slice(-CHALLENGE_RESULTS_MAX));
+            localStorage.removeItem(CHALLENGE_STORAGE.active);
+            return result;
+        }
+
+        // ---------- 生徒用：参加 ----------
+        function openChallengeJoin(config) {
+            // 時間切れになった進行中チャレンジは結果として確定させる
+            const active = loadActiveChallengeSession();
+            if (active && isChallengeSessionExpired(active)) {
+                const result = recordChallengeResult(active, true);
+                if (active.config.id === config.id) {
+                    showChallengeResult(result, active.config);
+                    return;
+                }
+            } else if (active) {
+                // 進行中のチャレンジがある場合は、そちらの再開を案内する
+                config = active.config;
+            }
+
+            challengeCurrentConfig = config;
+            showChallengeScreen('challengeJoinScreen');
+            document.getElementById('challengeJoinName').textContent = config.n;
+            fillChallengeInfo(document.getElementById('challengeJoinInfo'), getChallengeConfigRows(config).slice(0, 4));
+
+            const form = document.getElementById('challengeJoinForm');
+            const done = document.getElementById('challengeJoinDone');
+            const resume = document.getElementById('challengeJoinResume');
+            form.classList.add('hidden');
+            done.classList.add('hidden');
+            resume.classList.add('hidden');
+
+            if (active && !isChallengeSessionExpired(active)) {
+                document.getElementById('challengeResumeInfo').textContent =
+                    `${active.nickname}　残り約${getChallengeTimeLeft(active)}秒（時間は止まらずに進んでいます）`;
+                resume.classList.remove('hidden');
+            } else if (!canStartChallenge(config)) {
+                document.getElementById('challengeUnlockBox').classList.add('hidden');
+                document.getElementById('challengeUnlockError').classList.add('hidden');
+                document.getElementById('challengeUnlockInput').value = '';
+                done.classList.remove('hidden');
+            } else {
+                const input = document.getElementById('challengeNicknameInput');
+                input.value = challengeNickname || challengeLoad(CHALLENGE_STORAGE.nickname, '') || '';
+                form.classList.remove('hidden');
+            }
+        }
+
+        function challengeReady() {
+            const config = challengeCurrentConfig;
+            if (!config) return;
+            const nickname = sanitizeChallengeText(document.getElementById('challengeNicknameInput').value, 12);
+            if (nickname) {
+                challengeSave(CHALLENGE_STORAGE.nickname, nickname);
+            }
+            challengeNickname = nickname || CHALLENGE_DEFAULT_NICKNAME;
+            if (!canStartChallenge(config)) {
+                openChallengeJoin(config);
+                return;
+            }
+            showChallengeReady();
+        }
+
+        function showChallengeReady() {
+            const config = challengeCurrentConfig;
+            showChallengeScreen('challengeReadyScreen');
+            document.getElementById('challengeReadyName').textContent = config.n;
+            document.getElementById('challengeReadyInfo').textContent =
+                `${challengeNickname}　／　${getModeLabel(config.m)}（${getDifficultyLabel(config.d)}）・${getChallengeTimeLabel(config.t)}`;
+        }
+
+        function backToChallengeJoin() {
+            if (challengeCurrentConfig) {
+                openChallengeJoin(challengeCurrentConfig);
+            } else {
+                returnToTitle();
+            }
+        }
+
+        function startChallengeFromReady() {
+            const config = challengeCurrentConfig;
+            if (!config || loadActiveChallengeSession() || !canStartChallenge(config)) {
+                backToChallengeJoin();
+                return;
+            }
+            const now = Date.now();
+            const session = {
+                v: CHALLENGE_FORMAT_VERSION,
+                config: config,
+                nickname: challengeNickname || CHALLENGE_DEFAULT_NICKNAME,
+                attempt: getChallengeAttemptCount(config.id) + 1,
+                startedAt: now,
+                // 終了時刻を最初に決めておくことで、再読み込みしても制限時間がリセットされない
+                endTime: now + CHALLENGE_START_DELAY_MS + config.t * 1000,
+                progress: { score: 0, correct: 0, wrong: 0, combo: 0, maxCombo: 0, problemIndex: 0 }
+            };
+            challengeSave(CHALLENGE_STORAGE.active, session);
+            launchChallengeGame(session);
+        }
+
+        function showChallengeResume() {
+            const session = loadActiveChallengeSession();
+            if (!session) {
+                showChallengeMenu();
+                return;
+            }
+            openChallengeJoin(session.config);
+        }
+
+        function resumeChallenge() {
+            const session = loadActiveChallengeSession();
+            if (!session || isChallengeSessionExpired(session)) {
+                openChallengeJoin(session ? session.config : challengeCurrentConfig);
+                return;
+            }
+            launchChallengeGame(session);
+        }
+
+        // 挑戦済み（1回限定）の生徒に、先生の許可コードで再挑戦を認める救済手段
+        function toggleChallengeUnlockInput() {
+            document.getElementById('challengeUnlockBox').classList.toggle('hidden');
+        }
+
+        function submitChallengeUnlock() {
+            const config = challengeCurrentConfig;
+            if (!config) return;
+            const code = document.getElementById('challengeUnlockInput').value.trim();
+            if (code !== getChallengeUnlockCode(config.id)) {
+                document.getElementById('challengeUnlockError').classList.remove('hidden');
+                return;
+            }
+            const map = challengeLoad(CHALLENGE_STORAGE.extraAttempts, {});
+            const extra = map && typeof map === 'object' ? map : {};
+            // 今までの挑戦回数＋1回まで挑戦できるようにする
+            extra[config.id] = getChallengeAttemptCount(config.id);
+            challengeSave(CHALLENGE_STORAGE.extraAttempts, extra);
+            openChallengeJoin(config);
+        }
+
+        // ---------- ゲーム連携（3分集中をベースに起動） ----------
+        function launchChallengeGame(session) {
+            hideChallengeScreens();
+            document.getElementById('modeScreen').classList.add('hidden');
+            document.getElementById('titleCopyright').style.display = 'none';
+            stopShootingStars();
+
+            gameState.isThreeMinuteMode = true;
+            gameState.challenge = session;
+            gameState.mode = session.config.m;
+            gameState.difficulty = session.config.d;
+            startGame(session.config.m, session.config.d, -1);
+
+            // 途中復帰の場合は保存済みの成績を引き継ぐ
+            const p = session.progress;
+            gameState.score = p.score;
+            gameState.correctCount = p.correct;
+            gameState.wrongAnswerCount = p.wrong;
+            gameState.comboCount = p.combo;
+            gameState.maxCombo = p.maxCombo;
+            gameState.timeLeft = getChallengeTimeLeft(session);
+            document.getElementById('score').textContent = gameState.score;
+            updateTimeGauge();
+        }
+
+        // 実際の経過時間を基準にしたタイマー（端末の処理速度に左右されない）
+        function startChallengeTimer() {
+            clearInterval(gameTimer);
+            const session = gameState.challenge;
+            const tick = () => {
+                if (!gameState.gameRunning || gameState.challenge !== session) {
+                    clearInterval(gameTimer);
+                    return;
+                }
+                const remaining = getChallengeTimeLeft(session);
+                if (remaining !== gameState.timeLeft) {
+                    const previous = gameState.timeLeft;
+                    gameState.timeLeft = remaining;
+                    updateTimeGauge();
+                    if (session.config.t > 60 && previous > 60 && remaining <= 60 && remaining > 30) {
+                        showTimeRemainingNotice('残り１分！');
+                    } else if (previous > 30 && remaining <= 30 && remaining > 0) {
+                        showTimeRemainingNotice('残り３０秒！');
+                    }
+                }
+                if (remaining <= 0) {
+                    gameState.timeUp = true;
+                    clearInterval(gameTimer);
+                    finishChallenge();
+                }
+            };
+            gameTimer = setInterval(tick, 200);
+            tick();
+        }
+
+        // 授業チャレンジの問題を取得
+        function getChallengeProblem() {
+            const session = gameState.challenge;
+            if (session.config.q !== 'common') {
+                return buildProblemAndChoices();
+            }
+            // 全員共通問題：チャレンジID・シード・問題番号から決定的に生成する。
+            // 問題生成中だけ Math.random をシード付き乱数に差し替えるので、
+            // 演出用の乱数や通常モードの出題には影響せず、正誤や解答速度で出題順も変わらない。
+            const seed = challengeHash(`${session.config.id}:${session.config.s}:${session.config.m}:${session.config.d}:${session.progress.problemIndex}`);
+            const originalRandom = Math.random;
+            Math.random = createSeededRandom(seed);
+            try {
+                return buildProblemAndChoices();
+            } finally {
+                Math.random = originalRandom;
+            }
+        }
+
+        // 解答ごとに途中経過を保存（正解したら次の問題番号へ進める）
+        function saveChallengeProgress(isCorrect) {
+            const session = gameState.challenge;
+            if (!session) return;
+            const p = session.progress;
+            p.score = gameState.score;
+            p.correct = gameState.correctCount;
+            p.wrong = gameState.wrongAnswerCount;
+            p.combo = gameState.comboCount;
+            p.maxCombo = gameState.maxCombo;
+            if (isCorrect) {
+                p.problemIndex++;
+            }
+            challengeSave(CHALLENGE_STORAGE.active, session);
+        }
+
+        function updateChallengeGameBanner() {
+            const banner = document.getElementById('challengeGameBanner');
+            if (gameState.challenge) {
+                banner.textContent = `授業チャレンジ｜${gameState.challenge.config.n}`;
+                banner.classList.remove('hidden');
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        // ゲーム中のホームボタン（授業チャレンジ中は確認する）
+        function returnToTitleFromGame() {
+            if (gameState.challenge && !confirm('授業チャレンジを中断しますか？\n※ 時間は止まりません。時間内なら「授業チャレンジ」から続きを再開できます。')) {
+                return;
+            }
+            returnToTitle();
+        }
+
+        // 制限時間終了
+        function finishChallenge() {
+            const session = gameState.challenge;
+            if (!session) return;
+            gameState.gameRunning = false;
+            clearInterval(gameTimer);
+            saveChallengeProgress(false);
+
+            if (gameState.currentFallInterval) {
+                clearInterval(gameState.currentFallInterval);
+                gameState.currentFallInterval = null;
+            }
+            const gameScreen = document.getElementById('gameScreen');
+            gameScreen.classList.remove('time-warning');
+            gameScreen.style.boxShadow = '';
+            gameScreen.style.borderColor = '';
+            document.getElementById('gameArea').innerHTML = '';
+            document.getElementById('choices').innerHTML = '';
+            document.getElementById('dangerOverlay').classList.remove('active');
+
+            if (gameState.bgmEnabled) {
+                playGameClearMusic();
+            } else {
+                playFanfareSound();
+            }
+
+            const result = recordChallengeResult(session, false);
+            gameState.challenge = null;
+            gameState.isThreeMinuteMode = false;
+            updateChallengeGameBanner();
+            showChallengeResult(result, session.config);
+        }
+
+        // ---------- 結果 ----------
+        function showChallengeResult(result, config) {
+            challengeCurrentConfig = config;
+            challengeNickname = result.nickname;
+            showChallengeScreen('challengeResultScreen');
+
+            document.getElementById('challengeResultName').textContent = result.challengeName;
+            document.getElementById('challengeResultNickname').textContent = result.nickname;
+            document.getElementById('challengeResultScore').textContent = result.score.toLocaleString();
+            document.getElementById('challengeResultCorrect').textContent = result.correct;
+
+            const rows = [
+                ['計算の種類', getModeLabel(result.mode)],
+                ['難しさ', getDifficultyLabel(result.difficulty)],
+                ['制限時間', getChallengeTimeLabel(result.timeLimit)],
+                ['解答数', `${result.answered}問`],
+                ['正答率', `${result.accuracy}%`],
+                ['最大コンボ', `${result.maxCombo}`],
+                ['挑戦', `${result.attempt}回目`]
+            ];
+            if (result.finishedWhileAway) {
+                rows.push(['状態', 'とちゅうで時間切れ']);
+            }
+            fillChallengeInfo(document.getElementById('challengeResultInfo'), rows);
+
+            // 「1回」の場合はリトライさせない
+            document.getElementById('challengeResultRetryBtn').classList.toggle('hidden', config.a !== 'unlimited');
+        }
+
+        function showLastChallengeResult() {
+            const config = challengeCurrentConfig;
+            if (!config) return;
+            const results = getChallengeResults().filter(r => r.challengeId === config.id);
+            if (results.length > 0) {
+                showChallengeResult(results[results.length - 1], config);
+            }
+        }
+
+        function retryChallenge() {
+            stopGameClearMusic();
+            if (!challengeCurrentConfig || !canStartChallenge(challengeCurrentConfig)) {
+                backToChallengeJoin();
+                return;
+            }
+            showChallengeReady();
+        }
+
+        // ---------- 記録メニュー：授業チャレンジの履歴 ----------
+        function showChallengeHistory() {
+            showChallengeScreen('challengeHistoryScreen');
+            const container = document.getElementById('challengeHistoryList');
+            container.innerHTML = '';
+            const results = getChallengeResults().slice().reverse();
+            if (results.length === 0) {
+                const empty = document.createElement('p');
+                empty.className = 'challenge-note';
+                empty.textContent = 'まだ授業チャレンジの記録はありません。';
+                container.appendChild(empty);
+                return;
+            }
+            results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'challenge-history-card';
+
+                const title = document.createElement('div');
+                title.className = 'challenge-history-title';
+                title.textContent = `${result.challengeName}　${result.nickname}`;
+
+                const meta = document.createElement('div');
+                meta.className = 'challenge-history-meta';
+                meta.textContent = `${formatChallengeDate(result.playedAt)}　${getModeLabel(result.mode)}（${getDifficultyLabel(result.difficulty)}）・${getChallengeTimeLabel(result.timeLimit)}・${result.attempt}回目`;
+
+                const score = document.createElement('div');
+                score.className = 'challenge-history-score';
+                score.textContent = `スコア ${Number(result.score).toLocaleString()}　正解 ${result.correct}問　正答率 ${result.accuracy}%`;
+
+                card.append(title, meta, score);
+                container.appendChild(card);
+            });
+        }
+
+        // ---------- 初期化 ----------
+        document.addEventListener('DOMContentLoaded', () => {
+            // 先生用設定画面の入力
+            document.getElementById('challengeNameInput').addEventListener('input', (e) => {
+                challengeFormState.n = e.target.value;
+            });
+            document.getElementById('challengeModeSelect').addEventListener('change', (e) => {
+                challengeFormState.m = e.target.value;
+            });
+            document.querySelectorAll('#challengeCreateScreen .challenge-seg').forEach(group => {
+                group.querySelectorAll('.challenge-seg-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const field = group.dataset.field;
+                        challengeFormState[field] = field === 't' ? Number(btn.dataset.value) : btn.dataset.value;
+                        renderChallengeForm();
+                    });
+                });
+            });
+
+            // 結果画面のホームボタンではクリア音楽も止める
+            document.querySelector('#challengeResultScreen .home-btn').addEventListener('click', stopGameClearMusic);
+
+            // 時間切れになった進行中のチャレンジは結果として確定
+            const active = loadActiveChallengeSession();
+            if (active && isChallengeSessionExpired(active)) {
+                const result = recordChallengeResult(active, true);
+                showChallengeResult(result, active.config);
+                return;
+            }
+            // 進行中のチャレンジがあれば再開を案内
+            if (active) {
+                openChallengeJoin(active.config);
+                return;
+            }
+
+            // QRコード（URL）から直接参加
+            const params = new URLSearchParams(location.search);
+            if (!params.has('challenge')) return;
+            const config = decodeChallengeParam(params.get('challenge'));
+            if (config) {
+                openChallengeJoin(config);
+            } else {
+                showChallengeScreen('challengeErrorScreen');
+            }
+        });
     </script>
 
     <!-- タイトル画面専用コピーライト表記 -->
