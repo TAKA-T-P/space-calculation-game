@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>スペース計算ラリー v2.1</title>
+    <title>スペース計算ラリー v2.2</title>
     <!-- 完全新実装：ストーリーシステム V2.0.0 - 2025-01-19 - 関数名/変数名完全変更 -->
     <style>
         * {
@@ -2889,6 +2889,391 @@
                 font-size: 1.8rem;
             }
         }
+
+        /* ===== オンライン集計（v2.2） ===== */
+        .online-badge {
+            align-self: center;
+            padding: 4px 14px;
+            border: 1px solid #00ff88;
+            border-radius: 999px;
+            background: rgba(0, 255, 136, 0.12);
+            color: #00ff88;
+            font-weight: bold;
+            text-shadow: 0 0 8px #00ff88;
+        }
+
+        .online-badge.closed {
+            border-color: #ff9966;
+            background: rgba(255, 120, 60, 0.12);
+            color: #ff9966;
+            text-shadow: 0 0 8px #ff7744;
+        }
+
+        .online-join-box,
+        .online-submit-box,
+        .online-auth-box {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(0, 255, 136, 0.45);
+            border-radius: 12px;
+            background: rgba(0, 40, 30, 0.55);
+            text-align: center;
+        }
+
+        .online-auth-box {
+            margin-top: 0.8rem;
+            border-color: rgba(0, 255, 255, 0.4);
+            background: rgba(0, 20, 50, 0.6);
+        }
+
+        .online-auth-box:empty {
+            display: none;
+        }
+
+        .online-status-text {
+            font-weight: bold;
+            color: #aaccdd;
+            line-height: 1.5;
+        }
+
+        .online-status-text.ok { color: #00ff88; text-shadow: 0 0 8px #00ff88; }
+        .online-status-text.error { color: #ff7777; }
+        .online-status-text.busy { color: #ffdd55; }
+
+        .online-google-btn {
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #1a1a3a;
+            cursor: pointer;
+        }
+
+        .online-detail-buttons .challenge-small-btn:last-child {
+            grid-column: auto;
+        }
+
+        .online-present-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .online-countdown-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .online-countdown-row .challenge-input {
+            width: 5em;
+            text-align: center;
+        }
+
+        .online-results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .online-results-table th,
+        .online-results-table td {
+            padding: 6px 4px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.25);
+            word-break: break-all;
+        }
+
+        .online-results-table th {
+            color: #88ccff;
+        }
+
+        .online-delete-btn {
+            margin-top: 1.5rem;
+            color: #ff8888;
+        }
+
+        /* ランキング発表ステージ */
+        .ranking-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 21000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #0a1a40 0%, #020814 70%, #000000 100%);
+            color: #ffffff;
+        }
+
+        .ranking-stage-stars {
+            position: absolute;
+            inset: -50%;
+            background-image:
+                radial-gradient(2px 2px at 10% 20%, #ffffff, transparent),
+                radial-gradient(1px 1px at 30% 70%, #aaddff, transparent),
+                radial-gradient(2px 2px at 55% 35%, #ffffff, transparent),
+                radial-gradient(1px 1px at 75% 80%, #ffffff, transparent),
+                radial-gradient(2px 2px at 90% 15%, #ccffff, transparent),
+                radial-gradient(1px 1px at 45% 90%, #ffffff, transparent);
+            background-size: 300px 300px;
+            animation: ranking-stars 60s linear infinite;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        @keyframes ranking-stars {
+            from { transform: translateY(0); }
+            to { transform: translateY(300px); }
+        }
+
+        .ranking-stage-ufo {
+            position: absolute;
+            top: 12%;
+            left: -10%;
+            font-size: 3rem;
+            filter: drop-shadow(0 0 12px #00ffff);
+            animation: ranking-ufo 14s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes ranking-ufo {
+            0% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(30vw) translateY(4vh); }
+            50% { transform: translateX(60vw) translateY(-2vh); }
+            75% { transform: translateX(90vw) translateY(3vh); }
+            100% { transform: translateX(125vw) translateY(0); }
+        }
+
+        .ranking-stage-header {
+            position: relative;
+            padding: 2vh 16px 1vh;
+            text-align: center;
+        }
+
+        .ranking-stage-title {
+            font-size: clamp(1.2rem, 4vh, 2.4rem);
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 18px #00ffff;
+            word-break: break-all;
+        }
+
+        .ranking-stage-sub {
+            font-size: clamp(0.9rem, 2.4vh, 1.3rem);
+            color: #88ccff;
+        }
+
+        .ranking-stage-body {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2vh;
+            padding: 1vh 16px;
+            overflow-y: auto;
+        }
+
+        .ranking-stage-current {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .ranking-card {
+            display: flex;
+            align-items: center;
+            gap: 2vw;
+            padding: 2vh 3vw;
+            margin-bottom: 1vh;
+            border: 2px solid #00ffff;
+            border-radius: 18px;
+            background: rgba(0, 40, 90, 0.7);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.45);
+            animation: ranking-card-in 0.6s ease-out;
+        }
+
+        @keyframes ranking-card-in {
+            from { opacity: 0; transform: translateY(30px) scale(0.92); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .ranking-card .rank {
+            flex-shrink: 0;
+            min-width: 3.5em;
+            font-size: clamp(1.6rem, 7vh, 4.2rem);
+            font-weight: bold;
+            color: #ffdd55;
+            text-shadow: 0 0 20px #ffcc33;
+            text-align: center;
+        }
+
+        .ranking-card .who {
+            flex: 1;
+            min-width: 0;
+            font-size: clamp(1.4rem, 6vh, 3.4rem);
+            font-weight: bold;
+            word-break: break-all;
+        }
+
+        .ranking-card .score {
+            flex-shrink: 0;
+            font-size: clamp(1.3rem, 6vh, 3.4rem);
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+        }
+
+        .ranking-card.rank-2 { border-color: #d8e4ff; box-shadow: 0 0 30px rgba(216, 228, 255, 0.5); }
+        .ranking-card.rank-3 { border-color: #ffb36b; box-shadow: 0 0 30px rgba(255, 179, 107, 0.5); }
+        .ranking-card.rank-1 { border-color: #ffdd55; box-shadow: 0 0 45px rgba(255, 221, 85, 0.8); }
+
+        .ranking-stage-list {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .ranking-row {
+            display: flex;
+            gap: 1em;
+            align-items: center;
+            padding: 0.6vh 1.5vw;
+            font-size: clamp(0.95rem, 3vh, 1.6rem);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .ranking-row .rank { min-width: 3.5em; color: #ffdd55; font-weight: bold; }
+        .ranking-row .who { flex: 1; min-width: 0; word-break: break-all; }
+        .ranking-row .score { color: #00ffff; font-weight: bold; }
+
+        .ranking-stage-intro {
+            margin-top: 10vh;
+            text-align: center;
+            font-size: clamp(2rem, 9vh, 5rem);
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 30px #00ffff;
+            animation: ranking-card-in 0.8s ease-out;
+        }
+
+        .ranking-stage-intro small {
+            display: block;
+            margin-top: 2vh;
+            font-size: clamp(1rem, 3vh, 1.6rem);
+            color: #88ccff;
+            text-shadow: none;
+        }
+
+        .ranking-stage-controls {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 1.2vh 12px 2vh;
+        }
+
+        .ranking-stage-controls button {
+            padding: 10px 16px;
+            font-size: 1rem;
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            cursor: pointer;
+        }
+
+        .ranking-stage-controls .ranking-stage-next {
+            border-color: #00ff88;
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.15);
+            font-weight: bold;
+        }
+
+        /* 1位発表の特別演出 */
+        .ranking-stage-champion {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2vh;
+            background: rgba(0, 0, 0, 0.92);
+            text-align: center;
+            padding: 16px;
+        }
+
+        .champion-count {
+            font-size: clamp(4rem, 30vh, 16rem);
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 40px #00ffff;
+            animation: champion-pop 0.7s ease-out;
+        }
+
+        @keyframes champion-pop {
+            from { opacity: 0; transform: scale(2.2); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .champion-flash {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, #ffffff 0%, rgba(255, 240, 150, 0.8) 30%, transparent 70%);
+            animation: champion-flash 1.2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes champion-flash {
+            from { opacity: 1; transform: scale(0.3); }
+            to { opacity: 0; transform: scale(2.5); }
+        }
+
+        .champion-title {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: clamp(3rem, 16vh, 9rem);
+            letter-spacing: 0.08em;
+            background: linear-gradient(to bottom, #fff7c0 0%, #ffd700 50%, #ff9900 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9));
+            animation: champion-pop 0.9s ease-out;
+        }
+
+        .champion-rank {
+            font-size: clamp(1.4rem, 5vh, 2.6rem);
+            color: #ffdd55;
+            font-weight: bold;
+        }
+
+        .champion-name {
+            font-size: clamp(2rem, 11vh, 6rem);
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 30px #ffdd55;
+            word-break: break-all;
+            animation: ranking-card-in 0.8s ease-out;
+        }
+
+        .champion-score {
+            font-size: clamp(1.8rem, 9vh, 5rem);
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 25px #00ffff;
+        }
+
+        @media (max-width: 600px) {
+            .ranking-card { flex-wrap: wrap; }
+            .ranking-stage-controls button { padding: 8px 10px; font-size: 0.85rem; }
+        }
     </style>
 </head>
 <body>
@@ -3251,6 +3636,7 @@
                 <button class="challenge-main-btn" onclick="showChallengeCreate(false)">チャレンジを作る<small>（先生用）</small></button>
                 <button class="challenge-main-btn challenge-sub-btn" onclick="toggleChallengeJoinInput()">チャレンジに参加する<small>（生徒用）</small></button>
                 <button class="challenge-small-btn challenge-guide-btn" onclick="showChallengeGuide()">？チャレンジの運用方法</button>
+                <button class="challenge-small-btn challenge-guide-btn" onclick="showOnlineAdmin()">オンライン大会を管理する（先生用）</button>
             </div>
 
             <div class="challenge-join-input hidden" id="challengeJoinInputBox">
@@ -3320,9 +3706,28 @@
                     <button type="button" class="challenge-seg-btn" data-value="unlimited">何度でも</button>
                 </div>
                 <p class="challenge-note" id="challengeAttemptNote"></p>
-            </div>
 
-            <button class="challenge-main-btn" onclick="issueChallenge()">QRコードを発行</button>
+                <span class="challenge-label">結果の集計方法</span>
+                <div class="challenge-seg" data-field="agg">
+                    <button type="button" class="challenge-seg-btn" data-value="offline">オフライン集計</button>
+                    <button type="button" class="challenge-seg-btn" data-value="online">オンライン集計</button>
+                </div>
+                <p class="challenge-note" id="challengeAggregationNote"></p>
+
+                <div id="challengeOnlineOptions" class="hidden">
+                    <div id="challengeRankingModeBox">
+                        <span class="challenge-label">ランキングに採用する記録</span>
+                        <div class="challenge-seg" data-field="r">
+                            <button type="button" class="challenge-seg-btn" data-value="best">最高記録</button>
+                            <button type="button" class="challenge-seg-btn" data-value="first">最初の記録</button>
+                        </div>
+                    </div>
+                    <div class="online-auth-box" data-online-auth></div>
+                </div>
+            </div>
+            <p class="challenge-error-text hidden" id="challengeIssueError"></p>
+
+            <button class="challenge-main-btn" id="challengeIssueBtn" onclick="issueChallenge()">QRコードを発行</button>
 
             <div class="challenge-history" id="challengeIssuedHistory">
                 <h2 class="challenge-subheading">発行済みチャレンジ</h2>
@@ -3337,6 +3742,7 @@
     <div id="challengeQrScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel">
             <h1 class="challenge-heading" id="challengeQrName"></h1>
+            <p class="online-badge hidden" id="challengeQrOnlineBadge">オンライン集計：ON</p>
             <dl class="challenge-info" id="challengeQrInfo"></dl>
             <div class="challenge-qr-box">
                 <canvas id="challengeQrCanvas"></canvas>
@@ -3354,6 +3760,7 @@
                 <button class="challenge-small-btn" onclick="backToChallengeSettings()">設定に戻る</button>
                 <button class="challenge-small-btn" onclick="showChallengeCreate(true)">新しいチャレンジを作成</button>
             </div>
+            <button class="challenge-main-btn hidden" id="challengeQrManageBtn" onclick="openOnlineAdminDetailFromQr()">この大会を管理する（結果・ランキング発表）</button>
             <p class="challenge-toast hidden" id="challengeQrToast"></p>
             <button class="challenge-link-btn" onclick="toggleChallengeUnlockCode()">先生用：再挑戦許可コードを表示</button>
             <p class="challenge-note hidden" id="challengeUnlockCodeText"></p>
@@ -3377,6 +3784,12 @@
             <p class="challenge-tag">授業チャレンジ</p>
             <h1 class="challenge-heading" id="challengeJoinName"></h1>
             <dl class="challenge-info" id="challengeJoinInfo"></dl>
+            <div class="online-join-box hidden" id="challengeJoinOnlineBox">
+                <p class="online-badge">オンライン集計：ON</p>
+                <p class="challenge-note">チャレンジ終了後、結果が先生に自動送信されます。</p>
+                <p class="online-status-text" id="challengeJoinOnlineStatus"></p>
+            </div>
+            <p class="challenge-error-text hidden" id="challengeJoinNotice"></p>
 
             <!-- 参加フォーム -->
             <div id="challengeJoinForm">
@@ -3436,7 +3849,11 @@
                 </div>
             </div>
             <dl class="challenge-info" id="challengeResultInfo"></dl>
-            <p class="challenge-report-text">先生にスコアを報告しよう！</p>
+            <div class="online-submit-box hidden" id="challengeSubmitBox">
+                <p class="online-status-text" id="challengeSubmitStatus"></p>
+                <button class="challenge-small-btn hidden" id="challengeResubmitBtn" onclick="resubmitShownChallengeResult()">再送信する</button>
+            </div>
+            <p class="challenge-report-text" id="challengeReportText">先生にスコアを報告しよう！</p>
             <button class="challenge-main-btn hidden" id="challengeResultRetryBtn" onclick="retryChallenge()">リトライ</button>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
@@ -3449,6 +3866,79 @@
             <div id="challengeHistoryList"></div>
         </div>
         <button class="home-btn" onclick="returnToInstructions()">戻る</button>
+    </div>
+
+    <!-- オンライン大会：一覧（先生用） -->
+    <div id="challengeAdminScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel challenge-panel-wide">
+            <h1 class="challenge-heading">オンライン大会の管理</h1>
+            <div class="online-auth-box" data-online-auth></div>
+            <p class="challenge-error-text hidden" id="onlineAdminError"></p>
+            <div id="onlineAdminListBox" class="hidden">
+                <button class="challenge-small-btn" onclick="loadOnlineAdminList()">一覧を更新</button>
+                <div id="onlineAdminList"></div>
+            </div>
+        </div>
+        <button class="home-btn" onclick="showChallengeMenu()">戻る</button>
+    </div>
+
+    <!-- オンライン大会：管理（先生用） -->
+    <div id="challengeAdminDetailScreen" class="screen challenge-screen hidden">
+        <div class="challenge-panel challenge-panel-wide">
+            <h1 class="challenge-heading" id="onlineDetailTitle"></h1>
+            <p class="online-badge" id="onlineDetailStatus"></p>
+            <dl class="challenge-info" id="onlineDetailInfo"></dl>
+            <div class="challenge-btn-grid online-detail-buttons">
+                <button class="challenge-small-btn" onclick="showOnlineDetailQr()">QRコードを再表示</button>
+                <button class="challenge-small-btn" onclick="fetchOnlineResults()">結果を取得</button>
+                <button class="challenge-small-btn" id="onlineCloseBtn" onclick="closeOnlineChallenge()">受付を終了</button>
+                <button class="challenge-small-btn" onclick="showOnlineAdmin()">大会一覧に戻る</button>
+            </div>
+            <p class="online-status-text" id="onlineDetailMessage"></p>
+
+            <div id="onlineResultsBox" class="hidden">
+                <h2 class="challenge-subheading">ランキング発表</h2>
+                <p class="challenge-note" id="onlineResultsSummary"></p>
+                <div class="online-present-options">
+                    <button class="challenge-main-btn" onclick="startRankingPresentation('top3')">TOP3特別演出</button>
+                    <div class="online-countdown-row">
+                        <label for="onlineCountdownFrom">カウントダウン発表：</label>
+                        <input type="number" id="onlineCountdownFrom" class="challenge-input" min="1" max="100" value="10">
+                        <span>位から</span>
+                        <button class="challenge-small-btn" onclick="startRankingPresentation('countdown')">発表する</button>
+                    </div>
+                    <button class="challenge-small-btn" onclick="startRankingPresentation('all')">一括表示</button>
+                </div>
+                <button class="challenge-link-btn" onclick="toggleOnlineResultsTable()">（先生用）結果一覧を表示／非表示</button>
+                <div id="onlineResultsTableBox" class="hidden"></div>
+            </div>
+
+            <button class="challenge-link-btn online-delete-btn" onclick="deleteOnlineChallenge()">この大会と結果を削除する</button>
+        </div>
+        <button class="home-btn" onclick="showOnlineAdmin()">戻る</button>
+    </div>
+
+    <!-- ランキング発表（プロジェクター向け） -->
+    <div id="rankingStage" class="ranking-stage hidden">
+        <div class="ranking-stage-stars" aria-hidden="true"></div>
+        <div class="ranking-stage-ufo" aria-hidden="true">🛸</div>
+        <div class="ranking-stage-header">
+            <div class="ranking-stage-title" id="rankingStageTitle"></div>
+            <div class="ranking-stage-sub" id="rankingStageSub"></div>
+        </div>
+        <div class="ranking-stage-body">
+            <div class="ranking-stage-current" id="rankingStageCurrent"></div>
+            <div class="ranking-stage-list" id="rankingStageList"></div>
+        </div>
+        <div class="ranking-stage-champion hidden" id="rankingStageChampion"></div>
+        <div class="ranking-stage-controls">
+            <button onclick="rankingStagePrev()">◀ 前へ</button>
+            <button class="ranking-stage-next" onclick="rankingStageNext()">次の順位 ▶</button>
+            <button onclick="rankingStageSkip()">スキップ</button>
+            <button onclick="rankingStageShowAll()">全順位を表示</button>
+            <button onclick="rankingStageFullscreen()">全画面</button>
+            <button onclick="hideRankingStage()">発表終了</button>
+        </div>
     </div>
 
     <!-- 授業チャレンジのURLエラー -->
@@ -11989,7 +12479,10 @@
         const CHALLENGE_ATTEMPT_TYPES = ['once', 'unlimited'];
         // modePages の各行に対応するカテゴリ名
         const CHALLENGE_CATEGORY_NAMES = ['基本の四則演算', '単位変換', 'その他', '小数', '分数', '割合・比・速さ', '正負の数'];
-        const CHALLENGE_DEFAULTS = { n: '計算ラリー大会', m: 'addition', d: 'normal', t: 180, q: 'random', a: 'once' };
+        // agg: 結果の集計方法（offline / online）、r: オンラインランキングの採用方式（best / first）
+        const CHALLENGE_DEFAULTS = { n: '計算ラリー大会', m: 'addition', d: 'normal', t: 180, q: 'random', a: 'once', agg: 'offline', r: 'best' };
+        const CHALLENGE_AGGREGATION_TYPES = ['offline', 'online'];
+        const CHALLENGE_RANKING_TYPES = ['best', 'first'];
         const CHALLENGE_DEFAULT_NICKNAME = 'ななしの隊員';
         const CHALLENGE_START_DELAY_MS = 1000; // 「START!」表示の時間
         const CHALLENGE_TEACHER_HISTORY_MAX = 20;
@@ -12007,7 +12500,8 @@
 
         const CHALLENGE_SCREEN_IDS = [
             'challengeMenuScreen', 'challengeCreateScreen', 'challengeQrScreen', 'challengeJoinScreen',
-            'challengeReadyScreen', 'challengeResultScreen', 'challengeHistoryScreen', 'challengeErrorScreen'
+            'challengeReadyScreen', 'challengeResultScreen', 'challengeHistoryScreen', 'challengeErrorScreen',
+            'challengeAdminScreen', 'challengeAdminDetailScreen'
         ];
 
         let challengeCurrentConfig = null; // 参加画面・QR画面で扱っているチャレンジ設定
@@ -12112,8 +12606,11 @@
             return { m, d, t, q, a };
         }
 
-        function createChallengeCode(settings) {
-            const serial = crypto.getRandomValues(new Uint32Array(1))[0] % CHALLENGE_CODE_SERIAL_COUNT;
+        // 区別番号の偶奇で集計方法を表す（偶数＝オフライン、奇数＝オンライン）。
+        // 番号を入力した時点でオンライン大会かどうかがわかるので、オフラインの番号では通信しない。
+        function createChallengeCode(settings, online = false) {
+            const random = crypto.getRandomValues(new Uint32Array(1))[0] % Math.floor(CHALLENGE_CODE_SERIAL_COUNT / 2);
+            const serial = random * 2 + (online ? 1 : 0);
             const payload = String(serial * CHALLENGE_SETTING_COMBINATIONS + getChallengeSettingIndex(settings)).padStart(CHALLENGE_CODE_LENGTH - 1, '0');
             return payload + challengeDammDigit(payload);
         }
@@ -12127,11 +12624,21 @@
             return typeof value === 'string' && /^\d{10}$/.test(value) && challengeDammDigit(value) === 0;
         }
 
-        // 入力された番号から設定を復元（全角数字・区切り記号・空白は無視）
-        function decodeChallengeCode(input) {
-            const code = String(input || '')
+        function isOnlineChallengeCode(code) {
+            return isChallengeCode(code)
+                && Math.floor(Number(code.slice(0, CHALLENGE_CODE_LENGTH - 1)) / CHALLENGE_SETTING_COMBINATIONS) % 2 === 1;
+        }
+
+        // 番号の正規化（全角数字・区切り記号・空白を取り除く）
+        function normalizeChallengeCodeInput(input) {
+            return String(input || '')
                 .replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
                 .replace(/\D/g, '');
+        }
+
+        // 入力された番号から設定を復元（全角数字・区切り記号・空白は無視）
+        function decodeChallengeCode(input) {
+            const code = normalizeChallengeCodeInput(input);
             if (!isChallengeCode(code)) return null;
             const settingIndex = Number(code.slice(0, CHALLENGE_CODE_LENGTH - 1)) % CHALLENGE_SETTING_COMBINATIONS;
             const settings = getChallengeSettingsFromIndex(settingIndex);
@@ -12181,7 +12688,16 @@
                 if (settingIndex !== getChallengeSettingIndex(config)) return null;
                 if (config.q === 'common' && config.s !== getChallengeCodeSeed(config.id)) return null;
             }
+            // オンライン大会（v2.2）：Firestoreの大会ID。参加番号が「オンライン」の番号であること
+            if (raw.o !== undefined) {
+                if (typeof raw.o !== 'string' || !/^[A-Za-z0-9]{20}$/.test(raw.o) || !isOnlineChallengeCode(config.id)) return null;
+                config.o = raw.o;
+            }
             return config;
+        }
+
+        function isOnlineChallenge(config) {
+            return !!(config && config.o);
         }
 
         // 番号で参加できるチャレンジなら参加番号を返す（v2.1初期に発行したQRコードは番号なし）
@@ -12263,6 +12779,7 @@
             CHALLENGE_SCREEN_IDS.forEach(id => document.getElementById(id).classList.add('hidden'));
             hideChallengeQrFullscreen();
             hideChallengeGuide();
+            hideRankingStage();
         }
 
         // チャレンジの運用方法
@@ -12308,9 +12825,18 @@
         function joinChallengeFromCode() {
             const config = decodeChallengeCode(document.getElementById('challengeJoinCodeInput').value);
             if (!config) {
-                document.getElementById('challengeJoinCodeError').classList.remove('hidden');
+                showJoinCodeMessage('番号がちがいます。もう一度確かめてね。', true);
                 return;
             }
+            // オンライン大会の番号なら、サーバーで大会を確認してから参加する
+            if (isOnlineChallengeCode(config.id)) {
+                joinOnlineChallengeByCode(config);
+                return;
+            }
+            openChallengeJoinWithUrl(config);
+        }
+
+        function openChallengeJoinWithUrl(config) {
             // 再読み込みしても同じチャレンジが開くようにURLを書き換える
             try {
                 history.replaceState(null, '', buildChallengeUrl(config));
@@ -12361,9 +12887,21 @@
             document.getElementById('challengeQuestionTypeNote').textContent = challengeFormState.q === 'common'
                 ? '同じQRコードから参加した全員に、同じ問題が同じ順番で出ます。ランキング大会向けです。'
                 : 'ひとりひとり違う問題が出ます。普段の練習や自己ベスト更新向けです。';
+            const online = challengeFormState.agg === 'online';
             document.getElementById('challengeAttemptNote').textContent = challengeFormState.a === 'once'
-                ? '同じ端末では1回だけ挑戦できます。※サーバーを使わないため、別の端末を使ったりブラウザのデータを消したりした場合の再挑戦までは防げません。'
-                : '何度でも挑戦できます。ランキングに「最初の記録」「最高記録」のどちらを使うかは先生が指示してください。';
+                ? '同じ端末では1回だけ挑戦できます。※別の端末を使ったりブラウザのデータを消したりした場合の再挑戦までは防げません。'
+                : (online
+                    ? '何度でも挑戦できます。オンライン集計では、下で選んだ記録が1人1枠でランキングに使われます。'
+                    : '何度でも挑戦できます。ランキングに「最初の記録」「最高記録」のどちらを使うかは先生が指示してください。');
+            document.getElementById('challengeAggregationNote').textContent = online
+                ? '終了後にスコアを自動送信し、先生の画面でランキングを発表できます。'
+                : 'サーバーに接続せず、QRコードで同じ条件のチャレンジを共有します。終了後、生徒が先生にスコアを報告します。';
+            document.getElementById('challengeOnlineOptions').classList.toggle('hidden', !online);
+            document.getElementById('challengeRankingModeBox').classList.toggle('hidden', challengeFormState.a !== 'unlimited');
+            document.getElementById('challengeIssueError').classList.add('hidden');
+            if (online) {
+                renderOnlineAuthBoxes();
+            }
         }
 
         function loadLastChallengeSettings() {
@@ -12376,7 +12914,9 @@
                 d: CHALLENGE_DIFFICULTIES.includes(last.d) ? last.d : CHALLENGE_DEFAULTS.d,
                 t: CHALLENGE_TIME_OPTIONS.includes(last.t) ? last.t : CHALLENGE_DEFAULTS.t,
                 q: CHALLENGE_QUESTION_TYPES.includes(last.q) ? last.q : CHALLENGE_DEFAULTS.q,
-                a: CHALLENGE_ATTEMPT_TYPES.includes(last.a) ? last.a : CHALLENGE_DEFAULTS.a
+                a: CHALLENGE_ATTEMPT_TYPES.includes(last.a) ? last.a : CHALLENGE_DEFAULTS.a,
+                agg: CHALLENGE_AGGREGATION_TYPES.includes(last.agg) ? last.agg : CHALLENGE_DEFAULTS.agg,
+                r: CHALLENGE_RANKING_TYPES.includes(last.r) ? last.r : CHALLENGE_DEFAULTS.r
             };
         }
 
@@ -12411,7 +12951,7 @@
                 const meta = document.createElement('div');
                 meta.className = 'challenge-history-meta';
                 const code = getChallengeCodeOf(config);
-                meta.textContent = `${createdAt ? formatChallengeDate(createdAt) + ' 発行' : ''}　${getModeLabel(config.m)}（${getDifficultyLabel(config.d)}）・${getChallengeTimeLabel(config.t)}・${getChallengeQuestionTypeLabel(config.q)}・${getChallengeAttemptLabel(config.a)}${code ? `　参加番号 ${formatChallengeCode(code)}` : ''}`;
+                meta.textContent = `${createdAt ? formatChallengeDate(createdAt) + ' 発行' : ''}　${getModeLabel(config.m)}（${getDifficultyLabel(config.d)}）・${getChallengeTimeLabel(config.t)}・${getChallengeQuestionTypeLabel(config.q)}・${getChallengeAttemptLabel(config.a)}${code ? `　参加番号 ${formatChallengeCode(code)}` : ''}${isOnlineChallenge(config) ? '　［オンライン集計］' : ''}`;
 
                 const button = document.createElement('button');
                 button.className = 'challenge-small-btn';
@@ -12426,6 +12966,12 @@
         function issueChallenge() {
             const name = sanitizeChallengeText(document.getElementById('challengeNameInput').value, 30) || CHALLENGE_DEFAULTS.n;
             challengeFormState.n = name;
+
+            // オンライン集計：Firestoreに大会を登録してからQRコードを表示する
+            if (challengeFormState.agg === 'online') {
+                issueOnlineChallenge();
+                return;
+            }
 
             // 新しいチャレンジとして毎回新しい参加番号（＝チャレンジID）を発行する
             const config = {
@@ -12445,19 +12991,23 @@
             const validConfig = validateChallengeConfig(config);
             if (!validConfig) return;
 
+            saveIssuedChallenge(validConfig);
+            showChallengeQr(validConfig);
+        }
+
+        // 前回設定と発行履歴を保存
+        function saveIssuedChallenge(config) {
             challengeSave(CHALLENGE_STORAGE.teacherLast, { ...challengeFormState });
             const issued = challengeLoad(CHALLENGE_STORAGE.teacherHistory, []);
             const list = Array.isArray(issued) ? issued : [];
-            list.unshift({ config: validConfig, createdAt: Date.now() });
+            list.unshift({ config: config, createdAt: Date.now() });
             challengeSave(CHALLENGE_STORAGE.teacherHistory, list.slice(0, CHALLENGE_TEACHER_HISTORY_MAX));
-
-            showChallengeQr(validConfig);
         }
 
         function backToChallengeSettings() {
             if (challengeCurrentConfig) {
                 const { n, m, d, t, q, a } = challengeCurrentConfig;
-                challengeFormState = { n, m, d, t, q, a };
+                challengeFormState = { ...challengeFormState, n, m, d, t, q, a, agg: isOnlineChallenge(challengeCurrentConfig) ? 'online' : 'offline' };
             }
             showChallengeCreate(false);
         }
@@ -12513,6 +13063,8 @@
             document.getElementById('challengeQrCodeBox').classList.toggle('hidden', !code);
 
             document.getElementById('challengeQrLocalWarning').classList.toggle('hidden', location.protocol !== 'file:');
+            document.getElementById('challengeQrOnlineBadge').classList.toggle('hidden', !isOnlineChallenge(config));
+            document.getElementById('challengeQrManageBtn').classList.toggle('hidden', !isOnlineChallenge(config));
             document.getElementById('challengeQrToast').classList.add('hidden');
             document.getElementById('challengeUnlockCodeText').classList.add('hidden');
         }
@@ -12716,6 +13268,12 @@
                 completed: true,
                 finishedWhileAway: !!finishedWhileAway
             };
+            // オンライン大会：送信状態を記録しておき、送れなかった場合も再送信できるようにする
+            if (isOnlineChallenge(session.config)) {
+                result.onlineId = session.config.o;
+                result.resultId = session.resultId;
+                result.submitStatus = 'pending';
+            }
             const results = getChallengeResults();
             results.push(result);
             challengeSave(CHALLENGE_STORAGE.results, results.slice(-CHALLENGE_RESULTS_MAX));
@@ -12750,6 +13308,9 @@
             done.classList.add('hidden');
             resume.classList.add('hidden');
 
+            // オンライン大会なら「オンライン集計：ON」を表示し、受付中か確認する
+            updateOnlineJoinBox(config);
+
             if (active && !isChallengeSessionExpired(active)) {
                 document.getElementById('challengeResumeInfo').textContent =
                     `${active.nickname}　残り約${getChallengeTimeLeft(active)}秒（時間は止まらずに進んでいます）`;
@@ -12778,6 +13339,10 @@
                 openChallengeJoin(config);
                 return;
             }
+            // 受付終了・削除済みのオンライン大会には参加できない
+            if (isOnlineJoinBlocked(config)) {
+                return;
+            }
             showChallengeReady();
         }
 
@@ -12799,7 +13364,7 @@
 
         function startChallengeFromReady() {
             const config = challengeCurrentConfig;
-            if (!config || loadActiveChallengeSession() || !canStartChallenge(config)) {
+            if (!config || loadActiveChallengeSession() || !canStartChallenge(config) || isOnlineJoinBlocked(config)) {
                 backToChallengeJoin();
                 return;
             }
@@ -12814,6 +13379,10 @@
                 endTime: now + CHALLENGE_START_DELAY_MS + config.t * 1000,
                 progress: { score: 0, correct: 0, wrong: 0, combo: 0, maxCombo: 0, problemIndex: 0 }
             };
+            // オンライン大会：結果IDはプレイ開始時に決める（再送信しても同じIDになり、二重登録されない）
+            if (isOnlineChallenge(config)) {
+                session.resultId = createOnlineResultId();
+            }
             challengeSave(CHALLENGE_STORAGE.active, session);
             launchChallengeGame(session);
         }
@@ -13033,6 +13602,9 @@
 
             // 「1回」の場合はリトライさせない
             document.getElementById('challengeResultRetryBtn').classList.toggle('hidden', config.a !== 'unlimited');
+
+            // オンライン大会：送信状態を表示し、未送信なら送信する
+            showOnlineSubmitState(result);
         }
 
         function showLastChallengeResult() {
@@ -13083,6 +13655,27 @@
                 score.textContent = `スコア ${Number(result.score).toLocaleString()}　正解 ${result.correct}問　正答率 ${result.accuracy}%`;
 
                 card.append(title, meta, score);
+                // オンライン大会の結果は送信状態を表示（未送信なら再送信できる）
+                if (result.onlineId) {
+                    const status = document.createElement('div');
+                    status.className = 'challenge-history-meta';
+                    status.textContent = result.submitStatus === 'sent' ? 'オンライン集計：送信完了' : 'オンライン集計：未送信';
+                    card.appendChild(status);
+                    if (result.submitStatus !== 'sent') {
+                        const button = document.createElement('button');
+                        button.className = 'challenge-small-btn';
+                        button.textContent = '結果を再送信';
+                        button.addEventListener('click', async () => {
+                            button.disabled = true;
+                            status.textContent = 'オンライン集計：送信中…';
+                            const outcome = await submitOnlineResult(result.resultId);
+                            status.textContent = outcome.ok ? 'オンライン集計：送信完了' : `オンライン集計：${outcome.message}`;
+                            button.classList.toggle('hidden', outcome.ok);
+                            button.disabled = false;
+                        });
+                        card.appendChild(button);
+                    }
+                }
                 container.appendChild(card);
             });
         }
@@ -13146,6 +13739,1138 @@
                 showChallengeScreen('challengeErrorScreen');
             }
         });
+    </script>
+
+    <!-- Firebaseの設定値（オンライン集計用。SDK本体は必要になったときだけ読み込む） -->
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // ===== 授業チャレンジ：オンライン集計（v2.2） =====
+        // オンライン集計を選んだ大会だけ Firebase（Authentication / Firestore）に接続する。
+        // - 先生：Googleログイン（@kec.gr.jp）で大会を作成・管理し、結果を取得してランキングを発表する
+        // - 生徒：匿名認証で参加し、ゲーム終了後に結果を1回だけ送信する（ゲーム中は通信しない）
+        // オフライン集計・UFOバトル・3分集中では Firebase のSDKを読み込まない。
+
+        const ONLINE_SDK_URL = 'lib/firebase-sdk.js';
+        const ONLINE_TIMEOUT_MS = 12000;
+        const ONLINE_RETENTION_DAYS = 90;
+        const ONLINE_NOT_TEACHER_MESSAGE = 'オンライン大会の作成・管理は、KEC職員用Googleアカウントでログインしてください。';
+        const ONLINE_TEACHER_DOMAIN = /^[^@]+@kec\.gr\.jp$/i;
+
+        let onlineSdkPromise = null;
+        let onlineFirebase = null; // { sdk, auth, db }
+        let onlineSdkError = null;
+        const onlineJoinStates = {}; // 大会ID → { status: checking|open|closed|missing|error, message }
+        const onlineSubmitting = {}; // 結果ID → 送信中のPromise
+        let onlineShownResultId = null;
+        let onlineAdminCurrent = null; // { docId, data, results, ranking, fetchedAt }
+
+        function isOnlineConfigured() {
+            const config = window.SPACE_FIREBASE_CONFIG;
+            return !!(config && config.apiKey && config.appId && config.projectId);
+        }
+
+        // ---------- SDKの読み込み ----------
+        function loadOnlineSdk() {
+            if (!isOnlineConfigured()) {
+                return Promise.reject(Object.assign(new Error('not-configured'), { code: 'not-configured' }));
+            }
+            if (onlineSdkPromise) return onlineSdkPromise;
+            onlineSdkPromise = new Promise((resolve, reject) => {
+                const init = () => {
+                    try {
+                        const sdk = window.SpaceFirebaseSDK;
+                        const app = sdk.initializeApp(window.SPACE_FIREBASE_CONFIG);
+                        onlineFirebase = { sdk, auth: sdk.getAuth(app), db: sdk.getFirestore(app) };
+                        sdk.onAuthStateChanged(onlineFirebase.auth, handleOnlineAuthChanged);
+                        onlineSdkError = null;
+                        resolve(onlineFirebase);
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+                if (window.SpaceFirebaseSDK) {
+                    init();
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = ONLINE_SDK_URL;
+                script.onload = init;
+                script.onerror = () => reject(Object.assign(new Error('sdk-load-failed'), { code: 'sdk-load-failed' }));
+                document.head.appendChild(script);
+            }).catch(e => {
+                // 失敗したら次回また読み込みを試せるようにする
+                onlineSdkPromise = null;
+                onlineSdkError = e;
+                throw e;
+            });
+            return onlineSdkPromise;
+        }
+
+        function withOnlineTimeout(promise, ms = ONLINE_TIMEOUT_MS) {
+            let timer;
+            const timeout = new Promise((_, reject) => {
+                timer = setTimeout(() => reject(Object.assign(new Error('timeout'), { code: 'timeout' })), ms);
+            });
+            return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+        }
+
+        function describeOnlineError(e) {
+            const code = (e && e.code) || '';
+            if (code === 'not-configured') return 'オンライン集計の設定（firebase-config.js）がされていません。';
+            if (code === 'sdk-load-failed') return 'オンライン機能を読み込めませんでした。通信環境を確認してください。';
+            if (code === 'timeout') return '通信に時間がかかっています。通信環境を確認してください。';
+            if (code === 'permission-denied') return '権限がありません。ログインしているアカウントや大会の状態を確認してください。';
+            if (code === 'unavailable' || code === 'auth/network-request-failed' || code === 'failed-precondition') return '通信できませんでした。通信環境を確認してください。';
+            if (code === 'auth/operation-not-allowed' || code === 'auth/admin-restricted-operation') return 'Firebaseでこのログイン方法が有効になっていません。';
+            if (code === 'auth/unauthorized-domain') return 'このページのドメインがFirebaseの承認済みドメインに登録されていません。';
+            if (e && e.userMessage) return e.userMessage;
+            return `通信エラーが発生しました${code ? `（${code}）` : ''}。`;
+        }
+
+        function toMillis(value) {
+            if (!value) return 0;
+            if (typeof value.toMillis === 'function') return value.toMillis();
+            if (typeof value === 'number') return value;
+            return 0;
+        }
+
+        // 推測されにくい20文字のID（結果ID）
+        function createOnlineResultId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const bytes = new Uint8Array(40);
+            crypto.getRandomValues(bytes);
+            let id = '';
+            for (const b of bytes) {
+                if (b < 248) id += chars[b % 62]; // 偏りが出ないよう 248 以上は捨てる
+                if (id.length === 20) break;
+            }
+            return id.length === 20 ? id : createOnlineResultId();
+        }
+
+        // ---------- 認証 ----------
+        // 先生権限：Google認証・メール確認済み・@kec.gr.jp（Firestoreのルールでも同じ条件を確認している）
+        function isTeacherUser(user) {
+            return !!(user && !user.isAnonymous && user.emailVerified
+                && ONLINE_TEACHER_DOMAIN.test(user.email || '')
+                && (user.providerData || []).some(p => p.providerId === 'google.com'));
+        }
+
+        // 生徒：ログインしていなければ匿名認証（先生の端末で試す場合は先生のアカウントのまま送信する）
+        async function ensureOnlineUser(fb) {
+            if (typeof fb.auth.authStateReady === 'function') {
+                await fb.auth.authStateReady();
+            }
+            if (fb.auth.currentUser) return fb.auth.currentUser;
+            const credential = await withOnlineTimeout(fb.sdk.signInAnonymously(fb.auth));
+            return credential.user;
+        }
+
+        async function onlineTeacherSignIn() {
+            try {
+                const fb = await loadOnlineSdk();
+                const provider = new fb.sdk.GoogleAuthProvider();
+                // hd はアカウント選択の補助。権限は isTeacherUser と Firestore のルールで判定する
+                provider.setCustomParameters({ hd: 'kec.gr.jp', prompt: 'select_account' });
+                await fb.sdk.signInWithPopup(fb.auth, provider);
+            } catch (e) {
+                const code = (e && e.code) || '';
+                if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') return;
+                const message = code === 'auth/popup-blocked'
+                    ? 'ログイン画面がブロックされました。ポップアップを許可してから、もう一度お試しください。'
+                    : describeOnlineError(e);
+                renderOnlineAuthBoxes(message);
+            }
+        }
+
+        async function onlineSignOut() {
+            if (!onlineFirebase) return;
+            await onlineFirebase.sdk.signOut(onlineFirebase.auth);
+        }
+
+        function handleOnlineAuthChanged() {
+            renderOnlineAuthBoxes();
+            const adminScreen = document.getElementById('challengeAdminScreen');
+            if (!adminScreen.classList.contains('hidden')) {
+                refreshOnlineAdminForUser();
+            }
+        }
+
+        // 先生用画面のログイン欄（data-online-auth の要素すべて）を描画
+        function renderOnlineAuthBoxes(errorMessage) {
+            const boxes = document.querySelectorAll('[data-online-auth]');
+            const render = (build) => boxes.forEach(box => {
+                box.innerHTML = '';
+                build(box);
+                if (errorMessage) {
+                    box.appendChild(createOnlineText(errorMessage, 'online-status-text error'));
+                }
+            });
+
+            if (!isOnlineConfigured()) {
+                render(box => box.appendChild(createOnlineText('オンライン集計を使うには、Firebaseの設定（firebase-config.js）が必要です。オフライン集計はこのまま使えます。', 'online-status-text error')));
+                return;
+            }
+            if (!onlineFirebase) {
+                if (onlineSdkError && !onlineSdkPromise) {
+                    render(box => {
+                        box.appendChild(createOnlineText(describeOnlineError(onlineSdkError), 'online-status-text error'));
+                        box.appendChild(createOnlineButton('もう一度接続する', 'challenge-small-btn', () => { onlineSdkError = null; renderOnlineAuthBoxes(); }));
+                    });
+                    return;
+                }
+                render(box => box.appendChild(createOnlineText('サーバーに接続しています…', 'online-status-text busy')));
+                loadOnlineSdk().then(() => renderOnlineAuthBoxes()).catch(() => renderOnlineAuthBoxes());
+                return;
+            }
+
+            const user = onlineFirebase.auth.currentUser;
+            if (!user || user.isAnonymous) {
+                render(box => {
+                    box.appendChild(createOnlineText('オンライン大会の作成・管理には、KEC職員用Googleアカウントでのログインが必要です。', 'challenge-note'));
+                    box.appendChild(createOnlineButton('Googleアカウントでログイン', 'online-google-btn', onlineTeacherSignIn));
+                });
+            } else if (!isTeacherUser(user)) {
+                render(box => {
+                    box.appendChild(createOnlineText(`ログイン中：${user.email || '（メールアドレスなし）'}`, 'challenge-note'));
+                    box.appendChild(createOnlineText(ONLINE_NOT_TEACHER_MESSAGE, 'online-status-text error'));
+                    box.appendChild(createOnlineButton('ログアウト', 'challenge-small-btn', onlineSignOut));
+                });
+            } else {
+                render(box => {
+                    box.appendChild(createOnlineText(`ログイン中：${user.email}`, 'online-status-text ok'));
+                    box.appendChild(createOnlineButton('ログアウト', 'challenge-small-btn', onlineSignOut));
+                });
+            }
+        }
+
+        function createOnlineText(text, className) {
+            const p = document.createElement('p');
+            p.className = className;
+            p.textContent = text;
+            return p;
+        }
+
+        function createOnlineButton(label, className, onClick) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = className;
+            button.textContent = label;
+            button.addEventListener('click', onClick);
+            return button;
+        }
+
+        // ---------- 先生用：オンライン大会の作成 ----------
+        function showChallengeIssueError(message) {
+            const element = document.getElementById('challengeIssueError');
+            element.textContent = message;
+            element.classList.toggle('hidden', !message);
+        }
+
+        // Firestoreの大会データ → 既存のチャレンジ設定
+        function onlineDocToConfig(docId, data) {
+            if (!data) return null;
+            return validateChallengeConfig({
+                v: CHALLENGE_FORMAT_VERSION,
+                id: data.challengeId,
+                n: data.title,
+                m: data.mode,
+                d: data.difficulty,
+                t: data.duration,
+                q: data.questionMode,
+                a: data.attemptLimit,
+                s: data.questionMode === 'common' ? data.seed : undefined,
+                o: docId
+            });
+        }
+
+        async function issueOnlineChallenge() {
+            const button = document.getElementById('challengeIssueBtn');
+            showChallengeIssueError('');
+            if (!isOnlineConfigured()) {
+                showChallengeIssueError('Firebaseの設定（firebase-config.js）がされていないため、オンライン集計は使えません。オフライン集計を選んでください。');
+                return;
+            }
+            button.disabled = true;
+            button.textContent = 'オンライン大会を登録しています…';
+            try {
+                const fb = await loadOnlineSdk();
+                const { sdk, db } = fb;
+                if (typeof fb.auth.authStateReady === 'function') await fb.auth.authStateReady();
+                const user = fb.auth.currentUser;
+                if (!isTeacherUser(user)) {
+                    showChallengeIssueError(user && !user.isAnonymous ? ONLINE_NOT_TEACHER_MESSAGE : 'オンライン大会を作成するには、上の「Googleアカウントでログイン」からログインしてください。');
+                    return;
+                }
+
+                const settings = {
+                    m: challengeFormState.m,
+                    d: challengeFormState.d,
+                    t: challengeFormState.t,
+                    q: challengeFormState.q,
+                    a: challengeFormState.a
+                };
+
+                // 参加番号の重複を確認（受付中の大会と同じ番号は使わない。期限切れの番号は再利用できる）。
+                // 確認と登録の間に他の先生が同じ番号を登録した場合は、ルールで一括書き込みごと拒否されるので、別の番号でやり直す
+                let config = null;
+                for (let attempt = 0; attempt < 5 && !config; attempt++) {
+                    const code = createChallengeCode(settings, true);
+                    const codeRef = sdk.doc(db, 'joinCodes', code);
+                    const existing = await withOnlineTimeout(sdk.getDoc(codeRef));
+                    if (existing.exists() && toMillis(existing.data().expiresAt) >= Date.now()) continue;
+                    try {
+                        config = await registerOnlineChallenge(sdk, db, user, settings, code, codeRef);
+                    } catch (e) {
+                        if (e.code !== 'permission-denied') throw e;
+                        const after = await withOnlineTimeout(sdk.getDoc(codeRef));
+                        if (!after.exists()) throw e; // 番号の競合ではない拒否
+                    }
+                }
+                if (!config) {
+                    throw Object.assign(new Error('code-collision'), { userMessage: '参加番号を発行できませんでした。もう一度お試しください。' });
+                }
+                saveIssuedChallenge(config);
+                showChallengeQr(config);
+            } catch (e) {
+                showChallengeIssueError(`オンライン大会を作成できませんでした。${describeOnlineError(e)}`);
+            } finally {
+                button.disabled = false;
+                button.textContent = 'QRコードを発行';
+            }
+        }
+
+        // 大会と参加番号を1回の一括書き込みで登録（どちらか一方だけが残ることはない）
+        async function registerOnlineChallenge(sdk, db, user, settings, code, codeRef) {
+            const challengeRef = sdk.doc(sdk.collection(db, 'classChallenges')); // 推測困難なランダムID
+            const expiresAt = sdk.Timestamp.fromMillis(Date.now() + ONLINE_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+            const data = {
+                schemaVersion: 1,
+                title: challengeFormState.n,
+                challengeId: code,
+                joinCode: code,
+                mode: settings.m,
+                difficulty: settings.d,
+                duration: settings.t,
+                questionMode: settings.q,
+                seed: settings.q === 'common' ? getChallengeCodeSeed(code) : null,
+                attemptLimit: settings.a,
+                // 1回限定は最初に完了した記録を採用
+                rankingMode: settings.a === 'unlimited' ? challengeFormState.r : 'first',
+                status: 'open',
+                ownerUid: user.uid,
+                createdAt: sdk.serverTimestamp(),
+                expiresAt: expiresAt
+            };
+            const batch = sdk.writeBatch(db);
+            batch.set(challengeRef, data);
+            batch.set(codeRef, {
+                schemaVersion: 1,
+                challengeDocId: challengeRef.id,
+                ownerUid: user.uid,
+                createdAt: sdk.serverTimestamp(),
+                expiresAt: expiresAt
+            });
+            await withOnlineTimeout(batch.commit());
+
+            const config = onlineDocToConfig(challengeRef.id, data);
+            if (!config) throw new Error('invalid-config');
+            return config;
+        }
+
+        // ---------- 生徒用：オンライン大会への参加 ----------
+        function showJoinCodeMessage(message, isError) {
+            const element = document.getElementById('challengeJoinCodeError');
+            element.textContent = message;
+            element.className = isError ? 'challenge-error-text' : 'online-status-text busy';
+            element.classList.toggle('hidden', !message);
+        }
+
+        // 参加番号（オンライン用の番号）から大会を探す。見つからない・通信できない場合はオフラインとして参加
+        async function joinOnlineChallengeByCode(fallbackConfig) {
+            if (!isOnlineConfigured()) {
+                openChallengeJoinWithUrl(fallbackConfig);
+                return;
+            }
+            showJoinCodeMessage('オンライン大会を確認しています…', false);
+            try {
+                const fb = await loadOnlineSdk();
+                const { sdk, db } = fb;
+                await ensureOnlineUser(fb);
+                const codeSnap = await withOnlineTimeout(sdk.getDoc(sdk.doc(db, 'joinCodes', fallbackConfig.id)));
+                if (!codeSnap.exists()) {
+                    showJoinCodeMessage('', false);
+                    openChallengeJoinWithUrl(fallbackConfig);
+                    return;
+                }
+                const challengeSnap = await withOnlineTimeout(sdk.getDoc(sdk.doc(db, 'classChallenges', codeSnap.data().challengeDocId)));
+                const config = challengeSnap.exists() ? onlineDocToConfig(challengeSnap.id, challengeSnap.data()) : null;
+                // 番号と大会の内容が一致しない場合は、誤った大会に参加しないよう止める
+                if (!config || config.id !== fallbackConfig.id) {
+                    showJoinCodeMessage('この番号の大会が見つかりませんでした。先生に確認してね。', true);
+                    return;
+                }
+                rememberOnlineJoinState(config, challengeSnap.data());
+                showJoinCodeMessage('', false);
+                openChallengeJoinWithUrl(config);
+            } catch (e) {
+                // 通信できなくても同じ条件で参加できる（結果は自動送信されない）
+                showJoinCodeMessage('', false);
+                openChallengeJoinWithUrl(fallbackConfig);
+                const notice = document.getElementById('challengeJoinNotice');
+                notice.textContent = 'オンライン大会かどうか確認できませんでした（通信エラー）。このまま参加できますが、結果は自動送信されません。終わったら先生にスコアを報告してね。';
+                notice.classList.remove('hidden');
+            }
+        }
+
+        function rememberOnlineJoinState(config, data) {
+            let state;
+            if (!data) {
+                state = { status: 'missing', message: 'このオンライン大会は見つかりません（削除された可能性があります）。先生に確認してね。' };
+            } else if (data.status !== 'open') {
+                state = { status: 'closed', message: 'このオンライン大会は受付を終了しました。' };
+            } else if (toMillis(data.expiresAt) && toMillis(data.expiresAt) < Date.now()) {
+                state = { status: 'closed', message: 'このオンライン大会は期限が切れています。' };
+            } else if (data.challengeId !== config.id) {
+                state = { status: 'missing', message: '大会の情報が一致しません。先生に確認してね。' };
+            } else {
+                state = { status: 'open', message: 'サーバーに接続しました。' };
+            }
+            onlineJoinStates[config.o] = state;
+            return state;
+        }
+
+        // 参加画面の「オンライン集計：ON」表示と、受付状況の確認
+        function updateOnlineJoinBox(config) {
+            const box = document.getElementById('challengeJoinOnlineBox');
+            document.getElementById('challengeJoinNotice').classList.add('hidden');
+            if (!isOnlineChallenge(config)) {
+                box.classList.add('hidden');
+                return;
+            }
+            box.classList.remove('hidden');
+            if (!isOnlineConfigured()) {
+                onlineJoinStates[config.o] = { status: 'error', message: 'この端末ではサーバーに接続できません。終わったら先生にスコアを報告してね。' };
+                renderOnlineJoinStatus(config);
+                return;
+            }
+            if (!onlineJoinStates[config.o] || onlineJoinStates[config.o].status !== 'open') {
+                onlineJoinStates[config.o] = { status: 'checking', message: 'サーバーに接続しています…' };
+            }
+            renderOnlineJoinStatus(config);
+            checkOnlineChallenge(config).then(() => {
+                if (challengeCurrentConfig && challengeCurrentConfig.o === config.o) {
+                    renderOnlineJoinStatus(config);
+                }
+            });
+        }
+
+        async function checkOnlineChallenge(config) {
+            try {
+                const fb = await loadOnlineSdk();
+                await ensureOnlineUser(fb);
+                const snap = await withOnlineTimeout(fb.sdk.getDoc(fb.sdk.doc(fb.db, 'classChallenges', config.o)));
+                return rememberOnlineJoinState(config, snap.exists() ? snap.data() : null);
+            } catch (e) {
+                // 通信できなくても参加はできる。終了後に送信を試み、だめなら再送信ボタンで送る
+                const state = { status: 'error', message: 'サーバーに接続できませんでした。このまま参加できます。結果が送信できなかったときは「再送信する」を押すか、先生にスコアを報告してね。' };
+                onlineJoinStates[config.o] = state;
+                return state;
+            }
+        }
+
+        function renderOnlineJoinStatus(config) {
+            const state = onlineJoinStates[config.o];
+            const element = document.getElementById('challengeJoinOnlineStatus');
+            if (!state) {
+                element.textContent = '';
+                return;
+            }
+            element.textContent = state.message;
+            element.className = `online-status-text ${state.status === 'open' ? 'ok' : (state.status === 'checking' ? 'busy' : 'error')}`;
+        }
+
+        // 受付終了・削除済みの大会では「準備OK」「スタート」に進ませない
+        function isOnlineJoinBlocked(config) {
+            if (!isOnlineChallenge(config)) return false;
+            const state = onlineJoinStates[config.o];
+            if (state && (state.status === 'closed' || state.status === 'missing')) {
+                renderOnlineJoinStatus(config);
+                return true;
+            }
+            return false;
+        }
+
+        // ---------- 生徒用：結果の送信 ----------
+        function updateStoredChallengeResult(resultId, changes) {
+            const results = getChallengeResults();
+            const target = results.find(r => r.resultId === resultId);
+            if (!target) return null;
+            Object.assign(target, changes);
+            challengeSave(CHALLENGE_STORAGE.results, results);
+            return target;
+        }
+
+        // 結果をFirestoreに送信（同じ結果IDなら何度呼んでも1件しか登録されない）
+        function submitOnlineResult(resultId) {
+            if (!onlineSubmitting[resultId]) {
+                onlineSubmitting[resultId] = doSubmitOnlineResult(resultId).finally(() => {
+                    delete onlineSubmitting[resultId];
+                });
+            }
+            return onlineSubmitting[resultId];
+        }
+
+        async function doSubmitOnlineResult(resultId) {
+            const result = getChallengeResults().find(r => r.resultId === resultId);
+            if (!result || !result.onlineId) return { ok: false, message: '送信する結果が見つかりません。' };
+            if (result.submitStatus === 'sent') return { ok: true };
+            try {
+                const fb = await loadOnlineSdk();
+                const { sdk, db } = fb;
+                const user = await ensureOnlineUser(fb);
+                const ref = sdk.doc(db, 'classChallenges', result.onlineId, 'results', result.resultId);
+                const correct = Math.max(0, Math.round(result.correct) || 0);
+                const answered = Math.max(correct, Math.round(result.answered) || 0);
+                const startedAt = Math.round(result.playedAt) || 0;
+                const data = {
+                    schemaVersion: 1,
+                    challengeDocId: result.onlineId,
+                    resultId: result.resultId,
+                    studentUid: user.uid,
+                    nickname: sanitizeChallengeText(result.nickname, 12) || CHALLENGE_DEFAULT_NICKNAME,
+                    score: Math.max(0, Math.round(result.score) || 0),
+                    correctCount: correct,
+                    answerCount: answered,
+                    // 送信する正解数・解答数から計算し直す（サーバー側でも同じ式で整合性を確認している）
+                    accuracy: answered > 0 ? Math.round((correct / answered) * 100) : 0,
+                    maxCombo: Math.min(correct, Math.max(0, Math.round(result.maxCombo) || 0)),
+                    attemptNumber: Math.min(100, Math.max(1, Math.round(result.attempt) || 1)),
+                    startedAt: startedAt,
+                    finishedAt: Math.max(startedAt, Math.round(result.finishedAt) || 0),
+                    submittedAt: sdk.serverTimestamp()
+                };
+                try {
+                    await withOnlineTimeout(sdk.setDoc(ref, data));
+                } catch (e) {
+                    if (e.code !== 'permission-denied') throw e;
+                    // 登録済み（前回の送信が届いていた）なら送信完了として扱う。
+                    // 未登録の結果IDは読み取りが拒否されるので、その場合は「未登録」とみなす
+                    let alreadyStored = false;
+                    try {
+                        const existing = await withOnlineTimeout(sdk.getDoc(ref));
+                        alreadyStored = existing.exists();
+                    } catch (readError) {
+                        if (readError.code !== 'permission-denied') throw readError;
+                    }
+                    if (!alreadyStored) {
+                        const challenge = await withOnlineTimeout(sdk.getDoc(sdk.doc(db, 'classChallenges', result.onlineId)));
+                        if (!challenge.exists()) {
+                            throw Object.assign(new Error('missing'), { userMessage: '大会が削除されていたため送信できませんでした。先生にスコアを報告してね。', permanent: true });
+                        }
+                        if (challenge.data().status !== 'open' || toMillis(challenge.data().expiresAt) < Date.now()) {
+                            throw Object.assign(new Error('closed'), { userMessage: '受付が終了していたため送信できませんでした。先生にスコアを報告してね。', permanent: true });
+                        }
+                        throw e;
+                    }
+                }
+                updateStoredChallengeResult(resultId, { submitStatus: 'sent', submittedAt: Date.now() });
+                return { ok: true };
+            } catch (e) {
+                updateStoredChallengeResult(resultId, { submitStatus: 'failed' });
+                return { ok: false, message: describeOnlineError(e) };
+            }
+        }
+
+        // 結果画面の送信状態
+        function showOnlineSubmitState(result) {
+            const box = document.getElementById('challengeSubmitBox');
+            const report = document.getElementById('challengeReportText');
+            const online = !!(result && result.onlineId);
+            box.classList.toggle('hidden', !online);
+            report.textContent = '先生にスコアを報告しよう！';
+            if (!online) {
+                onlineShownResultId = null;
+                return;
+            }
+            onlineShownResultId = result.resultId;
+            const stored = getChallengeResults().find(r => r.resultId === result.resultId) || result;
+            if (stored.submitStatus === 'sent') {
+                setOnlineSubmitStatus('送信完了！ 先生の発表を待とう！', 'ok', false);
+                report.textContent = '';
+            } else {
+                runShownResultSubmit();
+            }
+        }
+
+        function setOnlineSubmitStatus(message, kind, showRetry) {
+            const status = document.getElementById('challengeSubmitStatus');
+            status.textContent = message;
+            status.className = `online-status-text ${kind}`;
+            document.getElementById('challengeResubmitBtn').classList.toggle('hidden', !showRetry);
+        }
+
+        async function runShownResultSubmit() {
+            const resultId = onlineShownResultId;
+            if (!resultId) return;
+            setOnlineSubmitStatus('送信中…', 'busy', false);
+            document.getElementById('challengeReportText').textContent = '';
+            const outcome = await submitOnlineResult(resultId);
+            if (onlineShownResultId !== resultId) return;
+            if (outcome.ok) {
+                setOnlineSubmitStatus('送信完了！ 先生の発表を待とう！', 'ok', false);
+            } else {
+                setOnlineSubmitStatus(`送信できませんでした。${outcome.message}`, 'error', true);
+                document.getElementById('challengeReportText').textContent = '送信できないときは、先生にスコアを報告しよう！';
+            }
+        }
+
+        function resubmitShownChallengeResult() {
+            runShownResultSubmit();
+        }
+
+        // ---------- 先生用：オンライン大会の管理 ----------
+        function showOnlineAdminError(message) {
+            const element = document.getElementById('onlineAdminError');
+            element.textContent = message;
+            element.classList.toggle('hidden', !message);
+        }
+
+        function showOnlineAdmin() {
+            showChallengeScreen('challengeAdminScreen');
+            document.getElementById('onlineAdminListBox').classList.add('hidden');
+            showOnlineAdminError('');
+            renderOnlineAuthBoxes();
+            if (isOnlineConfigured()) {
+                loadOnlineSdk().then(refreshOnlineAdminForUser).catch(e => showOnlineAdminError(describeOnlineError(e)));
+            }
+        }
+
+        async function refreshOnlineAdminForUser() {
+            const fb = onlineFirebase;
+            if (!fb) return;
+            if (typeof fb.auth.authStateReady === 'function') await fb.auth.authStateReady();
+            const isTeacher = isTeacherUser(fb.auth.currentUser);
+            document.getElementById('onlineAdminListBox').classList.toggle('hidden', !isTeacher);
+            if (isTeacher) {
+                loadOnlineAdminList();
+            } else {
+                document.getElementById('onlineAdminList').innerHTML = '';
+            }
+        }
+
+        function getOnlineStatusLabel(data) {
+            if (data.status !== 'open') return '受付終了';
+            if (toMillis(data.expiresAt) && toMillis(data.expiresAt) < Date.now()) return '期限切れ';
+            return '受付中';
+        }
+
+        async function loadOnlineAdminList() {
+            const container = document.getElementById('onlineAdminList');
+            container.innerHTML = '';
+            container.appendChild(createOnlineText('読み込んでいます…', 'online-status-text busy'));
+            showOnlineAdminError('');
+            try {
+                const fb = await loadOnlineSdk();
+                const { sdk, db } = fb;
+                const user = fb.auth.currentUser;
+                if (!isTeacherUser(user)) return;
+                // 自分が作成した大会だけを取得（並べ替えはブラウザ側で行い、複合インデックスを不要にする）
+                const snap = await withOnlineTimeout(sdk.getDocs(sdk.query(
+                    sdk.collection(db, 'classChallenges'),
+                    sdk.where('ownerUid', '==', user.uid),
+                    sdk.limit(100)
+                )));
+                const items = snap.docs.map(d => ({ id: d.id, data: d.data() }))
+                    .sort((a, b) => toMillis(b.data.createdAt) - toMillis(a.data.createdAt));
+                container.innerHTML = '';
+                if (items.length === 0) {
+                    container.appendChild(createOnlineText('まだオンライン大会はありません。「チャレンジを作る」で「オンライン集計」を選んで作成してください。', 'challenge-note'));
+                    return;
+                }
+                items.forEach(item => container.appendChild(createOnlineAdminCard(item.id, item.data)));
+            } catch (e) {
+                container.innerHTML = '';
+                showOnlineAdminError(`大会の一覧を取得できませんでした。${describeOnlineError(e)}`);
+            }
+        }
+
+        function createOnlineAdminCard(docId, data) {
+            const card = document.createElement('div');
+            card.className = 'challenge-history-card';
+
+            const title = document.createElement('div');
+            title.className = 'challenge-history-title';
+            title.textContent = `${data.title}　［${getOnlineStatusLabel(data)}］`;
+
+            const meta = document.createElement('div');
+            meta.className = 'challenge-history-meta';
+            meta.textContent = `${data.createdAt ? formatChallengeDate(toMillis(data.createdAt)) + ' 作成' : ''}　${getModeLabel(data.mode)}（${getDifficultyLabel(data.difficulty)}）・${getChallengeTimeLabel(data.duration)}`;
+
+            const count = document.createElement('div');
+            count.className = 'challenge-history-score';
+            count.textContent = '結果登録数：確認中…';
+
+            const button = createOnlineButton('この大会を管理する', 'challenge-small-btn', () => openOnlineAdminDetail(docId, data));
+            card.append(title, meta, count, button);
+
+            // 件数は集計クエリで取得（結果の中身は読み込まない）
+            const fb = onlineFirebase;
+            withOnlineTimeout(fb.sdk.getCountFromServer(fb.sdk.collection(fb.db, 'classChallenges', docId, 'results')))
+                .then(snapshot => { count.textContent = `結果登録数：${snapshot.data().count}件`; })
+                .catch(() => { count.textContent = '結果登録数：取得できませんでした'; });
+            return card;
+        }
+
+        function openOnlineAdminDetail(docId, data) {
+            onlineAdminCurrent = { docId, data, results: null, ranking: null, fetchedAt: null };
+            showChallengeScreen('challengeAdminDetailScreen');
+            renderOnlineAdminDetail();
+        }
+
+        function renderOnlineAdminDetail() {
+            const { data } = onlineAdminCurrent;
+            document.getElementById('onlineDetailTitle').textContent = data.title;
+            const status = document.getElementById('onlineDetailStatus');
+            const statusLabel = getOnlineStatusLabel(data);
+            status.textContent = `オンライン大会：${statusLabel}`;
+            status.classList.toggle('closed', statusLabel !== '受付中');
+            fillChallengeInfo(document.getElementById('onlineDetailInfo'), [
+                ['参加番号', formatChallengeCode(data.joinCode)],
+                ['計算の種類', getModeLabel(data.mode)],
+                ['難しさ', getDifficultyLabel(data.difficulty)],
+                ['制限時間', getChallengeTimeLabel(data.duration)],
+                ['出題方式', getChallengeQuestionTypeLabel(data.questionMode)],
+                ['挑戦回数', getChallengeAttemptLabel(data.attemptLimit)],
+                ['ランキング', data.rankingMode === 'best' ? '最高記録を採用' : '最初の記録を採用'],
+                ['作成日時', data.createdAt ? formatChallengeDate(toMillis(data.createdAt)) : '-'],
+                ['保存期限', data.expiresAt ? formatChallengeDate(toMillis(data.expiresAt)) : '-']
+            ]);
+            document.getElementById('onlineCloseBtn').disabled = data.status !== 'open';
+            document.getElementById('onlineResultsBox').classList.toggle('hidden', !onlineAdminCurrent.ranking);
+        }
+
+        function setOnlineDetailMessage(message, kind) {
+            const element = document.getElementById('onlineDetailMessage');
+            element.textContent = message;
+            element.className = `online-status-text ${kind || ''}`;
+        }
+
+        // QRコード画面の「この大会を管理する」
+        async function openOnlineAdminDetailFromQr() {
+            const config = challengeCurrentConfig;
+            if (!isOnlineChallenge(config)) return;
+            try {
+                const fb = await loadOnlineSdk();
+                if (typeof fb.auth.authStateReady === 'function') await fb.auth.authStateReady();
+                if (!isTeacherUser(fb.auth.currentUser)) {
+                    showOnlineAdmin();
+                    return;
+                }
+                const snap = await withOnlineTimeout(fb.sdk.getDoc(fb.sdk.doc(fb.db, 'classChallenges', config.o)));
+                if (!snap.exists()) {
+                    showChallengeQrToast('この大会は見つかりませんでした（削除された可能性があります）');
+                    return;
+                }
+                openOnlineAdminDetail(snap.id, snap.data());
+            } catch (e) {
+                showChallengeQrToast(describeOnlineError(e));
+            }
+        }
+
+        function showOnlineDetailQr() {
+            const config = onlineDocToConfig(onlineAdminCurrent.docId, onlineAdminCurrent.data);
+            if (config) showChallengeQr(config);
+        }
+
+        // 結果を一括取得（リアルタイム監視はしない）
+        async function fetchOnlineResults() {
+            setOnlineDetailMessage('結果を取得しています…', 'busy');
+            try {
+                const fb = onlineFirebase || await loadOnlineSdk();
+                const snap = await withOnlineTimeout(fb.sdk.getDocs(fb.sdk.collection(fb.db, 'classChallenges', onlineAdminCurrent.docId, 'results')));
+                const results = snap.docs.map(d => d.data());
+                onlineAdminCurrent.results = results;
+                onlineAdminCurrent.ranking = computeOnlineRanking(results, onlineAdminCurrent.data);
+                onlineAdminCurrent.fetchedAt = Date.now();
+                const people = onlineAdminCurrent.ranking.length;
+                setOnlineDetailMessage(`${results.length}件の結果（${people}人）を取得しました。`, 'ok');
+                document.getElementById('onlineResultsSummary').textContent =
+                    `取得時刻 ${formatChallengeDate(onlineAdminCurrent.fetchedAt)}　参加 ${people}人。結果を取得し直すと、あとから送信された結果も反映されます。`;
+                document.getElementById('onlineCountdownFrom').value = Math.max(1, Math.min(10, people));
+                renderOnlineResultsTable();
+                renderOnlineAdminDetail();
+            } catch (e) {
+                setOnlineDetailMessage(`結果を取得できませんでした。${describeOnlineError(e)}`, 'error');
+            }
+        }
+
+        // 順位計算：1人1枠（匿名UIDごと）。1回限定・「最初の記録」は最初に完了した記録、「最高記録」は最高スコアを採用。
+        // 同点は同順位（1位, 1位, 3位 …）。
+        function computeOnlineRanking(results, challengeData) {
+            const useFirst = challengeData.attemptLimit === 'once' || challengeData.rankingMode !== 'best';
+            const byStudent = new Map();
+            results.forEach(r => {
+                if (!r || typeof r.studentUid !== 'string' || !Number.isFinite(r.score)) return;
+                if (!byStudent.has(r.studentUid)) byStudent.set(r.studentUid, []);
+                byStudent.get(r.studentUid).push(r);
+            });
+            const entries = [];
+            byStudent.forEach((list, uid) => {
+                const sorted = list.slice().sort((a, b) => (a.finishedAt - b.finishedAt) || (a.startedAt - b.startedAt));
+                let chosen = sorted[0];
+                if (!useFirst) {
+                    chosen = sorted.reduce((best, r) => (r.score > best.score ? r : best), sorted[0]);
+                }
+                entries.push({
+                    uid: uid,
+                    nickname: chosen.nickname || CHALLENGE_DEFAULT_NICKNAME,
+                    score: chosen.score,
+                    correctCount: chosen.correctCount,
+                    accuracy: chosen.accuracy,
+                    finishedAt: chosen.finishedAt,
+                    attempts: list.length
+                });
+            });
+            entries.sort((a, b) => (b.score - a.score) || (a.finishedAt - b.finishedAt));
+            entries.forEach((entry, index) => {
+                entry.rank = index > 0 && entry.score === entries[index - 1].score ? entries[index - 1].rank : index + 1;
+            });
+            return entries;
+        }
+
+        function renderOnlineResultsTable() {
+            const box = document.getElementById('onlineResultsTableBox');
+            box.innerHTML = '';
+            const ranking = onlineAdminCurrent.ranking || [];
+            if (ranking.length === 0) {
+                box.appendChild(createOnlineText('まだ結果がありません。', 'challenge-note'));
+                return;
+            }
+            const table = document.createElement('table');
+            table.className = 'online-results-table';
+            const head = table.insertRow();
+            ['順位', 'ニックネーム', 'スコア', '正解', '正答率', '挑戦'].forEach(label => {
+                const th = document.createElement('th');
+                th.textContent = label;
+                head.appendChild(th);
+            });
+            // 同じニックネームの生徒がいる場合は、匿名UIDの末尾で見分けられるようにする
+            const nameCounts = {};
+            ranking.forEach(entry => { nameCounts[entry.nickname] = (nameCounts[entry.nickname] || 0) + 1; });
+            ranking.forEach(entry => {
+                const row = table.insertRow();
+                const name = nameCounts[entry.nickname] > 1 ? `${entry.nickname}（ID末尾 ${entry.uid.slice(-4)}）` : entry.nickname;
+                [`${entry.rank}位`, name, entry.score.toLocaleString(), `${entry.correctCount}問`, `${entry.accuracy}%`, `${entry.attempts}回`]
+                    .forEach(value => { row.insertCell().textContent = value; });
+            });
+            box.appendChild(table);
+        }
+
+        function toggleOnlineResultsTable() {
+            document.getElementById('onlineResultsTableBox').classList.toggle('hidden');
+        }
+
+        async function closeOnlineChallenge() {
+            if (!onlineAdminCurrent || onlineAdminCurrent.data.status !== 'open') return;
+            if (!confirm('受付を終了しますか？\n終了後は、生徒の結果が送信できなくなります（ゲーム中の生徒がいないか確認してください）。')) return;
+            setOnlineDetailMessage('受付を終了しています…', 'busy');
+            try {
+                const fb = onlineFirebase || await loadOnlineSdk();
+                await withOnlineTimeout(fb.sdk.updateDoc(fb.sdk.doc(fb.db, 'classChallenges', onlineAdminCurrent.docId), {
+                    status: 'closed',
+                    closedAt: fb.sdk.serverTimestamp()
+                }));
+                onlineAdminCurrent.data = { ...onlineAdminCurrent.data, status: 'closed' };
+                renderOnlineAdminDetail();
+                setOnlineDetailMessage('受付を終了しました。', 'ok');
+            } catch (e) {
+                setOnlineDetailMessage(`受付を終了できませんでした。${describeOnlineError(e)}`, 'error');
+            }
+        }
+
+        // 大会と結果の削除（保存期間を過ぎた大会などを先生が手動で削除する）
+        async function deleteOnlineChallenge() {
+            if (!onlineAdminCurrent) return;
+            if (!confirm(`「${onlineAdminCurrent.data.title}」と、すべての結果を削除しますか？\nこの操作は元に戻せません。`)) return;
+            setOnlineDetailMessage('削除しています…', 'busy');
+            try {
+                const fb = onlineFirebase || await loadOnlineSdk();
+                const { sdk, db } = fb;
+                const docId = onlineAdminCurrent.docId;
+                const results = await withOnlineTimeout(sdk.getDocs(sdk.collection(db, 'classChallenges', docId, 'results')));
+                for (let i = 0; i < results.docs.length; i += 400) {
+                    const batch = sdk.writeBatch(db);
+                    results.docs.slice(i, i + 400).forEach(d => batch.delete(d.ref));
+                    await withOnlineTimeout(batch.commit());
+                }
+                const batch = sdk.writeBatch(db);
+                const codeRef = sdk.doc(db, 'joinCodes', onlineAdminCurrent.data.joinCode);
+                const codeSnap = await withOnlineTimeout(sdk.getDoc(codeRef));
+                if (codeSnap.exists() && codeSnap.data().challengeDocId === docId) {
+                    batch.delete(codeRef);
+                }
+                batch.delete(sdk.doc(db, 'classChallenges', docId));
+                await withOnlineTimeout(batch.commit());
+                onlineAdminCurrent = null;
+                showOnlineAdmin();
+            } catch (e) {
+                setOnlineDetailMessage(`削除できませんでした。${describeOnlineError(e)}`, 'error');
+            }
+        }
+
+        // ---------- ランキング発表 ----------
+        const rankingStage = { mode: null, steps: [], index: -1, view: 'steps', timers: [], championShown: false };
+
+        function clearRankingTimers() {
+            rankingStage.timers.forEach(id => clearTimeout(id));
+            rankingStage.timers = [];
+        }
+
+        function startRankingPresentation(mode) {
+            if (!onlineAdminCurrent || !onlineAdminCurrent.ranking) return;
+            const ranking = onlineAdminCurrent.ranking;
+            if (ranking.length === 0) {
+                setOnlineDetailMessage('まだ結果がありません。「結果を取得」を押してください。', 'error');
+                return;
+            }
+            let limit = 3;
+            if (mode === 'countdown') {
+                const value = parseInt(document.getElementById('onlineCountdownFrom').value, 10);
+                limit = Math.max(1, Math.min(100, Number.isFinite(value) ? value : 10));
+            }
+            // 同順位の生徒はまとめて発表する。下位から順に（例：10位 → … → 1位）
+            const groups = new Map();
+            ranking.forEach(entry => {
+                if (!groups.has(entry.rank)) groups.set(entry.rank, []);
+                groups.get(entry.rank).push(entry);
+            });
+            rankingStage.mode = mode;
+            rankingStage.steps = Array.from(groups.entries())
+                .filter(([rank]) => rank <= limit)
+                .sort((a, b) => b[0] - a[0])
+                .map(([rank, entries]) => ({ rank, entries }));
+            rankingStage.index = -1;
+            rankingStage.view = mode === 'all' ? 'all' : 'steps';
+
+            document.getElementById('rankingStageTitle').textContent = onlineAdminCurrent.data.title;
+            document.getElementById('rankingStage').classList.remove('hidden');
+            document.addEventListener('keydown', handleRankingStageKey);
+            renderRankingStage(false);
+        }
+
+        function hideRankingStage() {
+            const stage = document.getElementById('rankingStage');
+            if (!stage || stage.classList.contains('hidden')) return;
+            clearRankingTimers();
+            stage.classList.add('hidden');
+            document.getElementById('rankingStageChampion').classList.add('hidden');
+            document.removeEventListener('keydown', handleRankingStageKey);
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function handleRankingStageKey(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter' || e.key === 'PageDown') {
+                e.preventDefault();
+                rankingStageNext();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                rankingStagePrev();
+            }
+        }
+
+        function rankingStageNext() {
+            const champion = document.getElementById('rankingStageChampion');
+            // 1位の演出中なら、演出を閉じて順位表に戻る
+            if (!champion.classList.contains('hidden')) {
+                clearRankingTimers();
+                champion.classList.add('hidden');
+                renderRankingStage(false);
+                return;
+            }
+            if (rankingStage.view === 'all') return;
+            if (rankingStage.index >= rankingStage.steps.length - 1) {
+                rankingStageShowAll();
+                return;
+            }
+            rankingStage.index++;
+            renderRankingStage(true);
+        }
+
+        function rankingStagePrev() {
+            clearRankingTimers();
+            document.getElementById('rankingStageChampion').classList.add('hidden');
+            if (rankingStage.view === 'all' && rankingStage.mode !== 'all') {
+                rankingStage.view = 'steps';
+                renderRankingStage(false);
+                return;
+            }
+            if (rankingStage.index < 0) return;
+            rankingStage.index--;
+            renderRankingStage(false);
+        }
+
+        function rankingStageSkip() {
+            clearRankingTimers();
+            document.getElementById('rankingStageChampion').classList.add('hidden');
+            rankingStage.view = 'steps';
+            rankingStage.index = rankingStage.steps.length - 1;
+            renderRankingStage(false);
+        }
+
+        function rankingStageShowAll() {
+            clearRankingTimers();
+            document.getElementById('rankingStageChampion').classList.add('hidden');
+            rankingStage.view = 'all';
+            renderRankingStage(false);
+        }
+
+        function rankingStageFullscreen() {
+            const stage = document.getElementById('rankingStage');
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            } else if (stage.requestFullscreen) {
+                stage.requestFullscreen().catch(() => {});
+            }
+        }
+
+        function getRankLabel(rank) {
+            return `${rank}位`;
+        }
+
+        // スコアのカウントアップ
+        function countUpRankingScore(element, target, duration = 1400) {
+            const start = performance.now();
+            const step = (now) => {
+                if (!element.isConnected) return;
+                const progress = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                element.textContent = Math.round(target * eased).toLocaleString();
+                if (progress < 1) requestAnimationFrame(step);
+            };
+            requestAnimationFrame(step);
+        }
+
+        function createRankingCard(entry, animate) {
+            const card = document.createElement('div');
+            card.className = `ranking-card${entry.rank <= 3 ? ` rank-${entry.rank}` : ''}`;
+            const rank = document.createElement('div');
+            rank.className = 'rank';
+            rank.textContent = `${entry.rank === 1 ? '👑' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : ''}${getRankLabel(entry.rank)}`;
+            const who = document.createElement('div');
+            who.className = 'who';
+            who.textContent = entry.nickname;
+            const score = document.createElement('div');
+            score.className = 'score';
+            score.textContent = animate ? '0' : entry.score.toLocaleString();
+            card.append(rank, who, score);
+            if (animate) countUpRankingScore(score, entry.score);
+            return card;
+        }
+
+        function createRankingRow(entry) {
+            const row = document.createElement('div');
+            row.className = 'ranking-row';
+            const rank = document.createElement('span');
+            rank.className = 'rank';
+            rank.textContent = getRankLabel(entry.rank);
+            const who = document.createElement('span');
+            who.className = 'who';
+            who.textContent = entry.nickname;
+            const score = document.createElement('span');
+            score.className = 'score';
+            score.textContent = entry.score.toLocaleString();
+            row.append(rank, who, score);
+            return row;
+        }
+
+        function renderRankingStage(animate) {
+            const current = document.getElementById('rankingStageCurrent');
+            const list = document.getElementById('rankingStageList');
+            const sub = document.getElementById('rankingStageSub');
+            const nextButton = document.querySelector('#rankingStage .ranking-stage-next');
+            current.innerHTML = '';
+            list.innerHTML = '';
+            const ranking = onlineAdminCurrent ? onlineAdminCurrent.ranking : [];
+
+            if (rankingStage.view === 'all') {
+                sub.textContent = `全順位（参加 ${ranking.length}人）`;
+                ranking.forEach(entry => list.appendChild(createRankingRow(entry)));
+                nextButton.disabled = true;
+                return;
+            }
+            nextButton.disabled = false;
+            const modeLabel = rankingStage.mode === 'top3' ? 'TOP3発表' : `${rankingStage.steps.length > 0 ? rankingStage.steps[0].rank : ''}位からカウントダウン発表`;
+            sub.textContent = `${modeLabel}（参加 ${ranking.length}人）`;
+
+            if (rankingStage.index < 0) {
+                const intro = document.createElement('div');
+                intro.className = 'ranking-stage-intro';
+                intro.textContent = 'ランキング発表！';
+                const small = document.createElement('small');
+                small.textContent = '「次の順位」を押して発表しよう';
+                intro.appendChild(small);
+                current.appendChild(intro);
+                nextButton.textContent = '発表スタート ▶';
+                return;
+            }
+
+            const step = rankingStage.steps[rankingStage.index];
+            step.entries.forEach(entry => current.appendChild(createRankingCard(entry, animate)));
+            // すでに発表した順位（上位から並べる）
+            rankingStage.steps.slice(0, rankingStage.index).reverse().forEach(previous => {
+                previous.entries.forEach(entry => list.appendChild(createRankingRow(entry)));
+            });
+            nextButton.textContent = rankingStage.index >= rankingStage.steps.length - 1 ? '全順位を表示 ▶' : '次の順位 ▶';
+
+            if (step.rank === 1 && animate) {
+                playChampionEffect(step.entries);
+            }
+        }
+
+        // 1位発表：暗転 → カウントダウン → 光 → CHAMPION!
+        function playChampionEffect(entries) {
+            clearRankingTimers();
+            const overlay = document.getElementById('rankingStageChampion');
+            overlay.innerHTML = '';
+            overlay.classList.remove('hidden');
+            const showCount = (n) => {
+                overlay.innerHTML = '';
+                const count = document.createElement('div');
+                count.className = 'champion-count';
+                count.textContent = n;
+                overlay.appendChild(count);
+                if (typeof playCountdownSound === 'function') playCountdownSound();
+            };
+            [3, 2, 1].forEach((n, i) => {
+                rankingStage.timers.push(setTimeout(() => showCount(n), 400 + i * 900));
+            });
+            rankingStage.timers.push(setTimeout(() => {
+                overlay.innerHTML = '';
+                const flash = document.createElement('div');
+                flash.className = 'champion-flash';
+                const title = document.createElement('div');
+                title.className = 'champion-title';
+                title.textContent = 'CHAMPION!';
+                const rank = document.createElement('div');
+                rank.className = 'champion-rank';
+                rank.textContent = '👑 第1位 👑';
+                overlay.append(flash, title, rank);
+                entries.forEach(entry => {
+                    const name = document.createElement('div');
+                    name.className = 'champion-name';
+                    name.textContent = entry.nickname;
+                    const score = document.createElement('div');
+                    score.className = 'champion-score';
+                    score.textContent = '0';
+                    overlay.append(name, score);
+                    countUpRankingScore(score, entry.score, 1800);
+                });
+                if (typeof playFanfareSound === 'function') playFanfareSound();
+            }, 400 + 3 * 900));
+        }
     </script>
 
     <!-- タイトル画面専用コピーライト表記 -->

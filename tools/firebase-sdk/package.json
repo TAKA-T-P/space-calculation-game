@@ -1,0 +1,12 @@
+{
+  "name": "space-calculation-game-firebase-sdk",
+  "private": true,
+  "description": "授業チャレンジのオンライン集計で使う Firebase SDK を lib/firebase-sdk.js に1ファイルでまとめるためのビルド設定",
+  "scripts": {
+    "build": "esbuild entry.js --bundle --format=iife --minify --target=es2019 --legal-comments=eof --outfile=../../lib/firebase-sdk.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "firebase": "13.1.0"
+  }
+}

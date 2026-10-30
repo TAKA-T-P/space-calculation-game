@@ -1,0 +1,183 @@
+rules_version = '2';
+
+// スペース計算ラリー v2.2「授業チャレンジ・オンライン集計」用 Firestore セキュリティルール
+//
+// コレクション構成
+//   classChallenges/{challengeDocId}                 オンライン大会（先生が作成）
+//   classChallenges/{challengeDocId}/results/{resultId}  生徒の結果（1プレイ1件。resultId はプレイ開始時に生成）
+//   joinCodes/{joinCode}                             10桁の参加番号 → 大会ID の対応表
+//
+// 方針
+//   - 先生：Google認証・メール確認済み・@kec.gr.jp。自分が作成した大会だけ管理できる。
+//   - 生徒：匿名認証。大会情報の1件取得と、自分の結果の新規登録・確認だけができる。
+//   - 一度登録した結果は変更できない（同じ resultId の再送信は登録済みとして扱う）。
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // 先生権限。将来「承認済みUID方式」に切り替える場合は、
+    // isApprovedTeacherUid() を有効にして、この関数の条件を差し替える。
+    function isTeacher() {
+      return signedIn()
+        && request.auth.token.firebase.sign_in_provider == 'google.com'
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower().matches('^[^@]+@kec[.]gr[.]jp$');
+    }
+
+    // （将来用）teachers/{uid} に登録された先生だけを許可する場合の判定
+    // function isApprovedTeacherUid() {
+    //   return signedIn() && exists(/databases/$(database)/documents/teachers/$(request.auth.uid));
+    // }
+
+    function challengePath(challengeDocId) {
+      return /databases/$(database)/documents/classChallenges/$(challengeDocId);
+    }
+
+    function isChallengeOwner(challengeData) {
+      return isTeacher() && challengeData.ownerUid == request.auth.uid;
+    }
+
+    function validModes() {
+      return ['addition', 'subtraction', 'multiplication', 'division', 'all',
+              'length', 'weight', 'area', 'volume', 'unitMix',
+              'reverse', 'improperMixed', 'lcm', 'gcd', 'fraction',
+              'decimalAddition', 'decimalSubtraction', 'decimalMultiplication', 'decimalDivision', 'decimalMix',
+              'fractionAddition', 'fractionSubtraction', 'fractionMultiplication', 'fractionDivision', 'fractionMix',
+              'percentageMoney', 'percentageThreeWays', 'speedThreeWays', 'ratioSimplify', 'proportionalEquation',
+              'positiveNegativeAddition', 'positiveNegativeSubtraction', 'positiveNegativeMultiplication',
+              'positiveNegativeDivision', 'positiveNegativeMix'];
+    }
+
+    function validNewChallenge() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['schemaVersion', 'title', 'challengeId', 'joinCode', 'mode', 'difficulty',
+                               'duration', 'questionMode', 'seed', 'attemptLimit', 'rankingMode', 'status',
+                               'ownerUid', 'createdAt', 'expiresAt'])
+        && d.keys().hasAll(['schemaVersion', 'title', 'challengeId', 'joinCode', 'mode', 'difficulty',
+                            'duration', 'questionMode', 'seed', 'attemptLimit', 'rankingMode', 'status',
+                            'ownerUid', 'createdAt', 'expiresAt'])
+        && d.schemaVersion == 1
+        // 文字数の上限はアプリ側で30文字。日本語・絵文字でも通るよう、ここでは余裕を持たせる
+        && d.title is string && d.title.size() >= 1 && d.title.size() <= 130
+        && d.challengeId is string && d.challengeId.matches('^[0-9]{10}$')
+        && d.joinCode == d.challengeId
+        && d.mode in validModes()
+        && d.difficulty in ['normal', 'hyper']
+        && d.duration in [60, 120, 180, 300]
+        && d.questionMode in ['random', 'common']
+        && ((d.questionMode == 'common' && d.seed is int && d.seed >= 0 && d.seed <= 4294967295)
+            || (d.questionMode == 'random' && d.seed == null))
+        && d.attemptLimit in ['once', 'unlimited']
+        && d.rankingMode in ['first', 'best']
+        && d.status == 'open'
+        && d.ownerUid == request.auth.uid
+        && d.createdAt == request.time
+        && d.expiresAt is timestamp
+        && d.expiresAt > request.time
+        && d.expiresAt <= request.time + duration.value(91, 'd');
+    }
+
+    function joinCodePath(joinCode) {
+      return /databases/$(database)/documents/joinCodes/$(joinCode);
+    }
+
+    match /classChallenges/{challengeDocId} {
+      // 参加に必要な大会情報の1件取得（大会IDを知っている人だけ。一覧取得は不可）
+      allow get: if signedIn();
+      // 先生は自分が作成した大会だけ一覧取得できる（where ownerUid == 自分のUID が必須）
+      allow list: if isTeacher() && resource.data.ownerUid == request.auth.uid;
+      // 大会は参加番号（joinCodes）と同じ一括書き込みでのみ作成できる（番号と大会の対応を必ずそろえる）
+      allow create: if isTeacher() && validNewChallenge()
+        && getAfter(joinCodePath(request.resource.data.joinCode)).data.challengeDocId == challengeDocId;
+      // 受付終了だけを許可：受付中の大会を、status=closed・closedAt=サーバー時刻 にする（他の項目は変更不可）
+      allow update: if isChallengeOwner(resource.data)
+        && resource.data.status == 'open'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'closedAt'])
+        && request.resource.data.status == 'closed'
+        && request.resource.data.closedAt == request.time;
+      // 削除時は、この大会を指す参加番号も同じ一括書き込みで削除する（参加番号だけが残らないようにする）
+      allow delete: if isChallengeOwner(resource.data)
+        && (!existsAfter(joinCodePath(resource.data.joinCode))
+            || getAfter(joinCodePath(resource.data.joinCode)).data.challengeDocId != challengeDocId);
+
+      match /results/{resultId} {
+        // 生徒は自分の結果（送信済みかどうか）だけ確認できる。大会の作成者は全員の結果を取得できる。
+        // 存在しない結果IDの取得は許可しない（結果IDの有無を他人が確かめられないようにする）。
+        allow get: if signedIn()
+          && (resource.data.studentUid == request.auth.uid
+              || isChallengeOwner(get(challengePath(challengeDocId)).data));
+        allow list: if isChallengeOwner(get(challengePath(challengeDocId)).data);
+        allow create: if signedIn() && validNewResult(challengeDocId, resultId);
+        allow update: if false;
+        allow delete: if isChallengeOwner(get(challengePath(challengeDocId)).data);
+      }
+    }
+
+    function validNewResult(challengeDocId, resultId) {
+      let d = request.resource.data;
+      let c = get(challengePath(challengeDocId)).data;
+      return d.keys().hasOnly(['schemaVersion', 'challengeDocId', 'resultId', 'studentUid', 'nickname',
+                               'score', 'correctCount', 'answerCount', 'accuracy', 'maxCombo',
+                               'attemptNumber', 'startedAt', 'finishedAt', 'submittedAt'])
+        && d.keys().hasAll(['schemaVersion', 'challengeDocId', 'resultId', 'studentUid', 'nickname',
+                            'score', 'correctCount', 'answerCount', 'accuracy', 'maxCombo',
+                            'attemptNumber', 'startedAt', 'finishedAt', 'submittedAt'])
+        && d.schemaVersion == 1
+        && d.challengeDocId == challengeDocId
+        && d.resultId == resultId
+        && resultId.matches('^[A-Za-z0-9]{20}$')
+        && d.studentUid == request.auth.uid
+        // 文字数の上限はアプリ側で12文字。日本語・絵文字でも通るよう、ここでは余裕を持たせる
+        && d.nickname is string && d.nickname.size() >= 1 && d.nickname.size() <= 52
+        // 回数の上限：正解は1秒に5問、解答（誤答の連打を含む）は1秒に10回まで
+        && d.correctCount is int && d.correctCount >= 0 && d.correctCount <= c.duration * 5
+        && d.answerCount is int && d.answerCount >= d.correctCount && d.answerCount <= c.duration * 10
+        // スコア：1問の正解で得られる最大点は 基本点1000 × 最大倍率3.00 ＋ コンボ上限300 = 3300点。
+        // 誤答は減点のみ（0点未満にならない）なので、スコアは 正解数 × 3300 を超えない
+        && d.score is int && d.score >= 0 && d.score <= d.correctCount * 3300
+        // 正答率：アプリと同じく 正解数 ÷ 解答数 × 100 を四捨五入した値（解答0問なら0）
+        && d.accuracy is int && d.accuracy >= 0 && d.accuracy <= 100
+        && ((d.answerCount == 0 && d.accuracy == 0)
+            || (d.answerCount > 0 && math.abs(d.accuracy - d.correctCount * 100.0 / d.answerCount) <= 0.5))
+        && d.maxCombo is int && d.maxCombo >= 0 && d.maxCombo <= d.correctCount
+        && d.attemptNumber is int && d.attemptNumber >= 1 && d.attemptNumber <= 100
+        // プレイ時間：結果は制限時間が終わってから確定するので、開始〜終了は制限時間以上。
+        // 途中で閉じて後から確定する場合もあるため、上限は保存期間（91日）まで
+        && d.startedAt is int && d.finishedAt is int
+        && d.finishedAt - d.startedAt >= c.duration * 1000
+        && d.finishedAt - d.startedAt <= 7862400000
+        && d.submittedAt == request.time
+        // 受付中で、期限内の大会にだけ登録できる
+        && c.status == 'open'
+        && request.time < c.expiresAt;
+    }
+
+    match /joinCodes/{joinCode} {
+      // 参加番号から大会を探すための1件取得
+      allow get: if signedIn();
+      // 作成：大会と同時に（同じ一括書き込みで）作成し、大会の作成者・参加番号・期限が一致すること
+      allow create: if isTeacher() && validJoinCode(joinCode);
+      // 期限切れの参加番号だけは、別の大会で再利用（上書き）できる
+      allow update: if isTeacher() && resource.data.expiresAt < request.time && validJoinCode(joinCode);
+      allow delete: if isTeacher() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    function validJoinCode(joinCode) {
+      let d = request.resource.data;
+      let c = getAfter(challengePath(d.challengeDocId)).data;
+      return joinCode.matches('^[0-9]{10}$')
+        && d.keys().hasOnly(['schemaVersion', 'challengeDocId', 'ownerUid', 'createdAt', 'expiresAt'])
+        && d.keys().hasAll(['schemaVersion', 'challengeDocId', 'ownerUid', 'createdAt', 'expiresAt'])
+        && d.schemaVersion == 1
+        && d.challengeDocId is string
+        && d.ownerUid == request.auth.uid
+        && d.createdAt == request.time
+        && c.ownerUid == request.auth.uid
+        && c.joinCode == joinCode
+        && d.expiresAt == c.expiresAt;
+    }
+  }
+}
