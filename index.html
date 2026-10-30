@@ -3205,7 +3205,7 @@
             align-items: center;
             justify-content: center;
             gap: 2vh;
-            background: rgba(0, 0, 0, 0.92);
+            background: #000000; /* 1位発表までは後ろの画面が透けて見えないよう不透明にする */
             text-align: center;
             padding: 16px;
         }
@@ -3658,7 +3658,7 @@
                 <li><span class="challenge-guide-num">②</span><span>先生が全員の準備完了を確認し、カウントダウンする。</span></li>
                 <li><span class="challenge-guide-num">③</span><span>生徒が同時にスタートボタンを押す。</span></li>
                 <li><span class="challenge-guide-num">④</span><span>全員が指定時間いっぱい計算に取り組む。</span></li>
-                <li><span class="challenge-guide-num">⑤</span><span>制限時間終了後、先生が生徒のスコアを確認する。</span></li>
+                <li><span class="challenge-guide-num">⑤</span><span>制限時間終了後、先生が生徒のスコアを確認する。<small>オンライン大会の場合は、「結果を取得」でスコアが自動集計されます。</small></span></li>
                 <li><span class="challenge-guide-num">⑥</span><span>集中してがんばった生徒をほめる。</span></li>
             </ol>
             <button class="challenge-main-btn" onclick="hideChallengeGuide()">閉じる</button>
@@ -9384,7 +9384,8 @@
 
             // ユーザーがページをクリックしたら音楽を開始（自動再生制限対策）
             document.addEventListener('click', function initAudio() {
-                if (gameState.bgmEnabled) {
+                // 授業チャレンジの画面ではBGMを流さない
+                if (gameState.bgmEnabled && !isChallengeAreaActive()) {
                     playBgMusic();
                 }
                 document.removeEventListener('click', initAudio);
@@ -12782,6 +12783,12 @@
             hideRankingStage();
         }
 
+        // 授業チャレンジの画面（またはそのゲーム中）かどうか
+        function isChallengeAreaActive() {
+            return !!gameState.challenge
+                || CHALLENGE_SCREEN_IDS.some(id => !document.getElementById(id).classList.contains('hidden'));
+        }
+
         // チャレンジの運用方法
         function showChallengeGuide() {
             document.getElementById('challengeGuideModal').classList.remove('hidden');
@@ -12799,6 +12806,8 @@
             hideChallengeScreens();
             document.getElementById('titleCopyright').style.display = 'none';
             stopShootingStars();
+            // 授業チャレンジではBGM設定がONでもBGMを止める（タイトルに戻ると再開）
+            pauseBgMusic();
             const screen = document.getElementById(screenId);
             screen.classList.remove('hidden');
             screen.scrollTop = 0;
@@ -14663,6 +14672,9 @@
             const stage = document.getElementById('rankingStage');
             if (!stage || stage.classList.contains('hidden')) return;
             clearRankingTimers();
+            // 発表終了：1位発表の音楽を止める（授業チャレンジの画面なのでBGMも止めたまま）
+            stopGameClearMusic();
+            pauseBgMusic();
             stage.classList.add('hidden');
             document.getElementById('rankingStageChampion').classList.add('hidden');
             document.removeEventListener('keydown', handleRankingStageKey);
@@ -14701,6 +14713,7 @@
 
         function rankingStagePrev() {
             clearRankingTimers();
+            stopGameClearMusic(); // 1位の発表から戻るときは音楽を止める
             document.getElementById('rankingStageChampion').classList.add('hidden');
             if (rankingStage.view === 'all' && rankingStage.mode !== 'all') {
                 rankingStage.view = 'steps';
@@ -14818,14 +14831,18 @@
             }
 
             const step = rankingStage.steps[rankingStage.index];
-            step.entries.forEach(entry => current.appendChild(createRankingCard(entry, animate)));
+            // 1位の演出中は、カウントダウンが終わるまで1位のカードを作らない（後ろに名前が見えないようにする）
+            const playChampion = step.rank === 1 && animate;
+            if (!playChampion) {
+                step.entries.forEach(entry => current.appendChild(createRankingCard(entry, animate)));
+            }
             // すでに発表した順位（上位から並べる）
             rankingStage.steps.slice(0, rankingStage.index).reverse().forEach(previous => {
                 previous.entries.forEach(entry => list.appendChild(createRankingRow(entry)));
             });
             nextButton.textContent = rankingStage.index >= rankingStage.steps.length - 1 ? '全順位を表示 ▶' : '次の順位 ▶';
 
-            if (step.rank === 1 && animate) {
+            if (playChampion) {
                 playChampionEffect(step.entries);
             }
         }
@@ -14868,8 +14885,20 @@
                     overlay.append(name, score);
                     countUpRankingScore(score, entry.score, 1800);
                 });
-                if (typeof playFanfareSound === 'function') playFanfareSound();
+                playChampionMusic();
             }, 400 + 3 * 900));
+        }
+
+        // 1位発表の音楽（BGM設定のON/OFFに関わらず「ゲームクリアー.mp3」を鳴らす）
+        function playChampionMusic() {
+            const music = document.getElementById('gameClearMusic');
+            if (!music) return;
+            music.volume = 0.5;
+            music.currentTime = 0;
+            const playing = music.play();
+            if (playing && typeof playing.catch === 'function') {
+                playing.catch(error => console.log('1位発表の音楽を再生できませんでした:', error));
+            }
         }
     </script>
 
