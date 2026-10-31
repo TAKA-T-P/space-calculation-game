@@ -2251,8 +2251,8 @@
             transform: scale(1.05);
         }
 
-        /* ===== 授業チャレンジ ===== */
-        /* タイトル画面の「授業チャレンジ」ボタン */
+        /* ===== 授業内大会 ===== */
+        /* タイトル画面の「授業内大会」ボタン */
         #modeScreen .challenge-entry-btn {
             margin-top: 0.6rem;
             padding: 12px 30px;
@@ -2749,7 +2749,7 @@
             50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.8); }
         }
 
-        /* ゲーム画面上部の授業チャレンジ表示 */
+        /* ゲーム画面上部の授業内大会表示 */
         .challenge-game-banner {
             position: fixed;
             top: 14px;
@@ -3332,7 +3332,7 @@
         <div class="mode-buttons">
             <button class="game-start-btn" id="threeMinuteBtn">３分集中</button>
             <button class="game-start-btn" id="gameStartBtn">UFOバトル</button>
-            <button class="game-start-btn challenge-entry-btn" id="classChallengeBtn" onclick="showChallengeMenu()">授業チャレンジ</button>
+            <button class="game-start-btn challenge-entry-btn" id="classChallengeBtn" onclick="showChallengeMenu()">授業内大会</button>
         </div>
         <a class="portal-link-btn" href="https://taka-t-p.github.io/math-app-portal/">KEC数学科ラボへ</a>
     </div>
@@ -3470,7 +3470,7 @@
         <div class="choices" id="choices">
         </div>
 
-        <!-- 授業チャレンジ中の表示 -->
+        <!-- 授業内大会中の表示 -->
         <div class="challenge-game-banner hidden" id="challengeGameBanner"></div>
 
         <button class="home-btn" onclick="returnToTitleFromGame()">ホーム</button>
@@ -3652,16 +3652,16 @@
             <button class="story-btn" onclick="showStory()">プロローグ</button>
             <button class="story-btn" onclick="showStoryLibrary()">ストーリー</button>
             <button class="story-btn" onclick="selectMode('records')">ハイスコア</button>
-            <button class="story-btn" onclick="showChallengeHistory()">授業チャレンジ</button>
+            <button class="story-btn" onclick="showChallengeHistory()">授業内大会</button>
         </div>
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
-    <!-- ===== 授業チャレンジ ===== -->
+    <!-- ===== 授業内大会 ===== -->
     <!-- メニュー（先生用／生徒用の選択） -->
     <div id="challengeMenuScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel">
-            <h1 class="challenge-heading">授業チャレンジ</h1>
+            <h1 class="challenge-heading">授業内大会</h1>
             <p class="challenge-lead">みんなで同じ問題・同じ時間で計算バトル！</p>
 
             <div class="challenge-resume-card hidden" id="challengeMenuResumeCard">
@@ -3670,9 +3670,9 @@
             </div>
 
             <div class="challenge-menu-buttons">
-                <button class="challenge-main-btn" onclick="showChallengeCreate(false)">チャレンジを作る<small>（先生用）</small></button>
-                <button class="challenge-main-btn challenge-sub-btn" onclick="toggleChallengeJoinInput()">チャレンジに参加する<small>（生徒用）</small></button>
-                <button class="challenge-small-btn challenge-guide-btn" onclick="showChallengeGuide()">？チャレンジの運用方法</button>
+                <button class="challenge-main-btn" onclick="showChallengeCreate(false)">大会を作る<small>（先生用）</small></button>
+                <button class="challenge-main-btn challenge-sub-btn" onclick="toggleChallengeJoinInput()">大会に参加する<small>（生徒用）</small></button>
+                <button class="challenge-small-btn challenge-guide-btn" onclick="showChallengeGuide()">？大会の運用方法</button>
                 <button class="challenge-small-btn challenge-guide-btn" onclick="showOnlineAdmin()">オンライン大会を管理する（先生用）</button>
             </div>
 
@@ -3686,10 +3686,10 @@
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
-    <!-- チャレンジの運用方法 -->
+    <!-- 大会の運用方法 -->
     <div id="challengeGuideModal" class="challenge-modal hidden" onclick="if (event.target === this) hideChallengeGuide()">
         <div class="challenge-modal-content" role="dialog" aria-modal="true" aria-labelledby="challengeGuideTitle">
-            <h2 class="challenge-subheading" id="challengeGuideTitle">チャレンジの運用方法</h2>
+            <h2 class="challenge-subheading" id="challengeGuideTitle">大会の運用方法</h2>
             <ol class="challenge-guide-steps">
                 <li><span class="challenge-guide-num">①</span><span>先生がQRコードを提示し、生徒全員が参加画面を開く。<small>QRコードを読み取れない生徒は、参加番号を入力して参加できます。</small></span></li>
                 <li><span class="challenge-guide-num">②</span><span>先生が全員の準備完了を確認し、カウントダウンする。</span></li>
@@ -3705,7 +3705,7 @@
     <!-- 先生用：チャレンジ作成 -->
     <div id="challengeCreateScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel challenge-panel-wide">
-            <h1 class="challenge-heading">チャレンジを作る</h1>
+            <h1 class="challenge-heading">大会を作る</h1>
 
             <button class="challenge-small-btn" id="challengeUseLastBtn" onclick="applyLastChallengeSettings()">前回と同じ設定で作成</button>
 
@@ -3819,7 +3819,7 @@
     <!-- 生徒用：チャレンジ参加 -->
     <div id="challengeJoinScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel">
-            <p class="challenge-tag">授業チャレンジ</p>
+            <p class="challenge-tag">授業内大会</p>
             <h1 class="challenge-heading" id="challengeJoinName"></h1>
             <dl class="challenge-info" id="challengeJoinInfo"></dl>
             <div class="online-join-box hidden" id="challengeJoinOnlineBox">
@@ -3869,7 +3869,7 @@
         <button class="home-btn" onclick="backToChallengeJoin()">戻る</button>
     </div>
 
-    <!-- 授業チャレンジ結果 -->
+    <!-- 授業内大会結果 -->
     <div id="challengeResultScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel">
             <h1 class="challenge-result-title">MISSION COMPLETE</h1>
@@ -3897,10 +3897,10 @@
         <button class="home-btn" onclick="returnToTitle()">ホーム</button>
     </div>
 
-    <!-- 授業チャレンジ履歴 -->
+    <!-- 授業内大会履歴 -->
     <div id="challengeHistoryScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel challenge-panel-wide">
-            <h1 class="challenge-heading">授業チャレンジの記録</h1>
+            <h1 class="challenge-heading">授業内大会の記録</h1>
             <div id="challengeHistoryList"></div>
         </div>
         <button class="home-btn" onclick="returnToInstructions()">戻る</button>
@@ -3978,7 +3978,7 @@
         </div>
     </div>
 
-    <!-- 授業チャレンジのURLエラー -->
+    <!-- 授業内大会のURLエラー -->
     <div id="challengeErrorScreen" class="screen challenge-screen hidden">
         <div class="challenge-panel">
             <h1 class="challenge-heading">参加できません</h1>
@@ -4014,7 +4014,7 @@
             lastFailedProblem: null,
             isThreeMinuteMode: false,
             maxCombo: 0,
-            challenge: null // 授業チャレンジ中のセッション（通常モードでは null）
+            challenge: null // 授業内大会中のセッション（通常モードでは null）
         };
 
         let gameTimer;
@@ -4048,7 +4048,7 @@
 
         // 配列をシャッフルする関数（Fisher-Yates法）
         // sort(() => Math.random() - 0.5) はブラウザごとに並び順が変わるため、
-        // 授業チャレンジの全員共通問題でも同じ結果になるようこちらを使う
+        // 授業内大会の全員共通問題でも同じ結果になるようこちらを使う
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -5377,7 +5377,7 @@
                 const modeText = getModeLabel(gameState.mode);
                 const difficultyText = getDifficultyLabel(gameState.difficulty);
                 const speedText = gameState.challenge
-                    ? `授業チャレンジ ${getChallengeTimeLabel(gameState.challenge.config.t)}`
+                    ? `授業内大会 ${getChallengeTimeLabel(gameState.challenge.config.t)}`
                     : getSpeedLabel(gameState.initialSpeedMultiplier);
                 modeDisplayElement.textContent = `${difficultyText}　${modeText}　${speedText}`;
             }
@@ -7893,7 +7893,7 @@
         function newProblem() {
             if (!gameState.gameRunning) return;
 
-            // 授業チャレンジでは出題方式（ランダム／全員共通）に応じて問題を取得する
+            // 授業内大会では出題方式（ランダム／全員共通）に応じて問題を取得する
             const { problem, choices } = gameState.challenge ? getChallengeProblem() : buildProblemAndChoices();
 
             gameState.currentProblem = problem;
@@ -8150,7 +8150,7 @@
                 updateTotalCorrectCount(); // 累積正解数を更新
                 document.getElementById('score').textContent = gameState.score;
 
-                // 授業チャレンジは途中経過を端末に記録（再読み込み時の復帰用）
+                // 授業内大会は途中経過を端末に記録（再読み込み時の復帰用）
                 if (gameState.challenge) {
                     saveChallengeProgress(true);
                 }
@@ -8271,7 +8271,7 @@
         }
 
         // カウントダウン表示
-        // startCount: 0 にすると「START!」のみ表示（授業チャレンジは先生が口頭でカウントするため）
+        // startCount: 0 にすると「START!」のみ表示（授業内大会は先生が口頭でカウントするため）
         function showCountdown(callback, startCount = 3) {
             const countdownOverlay = document.createElement('div');
             countdownOverlay.className = 'countdown-overlay';
@@ -8339,10 +8339,10 @@
             gameState.timeUp = false;
             gameState.gameRunning = false; // カウントダウン中は false
 
-            // 3分集中モードの場合の設定（授業チャレンジも3分集中をベースに動作）
+            // 3分集中モードの場合の設定（授業内大会も3分集中をベースに動作）
             if (gameState.isThreeMinuteMode) {
                 gameState.lives = 999; // 実質無限（表示は「∞」）
-                gameState.timeLeft = getThreeMinuteModeTimeLimit(); // 3分間（授業チャレンジは先生の指定時間）
+                gameState.timeLeft = getThreeMinuteModeTimeLimit(); // 3分間（授業内大会は先生の指定時間）
                 gameState.initialSpeedMultiplier = -1; // 3分集中モードの識別用
                 gameState.speedMultiplier = 1.0; // 速度倍率は1.0固定
             } else {
@@ -8399,7 +8399,7 @@
             // モード表示を更新
             updateModeDisplay();
 
-            // 授業チャレンジ中はプレイ中リトライを使わせない
+            // 授業内大会中はプレイ中リトライを使わせない
             document.getElementById('gameRetryBtn').style.display = gameState.challenge ? 'none' : '';
             updateChallengeGameBanner();
 
@@ -8407,7 +8407,7 @@
             showCountdown(() => {
                 gameState.gameRunning = true;
 
-                // 授業チャレンジは実時間基準のタイマーを使う
+                // 授業内大会は実時間基準のタイマーを使う
                 if (gameState.challenge) {
                     startChallengeTimer();
                     newProblem();
@@ -8443,7 +8443,7 @@
             }, gameState.challenge ? 0 : 3);
         }
 
-        // 3分集中モードの制限時間（秒）。授業チャレンジでは先生が指定した時間
+        // 3分集中モードの制限時間（秒）。授業内大会では先生が指定した時間
         function getThreeMinuteModeTimeLimit() {
             return gameState.challenge ? gameState.challenge.config.t : 180;
         }
@@ -9068,7 +9068,7 @@
         function updateTimeGauge() {
             const timeGauge = document.getElementById('timeGauge');
             if (timeGauge) {
-                // 3分集中モードでは180秒（授業チャレンジは指定時間）、通常モードでは60秒が最大
+                // 3分集中モードでは180秒（授業内大会は指定時間）、通常モードでは60秒が最大
                 const maxTime = gameState.isThreeMinuteMode ? getThreeMinuteModeTimeLimit() : 60;
                 const percentage = (gameState.timeLeft / maxTime) * 100;
                 timeGauge.style.height = percentage + '%';
@@ -9421,7 +9421,7 @@
 
             // ユーザーがページをクリックしたら音楽を開始（自動再生制限対策）
             document.addEventListener('click', function initAudio() {
-                // 授業チャレンジの画面ではBGMを流さない
+                // 授業内大会の画面ではBGMを流さない
                 if (gameState.bgmEnabled && !isChallengeAreaActive()) {
                     playBgMusic();
                 }
@@ -12505,7 +12505,7 @@
     <script src="lib/qrcode.js"></script>
 
     <script>
-        // ===== 授業チャレンジ（v2.1） =====
+        // ===== 授業内大会（v2.1） =====
         // 3分集中モードをベースに、先生が指定した条件（計算の種類・難しさ・制限時間など）で
         // クラス全員が同じチャレンジに取り組むためのモード。
         // サーバーは使わず、設定はURLパラメータ（QRコード）で共有し、記録は各端末のlocalStorageに保存する。
@@ -12561,7 +12561,7 @@
             try {
                 localStorage.setItem(key, JSON.stringify(value));
             } catch (e) {
-                console.warn('授業チャレンジのデータを保存できませんでした', e);
+                console.warn('授業内大会のデータを保存できませんでした', e);
             }
         }
 
@@ -12683,7 +12683,7 @@
             const config = {
                 v: CHALLENGE_FORMAT_VERSION,
                 id: code,
-                n: `授業チャレンジ ${formatChallengeCode(code)}`, // チャレンジ名は番号に含められないため
+                n: `授業内大会 ${formatChallengeCode(code)}`, // チャレンジ名は番号に含められないため
                 ...settings
             };
             if (settings.q === 'common') {
@@ -12820,13 +12820,13 @@
             hideRankingStage();
         }
 
-        // 授業チャレンジの画面（またはそのゲーム中）かどうか
+        // 授業内大会の画面（またはそのゲーム中）かどうか
         function isChallengeAreaActive() {
             return !!gameState.challenge
                 || CHALLENGE_SCREEN_IDS.some(id => !document.getElementById(id).classList.contains('hidden'));
         }
 
-        // チャレンジの運用方法
+        // 大会の運用方法
         function showChallengeGuide() {
             document.getElementById('challengeGuideModal').classList.remove('hidden');
         }
@@ -12843,7 +12843,7 @@
             hideChallengeScreens();
             document.getElementById('titleCopyright').style.display = 'none';
             stopShootingStars();
-            // 授業チャレンジではBGM設定がONでもBGMを止める（タイトルに戻ると再開）
+            // 授業内大会ではBGM設定がONでもBGMを止める（タイトルに戻ると再開）
             pauseBgMusic();
             const screen = document.getElementById(screenId);
             screen.classList.remove('hidden');
@@ -13527,7 +13527,7 @@
             tick();
         }
 
-        // 授業チャレンジの問題を取得
+        // 授業内大会の問題を取得
         function getChallengeProblem() {
             const session = gameState.challenge;
             if (session.config.q !== 'common') {
@@ -13565,16 +13565,16 @@
         function updateChallengeGameBanner() {
             const banner = document.getElementById('challengeGameBanner');
             if (gameState.challenge) {
-                banner.textContent = `授業チャレンジ｜${gameState.challenge.config.n}`;
+                banner.textContent = `授業内大会｜${gameState.challenge.config.n}`;
                 banner.classList.remove('hidden');
             } else {
                 banner.classList.add('hidden');
             }
         }
 
-        // ゲーム中のホームボタン（授業チャレンジ中は確認する）
+        // ゲーム中のホームボタン（授業内大会中は確認する）
         function returnToTitleFromGame() {
-            if (gameState.challenge && !confirm('授業チャレンジを中断しますか？\n※ 時間は止まりません。時間内なら「授業チャレンジ」から続きを再開できます。')) {
+            if (gameState.challenge && !confirm('授業内大会を中断しますか？\n※ 時間は止まりません。時間内なら「授業内大会」から続きを再開できます。')) {
                 return;
             }
             returnToTitle();
@@ -13671,7 +13671,7 @@
             showChallengeReady();
         }
 
-        // ---------- 記録メニュー：授業チャレンジの履歴 ----------
+        // ---------- 記録メニュー：授業内大会の履歴 ----------
         function showChallengeHistory() {
             showChallengeScreen('challengeHistoryScreen');
             const container = document.getElementById('challengeHistoryList');
@@ -13680,7 +13680,7 @@
             if (results.length === 0) {
                 const empty = document.createElement('p');
                 empty.className = 'challenge-note';
-                empty.textContent = 'まだ授業チャレンジの記録はありません。';
+                empty.textContent = 'まだ授業内大会の記録はありません。';
                 container.appendChild(empty);
                 return;
             }
@@ -13791,7 +13791,7 @@
     <script src="firebase-config.js"></script>
 
     <script>
-        // ===== 授業チャレンジ：オンライン集計（v2.2） =====
+        // ===== 授業内大会：オンライン集計（v2.2） =====
         // オンライン集計を選んだ大会だけ Firebase（Authentication / Firestore）に接続する。
         // - 先生：Googleログイン（@kec.gr.jp）で大会を作成・管理し、結果を取得してランキングを発表する
         // - 生徒：匿名認証で参加し、ゲーム終了後に結果を1回だけ送信する（ゲーム中は通信しない）
@@ -14431,7 +14431,7 @@
                     .sort((a, b) => toMillis(b.data.createdAt) - toMillis(a.data.createdAt));
                 container.innerHTML = '';
                 if (items.length === 0) {
-                    container.appendChild(createOnlineText('まだオンライン大会はありません。「チャレンジを作る」で「オンライン集計」を選んで作成してください。', 'challenge-note'));
+                    container.appendChild(createOnlineText('まだオンライン大会はありません。「大会を作る」で「オンライン集計」を選んで作成してください。', 'challenge-note'));
                     return;
                 }
                 items.forEach(item => container.appendChild(createOnlineAdminCard(item.id, item.data)));
@@ -14709,7 +14709,7 @@
             const stage = document.getElementById('rankingStage');
             if (!stage || stage.classList.contains('hidden')) return;
             clearRankingTimers();
-            // 発表終了：1位発表の音楽を止める（授業チャレンジの画面なのでBGMも止めたまま）
+            // 発表終了：1位発表の音楽を止める（授業内大会の画面なのでBGMも止めたまま）
             stopGameClearMusic();
             pauseBgMusic();
             stage.classList.add('hidden');
